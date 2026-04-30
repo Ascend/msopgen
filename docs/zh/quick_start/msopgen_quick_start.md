@@ -100,7 +100,7 @@ rm -rf ~/ot_demo/workspace/src && mkdir -p ~/ot_demo/workspace/src && cd ~/ot_de
 **1. 获取芯片型号并拼接参数**   
 参考《[芯片SoC类型获取方法](https://gitcode.com/Ascend/msot/blob/26.0.0/docs/zh/quick_start/get_chip_soc_type.md)》获取芯片类型，例如 Ascend910B4。
 
-参数 -c：芯片类型，格式为 `aicpu`/`ai_core-{首字母小写芯片SoC型号}`，ai_core的拼接后示例：ai_core-ascend910B4、ai_core-ascend910_9392。   
+参数 -c：芯片类型，格式为 `aicpu`/`ai_core-{首字母小写芯片SoC型号}`，ai_core拼接后的示例为：ai_core-ascend910B4、ai_core-ascend910_9392。   
 
 **2. 生成 Ascend C 算子工程**   
 执行以下命令，请将 -c 参数替换上节查询的拼接值（<span style="color:#e60000;">**注意**</span>：**其中的减号和下划线不能写错，例如：ai<span style="color:#e60000;">_</span>core<span style="color:#e60000;">-</span>ascend910B4**）：
