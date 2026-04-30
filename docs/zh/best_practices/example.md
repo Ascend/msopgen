@@ -124,7 +124,7 @@
         export NPU_HOST_LIB=${INSTALL_DIR}/${arch-os}/devlib
         ```
 
-    2. 执行以下命令，进行ST测试，并将输出结果到指定路径。xxx.json为[步骤6](#zh-cn_topic_0000001979357392_li2121117163612)获得的测试用例：
+    2. 执行以下命令，进行ST测试，并将输出结果保存到指定路径。xxx.json为[步骤6](#zh-cn_topic_0000001979357392_li2121117163612)获得的测试用例：
 
         ```sh
         msopst run -i ./st/xxx.json -soc Ascendxxxyy -out ./st/out  
@@ -337,7 +337,7 @@
     ]
     ```
 
-- 若算子属性的type为类型，测试用例定义文件如下所示。
+- 若算子属性的type为data_type，测试用例定义文件如下所示。
 
     ```json
     [
