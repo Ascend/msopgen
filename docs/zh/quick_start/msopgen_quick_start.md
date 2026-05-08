@@ -510,15 +510,6 @@ echo "export LD_LIBRARY_PATH=${ASCEND_OPP_PATH}/vendors/customize/op_api/lib:$LD
 
 ### 2.5 验证算子功能
 
->[!CAUTION]注意   
->**关于 NPU 设备选择的说明**   
->执行以下 `run.sh` 脚本将实际运行算子。为便于学习，假设环境中所有 NPU 卡型号相同，系统将随机选择一张空闲卡执行任务。
->若因随机选定的卡存在故障等原因需指定 NPU 卡，请根据 `npu-smi info` 命令返回的 NPU 信息，使用其顺序号（取值范围为 [0, NPU 数量 - 1]）按如下方式调用：
->
-> ```shell
-> bash ./run.sh 2
-> ```
-
 执行算子调用工程，验证算子功能（本例执行 1.0 + 2.0，预期结果为 3.0）：
 
 ```shell
@@ -527,6 +518,16 @@ cd ~/ot_demo/workspace/src/caller
 curl -fLO --retry 10 --retry-all-errors --retry-delay 3 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" "https://raw.gitcode.com/Ascend/msot/raw/master/example/quick_start/msopgen/caller/{CMakeLists.txt,main.cpp,exec.py,run.sh}"
 bash ./run.sh
 ```
+
+> [!NOTE]
+>
+> **关于 NPU 设备选择的说明**   
+> 执行如上 `run.sh` 脚本将实际运行算子。为便于学习，假设环境中所有 NPU 卡型号相同，系统将随机选择一张空闲卡执行任务。
+> 若因随机选定的卡存在故障等原因需指定 NPU 卡，请根据 `npu-smi info` 命令返回的 NPU 信息，使用其顺序号（取值范围为 [0, NPU 数量 - 1]）按如下方式调用：
+>
+> ```shell
+> bash ./run.sh 2
+> ```
 
 若输出如下内容，结果为 3.0，则表明算子已成功加载并计算正确：
 
