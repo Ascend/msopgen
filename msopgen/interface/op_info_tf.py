@@ -155,6 +155,9 @@ class TFOpInfo(OpInfo):
         if not input_info_lines and not output_info_lines:
             utils.print_warn_log(
                 "There is no input and output information. Please check.")
+        if utils.check_name_valid(op_name) != ConstManager.MS_OP_GEN_NONE_ERROR:
+            utils.print_warn_log("Invalid op type: %s" % op_name)
+            raise utils.MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
         self.op_type = op_name
         self.fix_op_type = utils.fix_name_lower_with_under(op_name)
         for input_line in input_info_lines:

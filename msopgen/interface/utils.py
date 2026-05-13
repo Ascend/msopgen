@@ -330,6 +330,9 @@ def check_name_valid(name: str) -> int:
         print_warn_log("The op type %s is invalid, should be Upper CamelCase, eg: AddCustom, Conv2D." % name)
     name_pattern = re.compile(ConstManager.SUPPORT_PATH_PATTERN)
     match = name_pattern.match(name)
+    if '..' in name:
+        print_warn_log("The op type %s contains path traversal characters" % name)
+        return ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR
     if match is None:
         print_warn_log("The op type is invalid %s" % name)
         return ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR
@@ -547,6 +550,14 @@ def read_file(op_file: str) -> None:
 
 
 def do_write_file(op_file: str, new_str: str, mode=None) -> bool:
+    # 规范化路径
+    norm_path = os.path.normpath(op_file)
+    
+    # 检测是否存在路径穿越
+    if '..' in norm_path:
+        print_warn_log("Path traversal detected in file path: %s" % op_file)
+        raise MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
+    
     if os.path.exists(op_file):
         print_warn_log("File %s already exists and will be overwrite!" % op_file)
         os.remove(op_file)
