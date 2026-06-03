@@ -20,16 +20,14 @@ This file mainly involves class for parsing input arguments.
 # -------------------------------------------------------------------------
 
 """
+
 import os
 import sys
-
-script_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(os.path.dirname(script_dir))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-
 from atexit import register
+
+# pylint: disable=all
 from msopst.st.interface import utils
+from msopgen.interface.utils import CliLogo
 from msopst.st.interface.arg_parser import MsopstArgParser
 from msopst.st.interface.acl_op_runner import AclOpRunner
 from msopst.st.interface.ms_op_runner import MsOpRunner
@@ -45,6 +43,13 @@ from msopst.st.interface.advance_ini_parser import AdvanceIniParser
 from msopst.st.interface.const_manager import ConstManager
 from msopst.st.interface.atc_transform_om import AtcTransformOm
 from msopst.st.interface.result_comparer import ResultCompare
+# pylint: enable=all
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(script_dir))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 abnormal_termination = False
 
 
@@ -52,8 +57,7 @@ def _create_op_generator(case_list, output_path, args, machine_type, report, adv
     if case_list[0].get(ConstManager.ST_MODE) == 'ms_python_train':
         return MsOpGenerator(case_list, (output_path, args.device_id), machine_type, report)
     if case_list[0].get(ConstManager.ST_MODE) == 'pt_python_train':
-        return PtOpGenerator(
-            case_list, (output_path, args.device_id), machine_type, (report, advance_args))
+        return PtOpGenerator(case_list, (output_path, args.device_id), machine_type, (report, advance_args))
 
 
 def _generate_run_cmd_op_project(args, report, machine_type, get_advance_args=None):
@@ -70,7 +74,8 @@ def _generate_run_cmd_op_project(args, report, machine_type, get_advance_args=No
     # generate acl project or python test scripts and generate test data
     if utils.is_gen_python_st(case_list[0]):
         op_generator_instance = _create_op_generator(
-            case_list, output_path, args, machine_type, report, get_advance_args)
+            case_list, output_path, args, machine_type, report, get_advance_args
+        )
         op_generator_instance.generate()
     else:
         # atc tools transform acl_op.json of single operator to om model.
@@ -78,8 +83,7 @@ def _generate_run_cmd_op_project(args, report, machine_type, get_advance_args=No
         atc_transform.transform_acl_json_to_om(args.soc_version, get_advance_args)
         acl_op_generator_instance = AclOpGenerator(case_list, (output_path, args.device_id, machine_type), report)
         acl_op_generator_instance.generate()
-        path = os.path.join(output_path,
-                            case_list[0]['op'].replace('/', '_'))
+        path = os.path.join(output_path, case_list[0]['op'].replace('/', '_'))
         runner = AclOpRunner(path, args.soc_version, report, get_advance_args)
         runner.acl_compile()
     # generate data
@@ -90,8 +94,7 @@ def _generate_run_cmd_op_project(args, report, machine_type, get_advance_args=No
 
 def _runner_and_compare(args, case_list, report, get_advance_args=None):
     # run operator
-    output_op_path = os.path.join(args.output_path,
-                                  case_list[0]['op'].replace('/', '_'))
+    output_op_path = os.path.join(args.output_path, case_list[0]['op'].replace('/', '_'))
     path = os.path.realpath(output_op_path)
     if case_list[0].get('st_mode') == 'ms_python_train':
         op_name_fixed = utils.fix_name_lower_with_under(case_list[0]['op'])
@@ -122,8 +125,7 @@ def _generate_testcase(args, report, machine_type):
         utils.print_error_log("The st_report.json doesn't include operator information.")
         raise utils.OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PARAM_ERROR)
     if utils.is_gen_python_st(case_list[0]):
-        op_generator_instance = _create_op_generator(
-            case_list, output_path, args, machine_type, report)
+        op_generator_instance = _create_op_generator(case_list, output_path, args, machine_type, report)
         op_generator_instance.generate()
     else:
         # atc tools transform acl_op.json of single operator to om model.
@@ -177,8 +179,10 @@ def _gen_build_convert_run(args, report):
     get_advance_args = AdvanceIniParser(args.config_file)
     get_advance_args.get_advance_args_option()
     acl_mode = get_advance_args.get_mode_flag()
-    if acl_mode == ConstManager.BOTH_GEN_AND_RUN_ACL_PROJ or \
-            acl_mode == ConstManager.BOTH_GEN_AND_RUN_ACL_PROJ_PERFORMANCE:
+    if (
+        acl_mode == ConstManager.BOTH_GEN_AND_RUN_ACL_PROJ
+        or acl_mode == ConstManager.BOTH_GEN_AND_RUN_ACL_PROJ_PERFORMANCE
+    ):
         # gen op project and build & convert & execute the project.
         case_list = _generate_run_cmd_op_project(args, report, False, get_advance_args)
         _runner_and_compare(args, case_list, report, get_advance_args)
@@ -186,8 +190,10 @@ def _gen_build_convert_run(args, report):
         # only gen op project.
         _generate_run_cmd_op_project(args, report, False, get_advance_args)
         report.console_print()
-    elif acl_mode == ConstManager.ONLY_RUN_WITHOUT_GEN_ACL_PROJ or \
-            acl_mode == ConstManager.ONLY_RUN_WITHOUT_GEN_ACL_PROJ_PERFORMANCE:
+    elif (
+        acl_mode == ConstManager.ONLY_RUN_WITHOUT_GEN_ACL_PROJ
+        or acl_mode == ConstManager.ONLY_RUN_WITHOUT_GEN_ACL_PROJ_PERFORMANCE
+    ):
         # only build & convert & execute the project.
         # when the report is input,should avoid update the report
         global abnormal_termination
@@ -199,10 +205,8 @@ def _gen_build_convert_run(args, report):
         utils.print_info_log("Load %s success." % report_path)
         op_case_list = utils.load_json_file(args.input_file)
         if len(op_case_list) == 0:
-            utils.print_error_log("Failed to get %s, please check."
-                                  % args.input_file)
-            raise utils.OpTestGenException(
-                utils.OP_TEST_GEN_INVALID_PATH_ERROR)
+            utils.print_error_log("Failed to get %s, please check." % args.input_file)
+            raise utils.OpTestGenException(utils.OP_TEST_GEN_INVALID_PATH_ERROR)
         op_name = op_case_list[0].get('op')
         st_mode = op_case_list[0].get('st_mode')
         # run operator
@@ -228,8 +232,7 @@ def _gen_build_convert_run(args, report):
 def save_report(report, output_path):
     if abnormal_termination:
         return
-    report_file = os.path.join(os.path.realpath(output_path),
-                               'st_report.json')
+    report_file = os.path.join(os.path.realpath(output_path), 'st_report.json')
     try:
         report.save(report_file)
         utils.print_info_log('The st report saved in: %s.' % report_file)
@@ -252,6 +255,9 @@ def main():
     # run/mi gen command generator report.
     report = st_report.OpSTReport(" ".join(sys.argv))
     register(save_report, report=report, output_path=args.output_path)
+    # print mindstudio logo
+    logo = CliLogo()
+    logo.print_logo()
     if sys.argv[1] == 'create':
         # generate test_case.json
         try:

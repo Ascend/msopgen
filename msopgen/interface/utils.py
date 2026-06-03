@@ -19,6 +19,7 @@ This file mainly involves the common function.
 # See the Mulan PSL v2 for more details.
 # -------------------------------------------------------------------------
 """
+
 import os
 import os.path
 import stat
@@ -38,13 +39,12 @@ class MsOpGenException(Exception):
     """
 
     def __init__(self, error_info):
-        super(MsOpGenException, self).__init__(error_info)
+        super(MsOpGenException, self).__init__(error_info)  # pylint: disable=all
         self.error_info = error_info
 
 
 def _print_log(level: str, msg: str) -> None:
-    current_time = time.strftime("%Y-%m-%d %H:%M:%S",
-                                 time.localtime(int(time.time())))
+    current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(time.time())))
     pid = os.getpid()
     print(current_time + " (" + str(pid) + ") - [" + level + "] " + str(msg))
     sys.stdout.flush()
@@ -84,9 +84,7 @@ def json_load(json_path: str, jsonfile: any) -> any:
     try:
         return json.load(jsonfile)
     except Exception as ex:
-        print_error_log(
-            'Failed to load json file %s. Please modify it. %s'
-            % (json_path, str(ex)))
+        print_error_log('Failed to load json file %s. Please modify it. %s' % (json_path, str(ex)))
         raise MsOpGenException(ConstManager.MS_OP_GEN_READ_FILE_ERROR) from ex
     finally:
         pass
@@ -102,8 +100,7 @@ def read_json_file(json_path: str) -> any:
         with open(json_path, 'rb') as jsonfile:
             return json_load(json_path, jsonfile)
     except IOError as io_error:
-        print_error_log(
-            'Failed to open json file %s. %s' % (json_path, str(io_error)))
+        print_error_log('Failed to open json file %s. %s' % (json_path, str(io_error)))
         raise MsOpGenException(ConstManager.MS_OP_GEN_OPEN_FILE_ERROR) from io_error
     finally:
         pass
@@ -113,10 +110,10 @@ class CheckFromConfig:
     """
     The class for check param from config file
     """
+
     def __init__(self: any) -> None:
         # verification limit
-        self.ms_io_dtype_list = \
-            self.get_trans_value("MS_INPUT_OUTPUT_DTYPE_LIST")
+        self.ms_io_dtype_list = self.get_trans_value("MS_INPUT_OUTPUT_DTYPE_LIST")
         self.collection_dtype_list = self.get_trans_value("COLLECTION_DTYPE_LIST")
         self.io_dtype_map = self.get_trans_value("INPUT_OUTPUT_DTYPE_MAP")
         self.io_format_list = self.get_trans_value("FORMAT_LIST")
@@ -124,10 +121,8 @@ class CheckFromConfig:
         self.ini_attr_type_map = self.get_trans_value("INI_ATTR_TYPE_MAP")
         self.check_attr_type_map = self.get_trans_value("CHECK_PARAM_ATTR_TYPE_MAP")
         self.tf_attr_type_map = self.get_trans_value("TF_ATTR_TYPE_MAP")
-        self.ms_tf_io_dtype_map = \
-            self.get_trans_value("MS_TF_INPUT_OUTPUT_DTYPE_MAP")
-        self.tf_io_dtype_map = \
-            self.get_trans_value("TF_INPUT_OUTPUT_DTYPE_MAP")
+        self.ms_tf_io_dtype_map = self.get_trans_value("MS_TF_INPUT_OUTPUT_DTYPE_MAP")
+        self.tf_io_dtype_map = self.get_trans_value("TF_INPUT_OUTPUT_DTYPE_MAP")
         self.soc_version_type = self.get_trans_value("SOC_VERSION_TYPE")
 
     @staticmethod
@@ -139,7 +134,8 @@ class CheckFromConfig:
         """
         current_path = os.path.realpath(__file__)
         transform_json_path = os.path.join(
-            os.path.realpath(os.path.dirname(current_path) + os.path.sep + ".."), "config", "transform.json")
+            os.path.realpath(os.path.dirname(current_path) + os.path.sep + ".."), "config", "transform.json"
+        )
         trans_data = read_json_file(transform_json_path)
 
         if trans_data is None:
@@ -147,9 +143,7 @@ class CheckFromConfig:
             raise MsOpGenException(ConstManager.MS_OP_GEN_READ_FILE_ERROR)
         trans_data_value = trans_data.get(key)
         if trans_data_value is None:
-            print_error_log(
-                "%s in Config file is None or invalid. Please check."
-                % key)
+            print_error_log("%s in Config file is None or invalid. Please check." % key)
             raise MsOpGenException(ConstManager.MS_OP_GEN_READ_FILE_ERROR)
         return trans_data_value
 
@@ -163,10 +157,11 @@ class CheckFromConfig:
         """
         if ir_type in self.ms_io_dtype_list:
             return ir_type
-        print_warn_log("The %s 'TypeRange' '%s' in the %s file is "
-                       "not supported. Please check. If you do not have "
-                       "this problems, ignore the warning."
-                       % (ir_name, ir_type, file_type))
+        print_warn_log(
+            "The %s 'TypeRange' '%s' in the %s file is "
+            "not supported. Please check. If you do not have "
+            "this problems, ignore the warning." % (ir_name, ir_type, file_type)
+        )
         return ""
 
     def check_ir_format(self: any, ir_format: any) -> list:
@@ -211,10 +206,11 @@ class CheckFromConfig:
         """
         if ir_type in self.io_dtype_map:
             return self.io_dtype_map.get(ir_type)
-        print_warn_log("The %s 'TypeRange' '%s' in the %s file is "
-                       "not supported. Please check. If you do not have "
-                       "this problems, ignore the warning."
-                       % (ir_name, ir_type, file_type))
+        print_warn_log(
+            "The %s 'TypeRange' '%s' in the %s file is "
+            "not supported. Please check. If you do not have "
+            "this problems, ignore the warning." % (ir_name, ir_type, file_type)
+        )
         return ""
 
     def trans_ir_attr_type(self: any, attr_type: str, file_type: str) -> str:
@@ -226,10 +222,12 @@ class CheckFromConfig:
         """
         if attr_type in self.ir_attr_type_map:
             return self.ir_attr_type_map.get(attr_type)
-        print_warn_log("The attr type '%s' specified in the %s file is "
-                       "not supported. Please check the input or output type. "
-                       "If you not have this problem, ignore the "
-                       "warning." % (attr_type, file_type))
+        print_warn_log(
+            "The attr type '%s' specified in the %s file is "
+            "not supported. Please check the input or output type. "
+            "If you not have this problem, ignore the "
+            "warning." % (attr_type, file_type)
+        )
         return ""
 
     def trans_ini_attr_type(self: any, attr_type: str) -> str:
@@ -240,9 +238,11 @@ class CheckFromConfig:
         """
         if attr_type in self.ini_attr_type_map:
             return self.ini_attr_type_map.get(attr_type)
-        print_warn_log("The attr type '%s' is not supported in the .ini file. "
-                       "Please check the attr type. If you do not have this "
-                       "problem, ignore the warning." % attr_type)
+        print_warn_log(
+            "The attr type '%s' is not supported in the .ini file. "
+            "Please check the attr type. If you do not have this "
+            "problem, ignore the warning." % attr_type
+        )
         return ""
 
     def trans_tf_attr_type(self: any, tf_type: str) -> str:
@@ -253,9 +253,11 @@ class CheckFromConfig:
         """
         if tf_type in self.tf_attr_type_map:
             return self.tf_attr_type_map.get(tf_type)
-        print_warn_log("The attr type '%s' in the .txt file is not supported. "
-                       "Please check the input or output type. If you do not "
-                       "have this problem, ignore the warning." % tf_type)
+        print_warn_log(
+            "The attr type '%s' in the .txt file is not supported. "
+            "Please check the input or output type. If you do not "
+            "have this problem, ignore the warning." % tf_type
+        )
         return ""
 
     def trans_ms_tf_io_dtype(self: any, tf_type: str, name: str) -> str:
@@ -267,10 +269,11 @@ class CheckFromConfig:
         """
         if tf_type in self.ms_tf_io_dtype_map:
             return self.ms_tf_io_dtype_map.get(tf_type)
-        print_warn_log("The '%s' type '%s' in the .txt file is "
-                       "not supported. Please check. If you do not "
-                       "have this problem, ignore the warning."
-                       % (name, tf_type))
+        print_warn_log(
+            "The '%s' type '%s' in the .txt file is "
+            "not supported. Please check. If you do not "
+            "have this problem, ignore the warning." % (name, tf_type)
+        )
         return ""
 
     def trans_tf_io_dtype(self: any, tf_type: str, name: str) -> str:
@@ -282,9 +285,11 @@ class CheckFromConfig:
         """
         if tf_type in self.tf_io_dtype_map:
             return self.tf_io_dtype_map.get(tf_type)
-        print_warn_log("The '%s' type '%s' in the .txt file is not supported. "
-                       "Please check. If you do not have this problems, just "
-                       "ignore the warning." % (name, tf_type))
+        print_warn_log(
+            "The '%s' type '%s' in the .txt file is not supported. "
+            "Please check. If you do not have this problems, just "
+            "ignore the warning." % (name, tf_type)
+        )
         return ""
 
     def trans_check_attr_type(self: any, attr_type: str) -> str:
@@ -295,9 +300,11 @@ class CheckFromConfig:
         """
         if attr_type in self.check_attr_type_map:
             return self.check_attr_type_map.get(attr_type)
-        print_warn_log("The attr type '%s' is not supported in check_op_params. "
-                       "Please check the attr type. If you do not have this "
-                       "problem, ignore the warning." % attr_type)
+        print_warn_log(
+            "The attr type '%s' is not supported in check_op_params. "
+            "Please check the attr type. If you do not have this "
+            "problem, ignore the warning." % attr_type
+        )
         return ""
 
     def trans_soc_version(self: any, soc_version: str) -> str:
@@ -326,7 +333,7 @@ def check_name_valid(name: str) -> int:
     if len(name) > 1000:
         print_warn_log("The input name is too long")
         return ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR
-    if name[0].islower() or name.__contains__("_"):
+    if name[0].islower() or "_" in name:
         print_warn_log("The op type %s is invalid, should be Upper CamelCase, eg: AddCustom, Conv2D." % name)
     name_pattern = re.compile(ConstManager.SUPPORT_PATH_PATTERN)
     match = name_pattern.match(name)
@@ -357,35 +364,30 @@ def check_path_valid(path: str, isdir=False, access_type=os.R_OK) -> None:
             os.makedirs(path, ConstManager.DIR_MODE)
         except OSError as ex:
             print_error_log(
-                'Failed to create {}. Please check the path permission or '
-                'disk space.'.format(path), str(ex))
+                'Failed to create {}. Please check the path permission or disk space.'.format(path), str(ex)
+            )
             raise MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR) from ex
         finally:
             pass
     if not os.path.exists(path):
-        print_error_log('The path {} does not exist. Please check whether '
-                        'the path exists.'.format(path))
+        print_error_log('The path {} does not exist. Please check whether the path exists.'.format(path))
         raise MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
 
     if not os.access(path, access_type):
-        print_error_log('You do not have the read permission on the path {} .'
-                        'Please check.'.format(path))
+        print_error_log('You do not have the read permission on the path {} .Please check.'.format(path))
         raise MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
 
     if isdir and not os.access(path, access_type):
-        print_error_log('You do not have the write permission on the path {} .'
-                        'Please check.'.format(path))
+        print_error_log('You do not have the write permission on the path {} .Please check.'.format(path))
         raise MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
 
     if isdir:
         if not os.path.isdir(path):
-            print_error_log('The path {} is not a directory.'
-                            ' Please check the path.'.format(path))
+            print_error_log('The path {} is not a directory. Please check the path.'.format(path))
             raise MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
     else:
         if not os.path.isfile(path):
-            print_error_log('The path {} is not a file.'
-                            ' Please check the path.'.format(path))
+            print_error_log('The path {} is not a file. Please check the path.'.format(path))
             raise MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
     check_input_permission_valid(path)
     if not check_path_owner_consistent(path):
@@ -421,8 +423,10 @@ def check_path_length_valid(path):
     if platform.system().lower() == 'windows':
         return len(path) <= ConstManager.WINDOWS_FILE_PATH_LENGTH_LIMIT
     else:
-        return (len(path) <= ConstManager.LINUX_PATH_LENGTH_LIMIT and 
-                len(os.path.basename(path)) <= ConstManager.LINUX_FILE_NAME_LENGTH_LIMIT)
+        return (
+            len(path) <= ConstManager.LINUX_PATH_LENGTH_LIMIT
+            and len(os.path.basename(path)) <= ConstManager.LINUX_FILE_NAME_LENGTH_LIMIT
+        )
 
 
 def check_input_permission_valid(path):
@@ -433,8 +437,9 @@ def check_input_permission_valid(path):
         raise MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
     file_stat = os.stat(path)
     if bool(file_stat.st_mode & stat.S_IWGRP) or bool(file_stat.st_mode & stat.S_IWOTH):
-        print_warn_log('The path {} should not be written by user group or others, '
-                       'which will cause security risks'.format(path))
+        print_warn_log(
+            'The path {} should not be written by user group or others, which will cause security risks'.format(path)
+        )
 
 
 def islink(path):
@@ -495,7 +500,7 @@ def copy_exist_file(dstname: str, is_skip_exist: bool) -> bool:
         if is_skip_exist:
             return True
         print_error_log("{} is not empty. Please check.".format(dstname))
-        MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
+        MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)  # pylint: disable=all
     return False
 
 
@@ -511,8 +516,7 @@ def get_content_from_double_quotes(line: str) -> any:
     pattern = re.compile('"(.*)"')
     match = pattern.findall(line)
     if not match:
-        print_warn_log("line = %s, (\"key:value\") format error. Please "
-                       "check the .txt file! " % line)
+        print_warn_log("line = %s, (\"key:value\") format error. Please check the .txt file! " % line)
     return match
 
 
@@ -538,12 +542,11 @@ def read_file(op_file: str) -> None:
     :return:
     """
     try:
-        with open(op_file) as file_object:
+        with open(op_file) as file_object:  # pylint: disable=all
             txt = file_object.read()
             return txt
     except IOError as io_error:
-        print_error_log(
-            'Failed to open file %s.' % op_file, str(io_error))
+        print_error_log('Failed to open file %s.' % op_file, str(io_error))
         raise MsOpGenException(ConstManager.MS_OP_GEN_READ_FILE_ERROR) from io_error
     finally:
         pass
@@ -552,12 +555,12 @@ def read_file(op_file: str) -> None:
 def do_write_file(op_file: str, new_str: str, mode=None) -> bool:
     # 规范化路径
     norm_path = os.path.normpath(op_file)
-    
+
     # 检测是否存在路径穿越
     if '..' in norm_path:
         print_warn_log("Path traversal detected in file path: %s" % op_file)
         raise MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
-    
+
     if os.path.exists(op_file):
         print_warn_log("File %s already exists and will be overwrite!" % op_file)
         os.remove(op_file)
@@ -590,18 +593,14 @@ def write_json_file(json_path: str, content: str) -> None:
     :return: the json object
     """
     try:
-        with os.fdopen(os.open(json_path, ConstManager.WRITE_FLAGS,
-                               ConstManager.CONFIG_MODE), 'w+') as file_object:
-            file_object.write(
-                json.dumps(content, sort_keys=False, indent=4))
+        with os.fdopen(os.open(json_path, ConstManager.WRITE_FLAGS, ConstManager.CONFIG_MODE), 'w+') as file_object:
+            file_object.write(json.dumps(content, sort_keys=False, indent=4))
     except IOError as io_error:
-        print_error_log(
-            'Failed to generate json file %s.' % json_path, str(io_error))
+        print_error_log('Failed to generate json file %s.' % json_path, str(io_error))
         raise MsOpGenException(ConstManager.MS_OP_GEN_WRITE_FILE_ERROR) from io_error
     finally:
         pass
-    print_info_log(
-        "Generate file %s successfully." % json_path)
+    print_info_log("Generate file %s successfully." % json_path)
 
 
 def fix_name_lower_with_under(name: str) -> str:
@@ -663,7 +662,7 @@ def judge_file_mode(target_path):
         return ConstManager.CONFIG_MODE
     else:
         return ConstManager.OTHERS_MODE
-        
+
 
 def walk_through_path(walk_dir):
     for basename in os.listdir(walk_dir):
@@ -690,9 +689,61 @@ def check_execute_file(file_path):
 
 def to_safe_string(input_string: str):
     invalid_character = {
-        "\n": "\\n", "\f": "\\f", "\r": "\\r", "\b": "\\b", "\t": "\\t", "\v": "\\v",
-        "\u007F": "\\u007F"
+        "\n": "\\n",
+        "\f": "\\f",
+        "\r": "\\r",
+        "\b": "\\b",
+        "\t": "\\t",
+        "\v": "\\v",
+        "\u007f": "\\u007F",
     }
     trans_table = str.maketrans(invalid_character)
     return input_string.translate(trans_table)
 
+
+class CliLogo:
+    """MindStudio CLI logo printer."""
+
+    RESET = "\033[0m"
+    DIM_GRAY = "\033[38;5;240m"
+    BOLD_WHITE = "\033[1;97m"
+    HIGHLIGHT = "\033[48;5;21;38;5;46m"  # green on blue
+
+    def _should_use_color_logo(self) -> bool:
+        """Check if we should use colored logo with ANSI escape codes."""
+        if not sys.stderr.isatty():
+            return False
+        term = os.environ.get("TERM")
+        return term is not None and term not in ("dumb", "unknown")
+
+    def _render_simple(self) -> str:
+        """Return the plain ASCII logo."""
+        return (
+            "================================================================="
+            "\n"
+            "                   >>>>>   MindStudio   <<<<<"
+            "\n"
+            "    THE END-TO-END TOOLCHAIN TO UNLEASH HUAWEI ASCEND COMPUTE"
+            "\n"
+            "================================================================="
+            "\n\n"
+        )
+
+    def _render_colored(self) -> str:
+        """Return the colored logo with ANSI escape codes."""
+        return (
+            f"{self.DIM_GRAY}================================================================="
+            f"{self.RESET}\n"
+            f"{self.BOLD_WHITE}                   >>>>>  "
+            f"{self.HIGHLIGHT} MindStudio {self.RESET}{self.BOLD_WHITE}  <<<<<{self.RESET}\n"
+            f"{self.BOLD_WHITE}    THE END-TO-END TOOLCHAIN TO UNLEASH HUAWEI ASCEND COMPUTE"
+            f"{self.RESET}\n"
+            f"{self.DIM_GRAY}================================================================="
+            f"{self.RESET}\n\n"
+        )
+
+    def print_logo(self) -> None:
+        """Print the MindStudio logo to stderr."""
+        content = self._render_colored() if self._should_use_color_logo() else self._render_simple()
+        sys.stderr.write(content)
+        sys.stderr.flush()

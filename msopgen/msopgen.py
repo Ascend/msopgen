@@ -25,6 +25,7 @@ from msopgen.interface.arg_parser import ArgParser
 from msopgen.interface.op_file_generator import OpFileGenerator
 from msopgen.interface.op_file_compile import OpFileCompile
 from msopgen.interface import utils
+from msopgen.interface.utils import CliLogo
 from msopgen.interface.const_manager import ConstManager
 from msopgen.simulator import Simulator, Dump2TraceException
 
@@ -46,7 +47,10 @@ def _do_sim_cmd(argument: ArgParser) -> None:
 def _msopgen_task():
     # 1.parse input argument and check arguments valid
     argument = ArgParser()
-    # 2.generate file, according to gen and mi
+    # 2.print mindstudio logo
+    logo = CliLogo()
+    logo.print_logo()
+    # 3.generate file, according to gen and mi
     if argument.gen_flag:
         _do_gen_cmd(argument)
     elif argument.compile_flag:
