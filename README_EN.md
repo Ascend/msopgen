@@ -1,10 +1,14 @@
 <h1 align="center">MindStudio Ops Generator</h1>
 
 <div align="center">
-<h2>Ascend AI Operator Project Generator</h2>
+<p><b><span style="font-size:24px;">Ascend AI Operator Project Generator</span></b></p>
 
- [![Ascend](https://img.shields.io/badge/Community-MindStudio-blue.svg)](https://www.hiascend.com/developer/software/mindstudio) 
- [![License](https://badgen.net/badge/License/MulanPSL-2.0/blue)](./LICENSE)
+ [![Quick Start](https://badgen.net/badge/快速入门/QuickStart/blue)](docs/zh/quick_start/msopgen_quick_start.md)
+ [![AI Q&A(DeepWiki)](https://badgen.net/badge/AI问答/DeepWiki/blue)](https://deepwiki.com/mindstudio-docs/master) 
+ [![AI Q&A(ZRead)](https://badgen.net/badge/AI问答/ZRead/blue)](https://zread.ai/mindstudio-docs/master) 
+ [![Exact Search](https://badgen.net/badge/精确搜索/ReadTheDocs/blue)](https://mindstudio-docs-master.readthedocs.io/zh-cn/latest/) 
+ [![Ascend](https://badgen.net/badge/昇腾社区/Community/blue)](https://www.hiascend.com/cn/developer/software/mindstudio) 
+ [![issues](https://badgen.net/badge/报告问题/Issues/blue)](https://gitcode.com/Ascend/msopgen/issues) 
 
 </div>
 
@@ -47,6 +51,18 @@ For details about how to use the tool, see [msOpGen User Guide](docs/en/user_gui
 
 msOpGen provides some typical cases to help users understand and get familiar with the tool. For details, see [msOpGen Typical Cases](docs/en/best_practices/example.md).
 
+## ❓ FAQ
+
+For common questions and solutions, see [msOpGen FAQ](docs/en/support/msopgen_faq.md).
+
+## 🌌 Intelligent Search
+
+To improve documentation browsing efficiency, we provide multiple search methods:  
+🔹 [AI Q&A (DeepWiki)](https://deepwiki.com/mindstudio-docs/master): Natural language Q&A to quickly understand project architecture and module relationships.   
+🔹 [AI Q&A (ZRead)](https://zread.ai/mindstudio-docs/master): Better Chinese Q&A experience with precise feature and detail location.   
+🔹 [Exact Search (ReadTheDocs)](https://mindstudio-docs-master.readthedocs.io): Full-text keyword search for APIs, parameters, and error messages.  
+
+
 ## 🛠️ Contribution Guide
 
 You are welcome to contribute to the project. For details, see [Contribution Guide](./docs/en/contributing/contributing_guide.md).
@@ -62,9 +78,9 @@ You are welcome to contribute to the project. For details, see [Contribution Gui
 
 You are welcome to contribute to the community. If you have any questions or suggestions, please submit [Issues](https://gitcode.com/Ascend/msopgen/issues). We will reply as soon as possible. Thank you for your support.
 
-|                                      📱 Follow the MindStudio WeChat Account                                      | 💬 Communication and Support Channels                                                                                                                                                                                                                                                                                                                                                                                                                    |
-|:-----------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <img src="https://gitcode.com/Ascend/msot/blob/master/docs/en/figures/readme/officialAccount.png" width="120"><br><sub>*Scan the QR code to follow us and get the latest updates.*</sub>| 💡 **Join the WeChat group**:<br>Follow the WeChat account and reply "communication group" to obtain the QR code for joining the group.<br><br>🛠️ ️**Other channels**:<br><br>|
+|                                                                    Instant Chat (WeChat Group)                                                                     |                                                                          Official Updates (WeChat Account)                                                                          | In-Depth Support (Assistant / Forum)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+|:------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <img src="https://raw.gitcode.com/mengguangxin/docs/files/dev_0526/common/Writing_Template/figures/qr_code_wechat_work.png" width="120"><br><sub>*Scan to join the tech group*</sub> | <img src="https://raw.gitcode.com/mengguangxin/docs/files/dev_0526/common/Writing_Template/figures/qr_code_wechat_official_account.png" width="120"><br><sub>*Scan to follow the official account*</sub> | Scan to join the group and follow the official account for the fastest access to the MindStudio user and developer community: <br> **Quick Q&A:** Discuss technical issues with community members in real time<br>**Stay Updated:** Get version releases and feature updates first<br> **Knowledge Sharing:** Exchange best practices and hands-on experience with fellow developers <br> <br> **More support channels**: 👉 Ascend Assistant: [![WeChat](https://img.shields.io/badge/WeChat-07C160?style=flat-square&logo=wechat&logoColor=white)](https://gitcode.com/Ascend/msit/blob/master/docs/en/figures/readme/xiaozhushou.png) 👉 Ascend Forum: [![Website](https://img.shields.io/badge/Website-%231e37ff?style=flat-square&logo=RSS&logoColor=white)](https://www.hiascend.com/forum/) |
 
 ## 🙏 Acknowledgements
 
