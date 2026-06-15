@@ -17,6 +17,7 @@
 # See the Mulan PSL v2 for more details.
 # -------------------------------------------------------------------------
 """
+
 import os
 import json
 import re
@@ -27,21 +28,22 @@ import logging
 from msopgen.interface.const_manager import ConstManager
 
 
-WINDOWS_PATH_LENGTH_LIMIT = 200
-LINUX_PATH_LENGTH_LIMIT = 4000
-LINUX_FILE_NAME_LENGTH_LIMIT = 200
+WINDOWS_PATH_LENGTH_LIMIT = 260
+LINUX_PATH_LENGTH_LIMIT = 4096
+LINUX_FILE_NAME_LENGTH_LIMIT = 255
 
 
 class Dump2TraceException(Exception):
     def __init__(self, error_info):
         logger.error(error_info)
-        super(Dump2TraceException, self).__init__(error_info)
+        super().__init__(error_info)
         self.error_info = ConstManager.MS_OP_GEN_SIMULATOR_ERROR
 
 
 def write_json_file(file, content):
-    with os.fdopen(os.open(file, ConstManager.WRITE_FLAGS, ConstManager.CONFIG_MODE),
-                   'w', encoding='utf-8', newline='') as file_handle:
+    with os.fdopen(
+        os.open(file, ConstManager.WRITE_FLAGS, ConstManager.CONFIG_MODE), 'w', encoding='utf-8', newline=''
+    ) as file_handle:
         file_handle.truncate()
         file_handle.write(json.dumps(content))
 
@@ -54,12 +56,16 @@ def print_csv_file(head: list, content: list, csv_path: str) -> None:
 
 
 class CheckPath:
-
     @staticmethod
     def _to_safe_string(input_string: str):
         invalid_character = {
-            "\n": "\\n", "\f": "\\f", "\r": "\\r", "\b": "\\b", "\t": "\\t", "\v": "\\v",
-            "\u007F": "\\u007F"
+            "\n": "\\n",
+            "\f": "\\f",
+            "\r": "\\r",
+            "\b": "\\b",
+            "\t": "\\t",
+            "\v": "\\v",
+            "\u007f": "\\u007F",
         }
         trans_table = str.maketrans(invalid_character)
         return input_string.translate(trans_table)
@@ -75,17 +81,14 @@ class CheckPath:
         if not cls._check_path_length_valid(file_path):
             raise Dump2TraceException("%s is too long." % cls._to_safe_string(file_path))
         if not os.access(file_path, access_type):
-            raise Dump2TraceException(
-                "You don't have the right permission for %s." % cls._to_safe_string(file_path))
+            raise Dump2TraceException("You don't have the right permission for %s." % cls._to_safe_string(file_path))
         if not os.path.isfile(file_path):
-            raise Dump2TraceException(
-                "File %s is not a valid file." % cls._to_safe_string(file_path))
+            raise Dump2TraceException("File %s is not a valid file." % cls._to_safe_string(file_path))
         if not cls._check_path_owner_consistent(file_path):
             logger.warning("The file %s is not belong to you.", cls._to_safe_string(file_path))
         cls._check_input_permission_valid(file_path)
         if os.path.getsize(file_path) >= max_file_size:
-            raise Dump2TraceException(
-                "The file %s is too large." % cls._to_safe_string(file_path))
+            raise Dump2TraceException("The file %s is too large." % cls._to_safe_string(file_path))
         return file_path
 
     @classmethod
@@ -102,8 +105,7 @@ class CheckPath:
         if not cls._check_path_length_valid(path):
             raise Dump2TraceException("%s is too long." % cls._to_safe_string(path))
         if not os.access(path, access_type):
-            raise Dump2TraceException(
-                "You don't have the right permission for %s." % cls._to_safe_string(path))
+            raise Dump2TraceException("You don't have the right permission for %s." % cls._to_safe_string(path))
         if not os.path.isdir(path):
             raise Dump2TraceException("%s is not a valid directory." % cls._to_safe_string(path))
         if not cls._check_path_owner_consistent(path):
@@ -140,20 +142,19 @@ class CheckPath:
         if platform.system().lower() == 'windows':
             pattern = re.compile(r'([.\\/:_ ~0-9a-zA-Z-])+')
             if not pattern.fullmatch(path):
-                raise Dump2TraceException(
-                    "Only the following characters are allowed in the path: A-Za-z0-9-_./\\: ~")
+                raise Dump2TraceException("Only the following characters are allowed in the path: A-Za-z0-9-_./\\: ~")
         else:
             pattern = re.compile(r'([./:_ ~0-9a-zA-Z-])+')
             if not pattern.fullmatch(path):
-                raise Dump2TraceException(
-                    "Only the following characters are allowed in the path: A-Za-z0-9-_./: ~")
+                raise Dump2TraceException("Only the following characters are allowed in the path: A-Za-z0-9-_./: ~")
 
     @classmethod
     def _check_files_in_folder_valid(cls, path, max_file_num=1000):
         for item in os.listdir(path):
             if max_file_num < 0:
-                raise Dump2TraceException("files in %s input path are too many, which exceed %d" %
-                                          (cls._to_safe_string(path), max_file_num))
+                raise Dump2TraceException(
+                    "files in %s input path are too many, which exceed %d" % (cls._to_safe_string(path), max_file_num)
+                )
             if not item.endswith(".dump"):
                 continue
             cls.check_file(os.path.join(path, item))
@@ -167,20 +168,20 @@ class CheckPath:
             raise Dump2TraceException("%s input path does not exist" % cls._to_safe_string(path))
         file_stat = os.stat(path)
         if bool(file_stat.st_mode & stat.S_IWGRP) or bool(file_stat.st_mode & stat.S_IWOTH):
-            logger.warning("%s input path should not be written by user group or others, "
-                          "which will cause security risks", cls._to_safe_string(path))
+            logger.warning(
+                "%s input path should not be written by user group or others, which will cause security risks",
+                cls._to_safe_string(path),
+            )
 
 
 class Logger(logging.Logger):
-
     def __init__(self, name: str, level=logging.INFO) -> None:
         super().__init__(name, level)
         self._set_console_handle()
 
     def _set_console_handle(self):
         formatter = logging.Formatter(
-            fmt="%(asctime)s (%(process)d) - [%(levelname)s] %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S"
+            fmt="%(asctime)s (%(process)d) - [%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
         )
         ch = logging.StreamHandler()
         ch.setLevel(self.level)

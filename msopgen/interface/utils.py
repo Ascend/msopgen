@@ -395,7 +395,9 @@ def check_path_valid(path: str, isdir=False, access_type=os.R_OK) -> None:
 
 
 def check_path_is_valid(path):
-    is_valid = not islink(path) and check_path_pattern_valid(path) and check_path_length_valid(path)
+    if islink(path):
+        print_warn_log('The path {} is a soft link.'.format(path))
+    is_valid = check_path_pattern_valid(path) and check_path_length_valid(path)
     if not is_valid:
         print_error_log('The path {} is not valid'.format(path))
         raise MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)

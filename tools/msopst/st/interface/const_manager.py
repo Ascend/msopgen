@@ -30,6 +30,7 @@ class ConstManager:
     """
     class ConstManager
     """
+
     # error code for user:success
     OP_TEST_GEN_NONE_ERROR = 0
     # error code for user: config error
@@ -133,7 +134,7 @@ class ConstManager:
         'DYNAMIC_INPUT': 'input',
         'OPTIONAL_INPUT': 'input',
         'OUTPUT': 'output',
-        'DYNAMIC_OUTPUT': 'output'
+        'DYNAMIC_OUTPUT': 'output',
     }
 
     AICPU_ATTR_LIST = ['ATTR', 'REQUIRED_ATTR']
@@ -147,7 +148,7 @@ class ConstManager:
         'listFloat': 'list_float',
         'listBool': 'list_bool',
         'listStr': 'list_string',
-        'listListInt': 'list_list_int'
+        'listListInt': 'list_list_int',
     }
 
     OP_ATTR_TYPE_MAP = {
@@ -160,7 +161,7 @@ class ConstManager:
         'list_float': 'OP_LIST_FLOAT',
         'list_bool': 'OP_LIST_BOOL',
         'list_string': 'OP_LIST_STRING',
-        'list_list_int': 'OP_LIST_INT_PTR'
+        'list_list_int': 'OP_LIST_INT_PTR',
     }
 
     OP_PROTO_PARSE_ATTR_TYPE_MAP = {
@@ -173,7 +174,7 @@ class ConstManager:
         "ListFloat": "listFloat",
         "ListString": "listStr",
         "ListBool": "listBool",
-        "ListListInt": "listListInt"
+        "ListListInt": "listListInt",
     }
 
     ATTR_MEMBER_VAR_MAP = {
@@ -186,7 +187,7 @@ class ConstManager:
         'list_float': 'listFloatAttr',
         'list_bool': 'listBoolAttr',
         'list_string': 'listStringAttr',
-        'list_list_int': 'listIntPtrAttr'
+        'list_list_int': 'listIntPtrAttr',
     }
 
     ATTR_TYPE_SUPPORT_TYPE_MAP = {
@@ -205,7 +206,7 @@ class ConstManager:
         "double": "DT_DOUBLE",
         "complex64": "DT_COMPLEX64",
         "complex128": "DT_COMPLEX128",
-        "bfloat16": "DT_BF16"
+        "bfloat16": "DT_BF16",
     }
 
     FALSE = 'false'
@@ -261,16 +262,14 @@ class ConstManager:
     CONST_VALUE = 'const_value'
     ONE_HUNDRED_MB = 100 * 1024 * 1024
     MAX_NAME_LENGTH = 256
-    LINUX_PATH_LENGTH_LIMIT = 4000
-    LINUX_FILE_NAME_LENGTH_LIMIT = 200
-
+    LINUX_PATH_LENGTH_LIMIT = 4096
+    LINUX_FILE_NAME_LENGTH_LIMIT = 255
 
     # --------------------------SubCaseDesign-----------------------
     ATTR_REQUIRED_KEYS = ["name", "type", "value"]
     # ---------------------------SubCaseDesignCross-----------------
     # due to orthogonal combination, type need to behind shape.
-    INPUT_CROSS_LIST = ['format', 'shape', 'type', 'data_distribute',
-                        'value_range']
+    INPUT_CROSS_LIST = ['format', 'shape', 'type', 'data_distribute', 'value_range']
     # due to orthogonal combination, type need to behind shape, also.
     OUTPUT_CROSS_LIST = ['format', 'shape', 'type']
     MS_INPUT_CROSS_LIST = ['type', 'shape', 'data_distribute', 'value_range']
@@ -301,8 +300,7 @@ class ConstManager:
     SHOW_TOP_TEN_DATA = 10
     SHOW_LAST_TEN_DATA = 10
     PROF_TIME_UNIT = 'us'
-    OP_CASE_INFO_IN_CSV_COLUMN_NAME_LIST = [
-        'Op Name', 'Task Type', 'Task Duration(us)', 'Task ID']
+    OP_CASE_INFO_IN_CSV_COLUMN_NAME_LIST = ['Op Name', 'Task Type', 'Task Duration(us)', 'Task ID']
     OP_NAME_INDEX = 0
     TASK_TYPE_INDEX = 1
     TASK_DURATION_INDEX = 2
@@ -321,8 +319,7 @@ class ConstManager:
     # ascendc operator
     NEXT_LINE_ASCENDC = '\n'
     INPUT_INFO_KEY = ['shape', 'type', 'value']
-    KERNEL_KEY = ['call_kernel_func', 'call_kernel_name', 'kernel_func',
-                  'kernel_func_name', 'input_name']
+    KERNEL_KEY = ['call_kernel_func', 'call_kernel_name', 'kernel_func', 'kernel_func_name', 'input_name']
     # pytorch
     NEXT_LINE_TORCH = '\n        '
     # ------------------AdvanceIniArgs---------------------

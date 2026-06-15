@@ -20,7 +20,6 @@ This file mainly involves the common function.
 # -------------------------------------------------------------------------
 """
 
-
 import os
 import stat
 import platform
@@ -30,6 +29,7 @@ class ConstManager:
     """
     The class for const manager
     """
+
     # error code for user:success
     MS_OP_GEN_NONE_ERROR = 0
     # error code for user: config error
@@ -88,15 +88,16 @@ class ConstManager:
     FRAMEWORK_ONNX_PLUGIN = "onnx_plugin"
     FRAMEWORK_CAFFE_PLUGIN = "caffe_plugin"
 
-    OP_TEMPLATE_PATH = (OP_TEMPLATE_PATH_WINDOWS if platform.system() == 'Windows' 
-                        else OP_TEMPLATE_PATH_LINUX)
-    OP_TEMPLATE_TBE_PATH = (OP_TEMPLATE_TBE_PATH_WINDOWS if platform.system() == 'Windows' 
-                            else OP_TEMPLATE_TBE_PATH_LINUX)
-    OP_TEMPLATE_AICPU_PATH = (OP_TEMPLATE_AICPU_PATH_WINDOWS if platform.system() == 'Windows' 
-                              else OP_TEMPLATE_AICPU_PATH_LINUX)
-    OP_TEMPLATE_ASCENDC_PATH = (OP_TEMPLATE_ASCENDC_PATH_WINDOWS if platform.system() == 'Windows' 
-                                else OP_TEMPLATE_ASCENDC_PATH_LINUX)
-
+    OP_TEMPLATE_PATH = OP_TEMPLATE_PATH_WINDOWS if platform.system() == 'Windows' else OP_TEMPLATE_PATH_LINUX
+    OP_TEMPLATE_TBE_PATH = (
+        OP_TEMPLATE_TBE_PATH_WINDOWS if platform.system() == 'Windows' else OP_TEMPLATE_TBE_PATH_LINUX
+    )
+    OP_TEMPLATE_AICPU_PATH = (
+        OP_TEMPLATE_AICPU_PATH_WINDOWS if platform.system() == 'Windows' else OP_TEMPLATE_AICPU_PATH_LINUX
+    )
+    OP_TEMPLATE_ASCENDC_PATH = (
+        OP_TEMPLATE_ASCENDC_PATH_WINDOWS if platform.system() == 'Windows' else OP_TEMPLATE_ASCENDC_PATH_LINUX
+    )
 
     SPACE = ' '
     EMPTY = ''
@@ -112,9 +113,9 @@ class ConstManager:
     WITH_WRITE_MODE = ["2", "3", "6", "7"]
 
     TEN_MB = 10 * 1024 * 1024
-    LINUX_PATH_LENGTH_LIMIT = 4000
-    LINUX_FILE_NAME_LENGTH_LIMIT = 200
-    WINDOWS_FILE_PATH_LENGTH_LIMIT = 200
+    LINUX_PATH_LENGTH_LIMIT = 4096
+    LINUX_FILE_NAME_LENGTH_LIMIT = 255
+    WINDOWS_FILE_PATH_LENGTH_LIMIT = 260
 
     # path
     IMPL_DIR = "tbe/impl/"
@@ -143,8 +144,7 @@ class ConstManager:
     PARAM_TYPE_REQUIRED = "required"
     PARAM_TYPE_OPTIONAL = "optional"
     PARAM_TYPE_MAP_INI = {"1": PARAM_TYPE_REQUIRED, "0": PARAM_TYPE_OPTIONAL}
-    INPUT_OUTPUT_PARAM_TYPE = [PARAM_TYPE_DYNAMIC, PARAM_TYPE_REQUIRED,
-                               PARAM_TYPE_OPTIONAL]
+    INPUT_OUTPUT_PARAM_TYPE = [PARAM_TYPE_DYNAMIC, PARAM_TYPE_REQUIRED, PARAM_TYPE_OPTIONAL]
     ATTR_PARAM_TYPE = [PARAM_TYPE_REQUIRED, PARAM_TYPE_OPTIONAL]
 
     # input file type
@@ -154,8 +154,7 @@ class ConstManager:
     INPUT_FILE_JSON = ".json"
     INPUT_FILE_EXCEL = (INPUT_FILE_XLSX, INPUT_FILE_XLS)
     MI_VALID_TYPE = (INPUT_FILE_XLSX, INPUT_FILE_XLS, INPUT_FILE_JSON)
-    GEN_VALID_TYPE = (INPUT_FILE_XLSX, INPUT_FILE_XLS, INPUT_FILE_TXT,
-                      INPUT_FILE_JSON)
+    GEN_VALID_TYPE = (INPUT_FILE_XLSX, INPUT_FILE_XLS, INPUT_FILE_TXT, INPUT_FILE_JSON)
 
     # keys in map
     INFO_IR_TYPES_KEY = "ir_type_list"
@@ -192,8 +191,17 @@ class ConstManager:
     UNNECESSARY_DELIVERY = ('framework', 'op_tiling')
     KEY_DELIVERY_FRAMEWORK = ('tf_plugin', 'onnx_plugin', 'caffe_plugin')
     COMPILE_DEPEND_FILES = ['CMakeLists.txt', 'build.sh', 'cmake', 'scripts']
-    ALL_DELIVERYS = ['CMakeLists.txt', 'build.sh', 'cmake', 'scripts', 'tbe',
-                     'op_proto', 'framework', 'op_tiling', 'cpukernel']
+    ALL_DELIVERYS = [
+        'CMakeLists.txt',
+        'build.sh',
+        'cmake',
+        'scripts',
+        'tbe',
+        'op_proto',
+        'framework',
+        'op_tiling',
+        'cpukernel',
+    ]
     CMAKELIST_TXT = 'CMakeLists.txt'
     TOOLCHAIN_CMAKE = 'toolchain.cmake'
     DELIVERABLE_SHOW = """
@@ -224,15 +232,15 @@ class ConstManager:
        |-------------+--xxx.h
        """
     MODIFY_BUILD = """#!/bin/bash
-if [ -z "$BASE_LIBS_PATH" ]; then 
-  if [ -z "$ASCEND_HOME_PATH" ]; then 
-    if [ -z "$ASCEND_AICPU_PATH" ]; then 
+if [ -z "$BASE_LIBS_PATH" ]; then
+  if [ -z "$ASCEND_HOME_PATH" ]; then
+    if [ -z "$ASCEND_AICPU_PATH" ]; then
       echo "please set env."
       exit 1
     else
       export ASCEND_HOME_PATH=$ASCEND_AICPU_PATH
     fi
-  else 
+  else
     export ASCEND_HOME_PATH=$ASCEND_HOME_PATH
   fi
 else

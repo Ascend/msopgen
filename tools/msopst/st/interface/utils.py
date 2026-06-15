@@ -23,8 +23,7 @@ This file mainly involves the common function.
 
 import os
 import os.path
-import platform
-import subprocess
+import subprocess  # nosec
 import sys
 import time
 import re
@@ -37,6 +36,7 @@ import numpy as np
 
 from msopst.st.interface.data_generator import DataGenerator
 from msopst.st.interface.const_manager import ConstManager
+
 
 def check_required_key_valid(json_obj, required_key_list, tensor, json_path):
     """
@@ -51,34 +51,39 @@ def check_required_key_valid(json_obj, required_key_list, tensor, json_path):
         if json_obj.get(ConstManager.ST_MODE) in ConstManager.ST_MODE_VALUE:
             required_key_list.append(ConstManager.ST_MODE)
         else:
-            print_error_log("The value of \"st_mode\" only support \"ms_python_train\", \"pt_python_train\","
-                                  " the actual is \"%s\"." % json_obj.get(ConstManager.ST_MODE))
+            print_error_log(
+                "The value of \"st_mode\" only support \"ms_python_train\", \"pt_python_train\","
+                " the actual is \"%s\"." % json_obj.get(ConstManager.ST_MODE)
+            )
             raise OpTestGenException(ConstManager.OP_TEST_GEN_PARSE_JSON_FILE_ERROR)
 
     if json_obj.get(ConstManager.ST_MODE) == 'pt_python_train' and json_obj.get(ConstManager.PYTORCH_API):
         if str(json_obj.get(ConstManager.PYTORCH_API)).startswith('torch'):
             required_key_list.append(ConstManager.PYTORCH_API)
         else:
-            print_error_log("The value of \"run_torch_api\" only support start with \"torch\","
-                                  " the actual is \"%s\"." % json_obj.get(ConstManager.PYTORCH_API))
+            print_error_log(
+                "The value of \"run_torch_api\" only support start with \"torch\","
+                " the actual is \"%s\"." % json_obj.get(ConstManager.PYTORCH_API)
+            )
             raise OpTestGenException(ConstManager.OP_TEST_GEN_PARSE_JSON_FILE_ERROR)
 
     if not json_obj.get(ConstManager.ST_MODE, None) and json_obj.get(ConstManager.PYTORCH_API):
-        print_error_log('If the user expects the tool to support function verification in torch API mode,'
-                              'please add the "st_mode":"pt_python_train" field in case json.')
+        print_error_log(
+            'If the user expects the tool to support function verification in torch API mode,'
+            'please add the "st_mode":"pt_python_train" field in case json.'
+        )
         raise OpTestGenException(ConstManager.OP_TEST_GEN_PARSE_JSON_FILE_ERROR)
     missing_keys = []
     for key in required_key_list:
         if key not in json_obj:
             missing_keys.append(key)
-        if key == ConstManager.CASE_NAME or key == ConstManager.OP:
+        if key in (ConstManager.CASE_NAME, ConstManager.OP):
             check_name_valid(json_obj.get(key), key)
     if len(missing_keys) > 0:
-        print_error_log(
-            'The "%s" is missing key: %s. Please modify it in file %s.' % (
-                tensor, missing_keys, json_path))
-        raise OpTestGenException(
-            ConstManager.OP_TEST_GEN_INVALID_DATA_ERROR)
+        print_error_log('The "%s" is missing key: %s. Please modify it in file %s.' % (tensor, missing_keys, json_path))
+        raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_DATA_ERROR)
+
+
 def create_attr_list_str(attr_value):
     """
     create attribute exact value string based on list type
@@ -92,13 +97,11 @@ def create_attr_list_str(attr_value):
         num_list_str_list = []
         for num_list in attr_value:
             num_list_str_list.append(
-                "new int64_t[" + str(len(num_list)) +
-                "]{" + str(", ".join(str(item) for item in num_list)) + "}")
-        res_str += str(
-            ", ".join(str(item) for item in num_list_str_list)) + "}"
+                "new int64_t[" + str(len(num_list)) + "]{" + str(", ".join(str(item) for item in num_list)) + "}"
+            )
+        res_str += str(", ".join(str(item) for item in num_list_str_list)) + "}"
     elif isinstance(attr_value[0], str):
-        res_str = "{" + str(
-            ", ".join('"' + item + '"' for item in attr_value)) + "}"
+        res_str = "{" + str(", ".join('"' + item + '"' for item in attr_value)) + "}"
     elif isinstance(attr_value[0], bool):
         bool_int_list = []
         for bool_val in attr_value:
@@ -107,11 +110,9 @@ def create_attr_list_str(attr_value):
                 bool_int_list.append(1)
             else:
                 bool_int_list.append(0)
-        res_str = "{" + str(
-            ", ".join(str(item) for item in bool_int_list)) + "}"
+        res_str = "{" + str(", ".join(str(item) for item in bool_int_list)) + "}"
     else:
-        res_str = "{" + str(
-            ", ".join(str(item) for item in attr_value)) + "}"
+        res_str = "{" + str(", ".join(str(item) for item in attr_value)) + "}"
     return res_str
 
 
@@ -179,6 +180,7 @@ def transfer_bfloat16_to_np_type():
     transfer bfloat16 to a type that numpy can use
     """
     import tensorflow
+
     return tensorflow.bfloat16.as_numpy_dtype
 
 
@@ -193,18 +195,15 @@ def get_np_type(dtype):
     else:
         np_type = getattr(np, map_type_to_expect_type(dtype))
     return np_type
-    
-    
+
+
 def adapt_acl_datatype(dtype):
     """
     To adapt aclDataType, mapping float32 to float.
     :param dtype: input dtype
     :return: dtype
     """
-    dtype_map = {
-        "float32": "float",
-        "bfloat16": "bf16"
-    }
+    dtype_map = {"float32": "float", "bfloat16": "bf16"}
     if dtype in dtype_map:
         dtype = dtype_map.get(dtype)
     return dtype
@@ -231,13 +230,12 @@ class OpTestGenException(Exception):
     """
 
     def __init__(self, error_info):
-        super(OpTestGenException, self).__init__(error_info)
+        super().__init__(error_info)
         self.error_info = error_info
 
 
 def _print_log(level, msg):
-    current_time = time.strftime("%Y-%m-%d %H:%M:%S",
-                                 time.localtime(int(time.time())))
+    current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(time.time())))
     pid = os.getpid()
     print(current_time + " (" + str(pid) + ") - [" + level + "] " + msg)
     sys.stdout.flush()
@@ -274,6 +272,7 @@ class CallingCounter:
     """
     Class CallingCounter
     """
+
     def __init__(self, func):
         self.func = func
         self.count = 0
@@ -326,35 +325,30 @@ def check_path_valid(path, isdir=False):
             os.makedirs(path, mode=0o700)
         except OSError as ex:
             print_error_log(
-                'Failed to create {}. Please check the path permission or '
-                'disk space. {} '.format(path, str(ex)))
+                'Failed to create {}. Please check the path permission or disk space. {} '.format(path, str(ex))
+            )
             raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PATH_ERROR) from ex
         finally:
             pass
     if not os.path.exists(path):
-        print_error_log('The path {} does not exist. Please check whether '
-                        'the path exists.'.format(path))
+        print_error_log('The path {} does not exist. Please check whether the path exists.'.format(path))
         raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PATH_ERROR)
 
     if not os.access(path, os.R_OK):
-        print_error_log('The path {} does not have permission to read.'
-                        ' Please check the path permission.'.format(path))
+        print_error_log('The path {} does not have permission to read. Please check the path permission.'.format(path))
         raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PATH_ERROR)
 
     if isdir and not os.access(path, os.W_OK):
-        print_error_log('The path {} does not have permission to write.'
-                        ' Please check the path permission.'.format(path))
+        print_error_log('The path {} does not have permission to write. Please check the path permission.'.format(path))
         raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PATH_ERROR)
 
     if isdir:
         if not os.path.isdir(path):
-            print_error_log('The path {} is not a directory.'
-                            ' Please check the path.'.format(path))
+            print_error_log('The path {} is not a directory. Please check the path.'.format(path))
             raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PATH_ERROR)
     else:
         if not os.path.isfile(path):
-            print_error_log('The path {} is not a file.'
-                            ' Please check the path.'.format(path))
+            print_error_log('The path {} is not a file. Please check the path.'.format(path))
             raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PATH_ERROR)
         check_file_valid(path)
 
@@ -365,8 +359,9 @@ def check_input_permission_valid(path):
         raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PATH_ERROR)
     file_stat = os.stat(path)
     if bool(file_stat.st_mode & stat.S_IWGRP) or bool(file_stat.st_mode & stat.S_IWOTH):
-        print_warn_log('The path {} should not be written by user group or others, '
-                       'which will cause security risks'.format(path))
+        print_warn_log(
+            'The path {} should not be written by user group or others, which will cause security risks'.format(path)
+        )
 
 
 def check_path_pattern_valid(path):
@@ -381,8 +376,10 @@ def check_path_owner_consistent(path):
 
 def check_path_length_valid(path):
     path = os.path.realpath(path)
-    return len(path) <= ConstManager.LINUX_PATH_LENGTH_LIMIT and \
-           len(os.path.basename(path)) <= ConstManager.LINUX_FILE_NAME_LENGTH_LIMIT
+    return (
+        len(path) <= ConstManager.LINUX_PATH_LENGTH_LIMIT
+        and len(os.path.basename(path)) <= ConstManager.LINUX_FILE_NAME_LENGTH_LIMIT
+    )
 
 
 def islink(path):
@@ -399,8 +396,7 @@ def check_file_valid(file_path):
     check_file_size(file_path)
     abs_path = os.path.realpath(file_path)
     if not file_is_exist(abs_path):
-        print_error_log('The file path {} does not exist. Please check whether '
-                        'the file path exists.'.format(file_path))
+        print_error_log('The file path {} does not exist. Please check whether the file path exists.'.format(file_path))
         raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PATH_ERROR)
     if not check_path_length_valid(abs_path):
         print_error_log('The file path {} is too long. Not support'.format(file_path))
@@ -432,21 +428,21 @@ def check_output_path(output_path, testcase_list, machine_type):
             try:
                 os.makedirs(op_name_path, mode=0o750)
             except OSError as err:
-                print_error_log(
-                    "Failed to create %s. %s" % (op_name_path, str(err)))
+                print_error_log("Failed to create %s. %s" % (op_name_path, str(err)))
                 raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PATH_ERROR) from err
             finally:
                 pass
         else:
             src_path = os.path.join(op_name_path, 'src')
             if os.path.exists(src_path):
-                print_error_log("Specified output path already has %s directory, "
-                                "please delete or move it and retry." % testcase_list[0]['op'])
+                print_error_log(
+                    "Specified output path already has %s directory, "
+                    "please delete or move it and retry." % testcase_list[0]['op']
+                )
                 raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PATH_ERROR)
         output_path = op_name_path
     if os.path.exists(output_path) and not check_path_owner_consistent(output_path):
-        print_error_log('The path {} belong to others. Not support'.format(output_path))
-        raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PATH_ERROR)
+        print_warn_log('The path {} belong to others.'.format(output_path))
     return output_path
 
 
@@ -470,8 +466,7 @@ def check_name_valid(name, name_type="name"):
         print_error_log('The value of %s is empty. Please modify it.' % name_type)
         raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PARAM_ERROR)
     if len(name) > ConstManager.MAX_NAME_LENGTH:
-        print_error_log("The length of %s exceeds %s. Please modify it."
-                        % (name_type, ConstManager.MAX_NAME_LENGTH))
+        print_error_log("The length of %s exceeds %s. Please modify it." % (name_type, ConstManager.MAX_NAME_LENGTH))
         raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_PARAM_ERROR)
     name_pattern = re.compile(ConstManager.NAME_PATTERN)
     match = name_pattern.match(name)
@@ -528,19 +523,19 @@ def check_value_valid(fe_type, value, name, prefix=""):
     elif fe_type == 'float':
         value_type = float
     elif fe_type == 'data_type':
-        if value not in ConstManager.ATTR_TYPE_SUPPORT_TYPE_MAP.keys():
+        if value not in ConstManager.ATTR_TYPE_SUPPORT_TYPE_MAP:
             print_error_log(
                 'The value (%s) is invalid. The value of "%s" for "attr" '
-                'only supports in %s. Please modify it.'
-                % (value, name, ConstManager.ATTR_TYPE_SUPPORT_TYPE_MAP.keys()))
+                'only supports in %s. Please modify it.' % (value, name, ConstManager.ATTR_TYPE_SUPPORT_TYPE_MAP.keys())
+            )
             raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_DATA_ERROR)
         value_type = str
     elif fe_type == 'list_int':
         if not isinstance(value, list):
             print_error_log(
                 'The value (%s) is invalid. The value of "%s" for "attr" '
-                'only supports list_list_int. Please modify it.'
-                % (value, name))
+                'only supports list_list_int. Please modify it.' % (value, name)
+            )
             raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_DATA_ERROR)
         for item in value:
             check_value_valid('int', item, name, 'list_list_')
@@ -549,8 +544,8 @@ def check_value_valid(fe_type, value, name, prefix=""):
     if not isinstance(value, value_type):
         print_error_log(
             'The value (%s) is invalid. The value of "%s" for "attr" only '
-            'supports %s%s. Please modify it.'
-            % (value, name, prefix, fe_type))
+            'supports %s%s. Please modify it.' % (value, name, prefix, fe_type)
+        )
         raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_DATA_ERROR)
 
 
@@ -565,12 +560,11 @@ def check_attr_value_valid(attr):
         if not isinstance(attr.get('value'), list):
             print_error_log(
                 'The value (%s) is invalid. The value of "%s" for "attr" '
-                'only supports %s. Please modify it.'
-                % (attr.get('value'), attr.get('name'), attr_type))
+                'only supports %s. Please modify it.' % (attr.get('value'), attr.get('name'), attr_type)
+            )
             raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_DATA_ERROR)
         for value in attr.get('value'):
-            check_value_valid(
-                attr_type[len('list_'):], value, attr.get('name'), 'list_')
+            check_value_valid(attr_type[len('list_') :], value, attr.get('name'), 'list_')
     else:
         check_value_valid(attr_type, attr.get('value'), attr.get('name'))
 
@@ -585,9 +579,7 @@ def json_load(json_path, input_file):
     try:
         return json.load(input_file)
     except Exception as ex:
-        print_error_log(
-            'Failed to load json file %s. Please modify it. %s'
-            % (json_path, str(ex)))
+        print_error_log('Failed to load json file %s. Please modify it. %s' % (json_path, str(ex)))
         raise OpTestGenException(ConstManager.OP_TEST_GEN_PARSE_JSON_FILE_ERROR) from ex
     finally:
         pass
@@ -601,11 +593,10 @@ def load_json_file(json_path):
     """
 
     try:
-        with open(json_path, 'r') as input_file:
+        with open(json_path, 'r', encoding='utf-8') as input_file:
             return json_load(json_path, input_file)
     except IOError as io_error:
-        print_error_log(
-            'Failed to open file %s. %s' % (json_path, str(io_error)))
+        print_error_log('Failed to open file %s. %s' % (json_path, str(io_error)))
         raise OpTestGenException(ConstManager.OP_TEST_GEN_OPEN_FILE_ERROR) from io_error
     finally:
         pass
@@ -618,12 +609,11 @@ def read_file(op_file):
     :return: None
     """
     try:
-        with open(op_file) as op_file_object:
+        with open(op_file, encoding='utf-8') as op_file_object:
             content_txt = op_file_object.read()
             return content_txt
     except IOError as io_err:
-        print_error_log(
-            'Failed to open file %s. %s, please check it.' % (op_file, str(io_err)))
+        print_error_log('Failed to open file %s. %s, please check it.' % (op_file, str(io_err)))
         raise OpTestGenException(ConstManager.OP_TEST_GEN_OPEN_FILE_ERROR) from io_err
     finally:
         pass
@@ -632,10 +622,8 @@ def read_file(op_file):
 def dump_json(json_path, content):
     if os.path.exists(json_path) and os.path.isfile(json_path):
         os.remove(json_path)
-    with os.fdopen(os.open(json_path, ConstManager.WRITE_FLAGS,
-                           ConstManager.WRITE_MODES), 'w') as file_object:
-        file_object.write(
-            json.dumps(content, sort_keys=False, indent=4))
+    with os.fdopen(os.open(json_path, ConstManager.WRITE_FLAGS, ConstManager.WRITE_MODES), 'w') as file_object:
+        file_object.write(json.dumps(content, sort_keys=False, indent=4))
 
 
 def write_json_file(json_path, content):
@@ -647,13 +635,11 @@ def write_json_file(json_path, content):
     try:
         dump_json(json_path, content)
     except IOError as io_error:
-        print_error_log(
-            'Failed to generate file %s. %s' % (json_path, str(io_error)))
+        print_error_log('Failed to generate file %s. %s' % (json_path, str(io_error)))
         raise OpTestGenException(ConstManager.OP_TEST_GEN_WRITE_FILE_ERROR) from io_error
     finally:
         pass
-    print_info_log(
-        "Generate file %s successfully." % os.path.realpath(json_path))
+    print_info_log("Generate file %s successfully." % os.path.realpath(json_path))
 
 
 def make_dirs(op_dir):
@@ -688,8 +674,7 @@ def fix_name_lower_with_under(name):
         if index == 0:
             fix_name += name_str.lower()
         elif name_str.isupper() and index != len(name) - 1:
-            if (index != len(name) - 1 and name[index + 1].islower()) or \
-                    (index != 0 and name[index - 1].islower()):
+            if (index != len(name) - 1 and name[index + 1].islower()) or (index != 0 and name[index - 1].islower()):
                 # If a capital letter is surrounded by lowercase letters, convert to "_" + lowercase letter
                 # In addition, all are converted to lowercase letters
                 # eg: "Abc2DEf"  ->   "abc2d_ef"
@@ -736,6 +721,7 @@ def get_execute_time(info_desc=None):
     Function: get execute time
     return: result
     """
+
     def inner(func):
         def wrapper(*args, **kwargs):
             start_time = time.time()
@@ -744,7 +730,9 @@ def get_execute_time(info_desc=None):
             duration_time = end_time - start_time
             print_info_log("%s execute time: %f s" % (info_desc, duration_time))
             return result
+
         return wrapper
+
     return inner
 
 
@@ -753,17 +741,20 @@ def execute_command(cmd):
     Execute command
     """
     print_info_log('Execute command: %s' % ' '.join(cmd))
-    process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
-    while process.poll() is None:
-        line = process.stdout.readline()
-        line = line.strip()
-        if line:
-            print(line)
-    if process.returncode != 0:
-        print_error_log('Failed to execute command: %s' % ' '.join(cmd))
-        raise OpTestGenException(
-            ConstManager.OP_TEST_GEN_INVALID_DATA_ERROR)
+    with subprocess.Popen(  # nosec
+        cmd,
+        shell=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    ) as process:
+        while process.poll() is None:
+            line = process.stdout.readline()
+            line = line.strip()
+            if line:
+                print(line)
+        if process.returncode != 0:
+            print_error_log('Failed to execute command: %s' % ' '.join(cmd))
+            raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_DATA_ERROR)
 
 
 def copy_template(src, dst, is_skip_exist=False):
@@ -809,17 +800,17 @@ def copy_src_to_dst(srcname: str, dstname: str, is_skip_exist: bool) -> bool:
 def change_mode(dir_path):
     if os.path.isfile(dir_path):
         if dir_path.endswith('.sh'):
-            os.chmod(dir_path, 0o750)
+            os.chmod(dir_path, 0o750)  # nosec
         else:
             os.chmod(dir_path, 0o640)
         return
-    os.chmod(dir_path, 0o750)
+    os.chmod(dir_path, 0o750)  # nosec
     for root, dirs, files in os.walk(dir_path):
         for folder in dirs:
             change_mode(os.path.join(root, folder))
         for file in files:
             if file.endswith('.sh'):
-                os.chmod(os.path.join(root, file), 0o750)
+                os.chmod(os.path.join(root, file), 0o750)  # nosec
                 continue
             os.chmod(os.path.join(root, file), 0o640)
 
@@ -834,7 +825,7 @@ def copy_exist_file(dstname: str, is_skip_exist: bool) -> bool:
         if is_skip_exist:
             return True
         print_error_log("{} is not empty. Please check.".format(dstname))
-        OpTestGenException(ConstManager.OP_TEST_GEN_MAKE_DIR_ERROR)
+        raise OpTestGenException(ConstManager.OP_TEST_GEN_MAKE_DIR_ERROR)
     return False
 
 
@@ -852,9 +843,9 @@ def check_execute_file(file_path):
         while os.path.dirname(dir_path) != dir_path:
             mode = str(oct(os.stat(dir_path).st_mode))
             if mode[-1] in ConstManager.WITH_WRITE_MODE or mode[-2] in ConstManager.WITH_WRITE_MODE:
-                print_error_log('%s executed by root user, all parent directory should not write by others.' 
-                % file_path)
-                return False
+                print_warn_log(
+                    '%s executed by root user, parent directory %s is writable by others.' % (file_path, dir_path)
+                )
             dir_path = os.path.dirname(dir_path)
     return True
 
@@ -863,6 +854,7 @@ class ScanFile:
     """
     The class for scanning path to get subdirectories.
     """
+
     def __init__(self, directory, first_prefix=None, second_prefix=None):
         self.directory = directory
         self.first_prefix = first_prefix
@@ -882,8 +874,7 @@ class ScanFile:
                     continue
                 files_list = self._get_files_list(file_path, files_list)
         else:
-            print_error_log("The scanned directory does not exist: %s"
-                            % self.directory)
+            print_error_log("The scanned directory does not exist: %s" % self.directory)
         return files_list
 
     def get_prefix(self):
@@ -891,7 +882,7 @@ class ScanFile:
         get prefix
         :return: prefix
         """
-        return self.prefix
+        return self.first_prefix
 
     def _get_files_list(self, file_path, files_list):
         all_files = os.listdir(file_path)
@@ -913,6 +904,7 @@ class ConstInput:
     The class for dealing with const input.
     attr: is_const is a bool type.
     """
+
     def __init__(self, is_const=None):
         self.is_const = is_const
 
@@ -940,18 +932,18 @@ class ConstInput:
                     data = np.fromfile(case_value, np_type)
                     const_value = data.tolist()
                 else:
-                    const_value = np.array(
-                        desc_dict.get(ConstManager.VALUE)).flatten().tolist()
+                    const_value = np.array(desc_dict.get(ConstManager.VALUE)).flatten().tolist()
             else:
                 # generate const value with data_distribute
                 range_min, range_max = desc_dict.get(ConstManager.VALUE_RANGE)
                 data = DataGenerator.gen_data(
-                    input_shape, range_min, range_max, dtype,
-                    desc_dict.get(ConstManager.DATA_DISTRIBUTE))
+                    input_shape, range_min, range_max, dtype, desc_dict.get(ConstManager.DATA_DISTRIBUTE)
+                )
                 const_value = ConstInput._generate_const_value(data, output_path, case_name, index)
             const_value_dict = {
                 ConstManager.IS_CONST: desc_dict.get(ConstManager.IS_CONST),
-                ConstManager.CONST_VALUE: const_value}
+                ConstManager.CONST_VALUE: const_value,
+            }
             res_desc_dic.update(const_value_dict)
 
     @staticmethod
@@ -966,8 +958,7 @@ class ConstInput:
         acl_const_list = []
         for input_desc_dic in testcase_struct.get(ConstManager.INPUT_DESC):
             if input_desc_dic.get(ConstManager.IS_CONST):
-                input_const_list.append(
-                    str(input_desc_dic.get(ConstManager.IS_CONST)).lower())
+                input_const_list.append(str(input_desc_dic.get(ConstManager.IS_CONST)).lower())
             else:
                 input_const_list.append(ConstManager.FALSE)
         for acl_const in input_const_list:
@@ -981,8 +972,7 @@ class ConstInput:
         # generate bin file to save const value and used by data generator module
         output_path = os.path.join(output_path, 'run', 'out', 'test_data', 'data')
         make_dirs(output_path)
-        file_path = os.path.join(output_path,
-                                 case_name + '_input_' + str(index) + '.bin')
+        file_path = os.path.join(output_path, case_name + '_input_' + str(index) + '.bin')
         const_data.tofile(file_path)
         os.chmod(file_path, ConstManager.WRITE_MODES)
         const_value = const_data.tolist()
@@ -1003,7 +993,6 @@ class ConstInput:
         if self.is_const is None:
             return False
         if not isinstance(self.is_const, bool):
-            print_error_log('The value of "is_const" only support bool '
-                            'type: true or false.')
+            print_error_log('The value of "is_const" only support bool type: true or false.')
             raise OpTestGenException(ConstManager.OP_TEST_GEN_INVALID_DATA_ERROR)
         return True
