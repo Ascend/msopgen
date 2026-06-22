@@ -38,31 +38,59 @@ class BuildManager:
         python build.py test             单元测试（拉取依赖 + 执行测试）
         python build.py test local       单元测试（跳过依赖拉取, 执行测试）
         python build.py -r <revision>    指定依赖的内部源码仓(例如msopcom)的 Git 分支/标签/commit
+        python build.py -v <version>     指定构建版本号，同时覆盖 --build-version 和 --whl-version
+        python build.py -e KEY=VALUE     指定额外构建选项，可多次使用
 
     参数说明:
         - 参数: command : 构建动作: 为空时为全构建, local 为跳过依赖下载, test 为运行单元测试。
         - 参数: -r, --revision : 指定 Git 修订版本或标签用于依赖检出。
+        - 参数: -v, --version : 指定构建版本号；若设置，则同时覆盖 --build-version 和 --whl-version 的值。
+        - 参数: --build-version, --whl-version : 历史参数，保留用于兼容；设置了 --version 时以 --version 为准。
+        - 参数: -e, --extra : 额外构建选项，格式为 KEY=VALUE，可多次指定。
+
+    产物归档:
+        产品构建完成后，归档到 artifacts/ 目录中。
     """
 
     def __init__(self):
         self.project_root = Path(__file__).resolve().parent
         argument_parser = argparse.ArgumentParser(description='Build the project and optionally run tests.')
-        argument_parser.add_argument('command', nargs='*', default=[],
-                                     choices=[[], 'local', 'test'],
-                                     help='Build action: omit for full build, "local" to skip dependency download, "test" to run unit tests')
-        argument_parser.add_argument('-r', '--revision',
-                                     help='Specify Git revision for internal dependent repo (e.g., msopcom).')
-        argument_parser.add_argument('--build-version', type=str, default=None, help='Build version for run/exe/dmg packages')
-        argument_parser.add_argument('--whl-version', type=str, default=None, help='WHL version for Python wheel packages')
+        argument_parser.add_argument(
+            'command',
+            nargs='*',
+            default=[],
+            choices=[[], 'local', 'test'],
+            help='Build action: omit for full build, "local" to skip dependency download, "test" to run unit tests',
+        )
+        argument_parser.add_argument(
+            '-r', '--revision', help='Specify Git revision for internal dependent repo (e.g., msopcom).'
+        )
+        argument_parser.add_argument(
+            '--build-version', type=str, default=None, help='Build version for run/exe/dmg packages'
+        )
+        argument_parser.add_argument(
+            '--whl-version', type=str, default=None, help='WHL version for Python wheel packages'
+        )
+        argument_parser.add_argument(
+            '-v',
+            '--version',
+            type=str,
+            default=None,
+            help='Build version, overrides --build-version and --whl-version if set',
+        )
+        argument_parser.add_argument(
+            '-e',
+            '--extra',
+            metavar='KEY=VALUE',
+            action='append',
+            default=[],
+            help='Extra build options in KEY=VALUE format, can be specified multiple times',
+        )
         self.parsed_arguments = argument_parser.parse_args()
 
-        if self.parsed_arguments.build_version is not None:
-            logging.info("--build-version: %s", self.parsed_arguments.build_version)
-            os.environ['BUILD_VERSION'] = self.parsed_arguments.build_version
-
-        if self.parsed_arguments.whl_version is not None:
-            logging.info("--whl-version: %s", self.parsed_arguments.whl_version)
-            os.environ['WHL_VERSION'] = self.parsed_arguments.whl_version
+        if self.parsed_arguments.version is not None:
+            self.parsed_arguments.build_version = self.parsed_arguments.version
+            self.parsed_arguments.whl_version = self.parsed_arguments.version
 
     def _execute_command(self, command_sequence, timeout_seconds=36000, cwd=None, env=None):
         logging.info("Running: %s", " ".join(command_sequence))
@@ -81,45 +109,90 @@ class BuildManager:
         dst_path.symlink_to(src_path.absolute(), target_is_directory=True)
 
     def _link_asc_tools_template(self):
-        asc_tools_dir = self.project_root / "thirdparty" / "asc-tools" / "utils" / "templates" / \
-                        "new_op_project_template"
+        asc_tools_dir = (
+            self.project_root / "thirdparty" / "asc-tools" / "utils" / "templates" / "new_op_project_template"
+        )
         install_dir = self.project_root / "msopgen" / "new_op_project_template"
         self._update_symlink(install_dir, asc_tools_dir)
+
+    def _archive_artifacts(self):
+        """将产品构建产物（output 目录下的 .whl）归档到工程根目录的 artifacts 目录。"""
+        artifact_patterns = ("*.whl",)
+        output_dir = self.project_root / "output"
+        artifacts_dir = self.project_root / "artifacts"
+        artifacts_dir.mkdir(exist_ok=True)
+
+        if not output_dir.exists():
+            logging.warning("Output directory not found, skip archiving: %s", output_dir)
+            return
+
+        for pattern in artifact_patterns:
+            for artifact in output_dir.rglob(pattern):
+                destination = artifacts_dir / artifact.name
+                logging.info("Archiving artifact: %s -> %s", artifact, destination)
+                shutil.copy2(artifact, destination)
 
     def run(self):
         os.chdir(self.project_root)
 
+        if self.parsed_arguments.whl_version is not None:
+            logging.info("--whl-version: %s", self.parsed_arguments.whl_version)
+            os.environ['WHL_VERSION'] = self.parsed_arguments.whl_version
+
+        if self.parsed_arguments.build_version is not None:
+            logging.info("--build-version: %s", self.parsed_arguments.build_version)
+            os.environ['BUILD_VERSION'] = self.parsed_arguments.build_version
+
+        for option in self.parsed_arguments.extra:
+            key, _, value = option.partition('=')
+            logging.info("--extra: %s = %s", key, value)
+
         # 在非 local 场景下按需更新依赖；在 local 场景下仅使用本地已有代码，不更新依赖。
         if 'local' not in self.parsed_arguments.command:
             from download_dependencies import DependencyManager
+
             DependencyManager(self.parsed_arguments).run()
 
         self._link_asc_tools_template()
 
         if 'test' in self.parsed_arguments.command:
             # -------------------- 单元测试 --------------------
+            requirements_file = self.project_root / "requirements.txt"
+            self._execute_command([sys.executable, "-m", "pip", "install", "-r", str(requirements_file)])
+
             test_dir = self.project_root / "test"
             self._execute_command([sys.executable, "run_test.py"], cwd=str(test_dir))
         else:
             # -------------------- 产品构建（打 whl 包） --------------------
             output_dir = str(self.project_root / "output")
 
-            self._execute_command([sys.executable, "setup.py",
-                                   "egg_info", "--egg-base", "build",
-                                   "bdist_wheel", "--dist-dir", output_dir])
+            self._execute_command(
+                [sys.executable, "setup.py", "egg_info", "--egg-base", "build", "bdist_wheel", "--dist-dir", output_dir]
+            )
 
-            self._execute_command([sys.executable, "setup.py",
-                                   "egg_info", "--egg-base", "../build",
-                                   "bdist_wheel", "--dist-dir", output_dir],
-                                  cwd=str(self.project_root / "tools"))
+            self._execute_command(
+                [
+                    sys.executable,
+                    "setup.py",
+                    "egg_info",
+                    "--egg-base",
+                    "../build",
+                    "bdist_wheel",
+                    "--dist-dir",
+                    output_dir,
+                ],
+                cwd=str(self.project_root / "tools"),
+            )
 
             for whl_file in glob.glob(str(self.project_root / "output" / "*.whl")):
                 os.chmod(whl_file, 0o550)
+
+            self._archive_artifacts()
 
 
 if __name__ == "__main__":
     try:
         BuildManager().run()
     except Exception:
-        logging.error(f"Unexpected error: {traceback.format_exc()}")
+        logging.error("Unexpected error: %s", traceback.format_exc())
         sys.exit(1)
