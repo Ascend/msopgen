@@ -46,7 +46,7 @@ echo 2 > /proc/sys/kernel/randomize_va_space
 
 ## Vulnerability Security Statement
 
-For details, see [MindStudio Vulnerability Handling Mechanism Description] (./vulnerability_handling_procedure.md).
+For details, see [MindStudio Vulnerability Handling Mechanism Description](./vulnerability_handling_procedure.md).
 
 ## Data security
 
@@ -65,7 +65,7 @@ This tool supports building from source. During the build process, the system do
 3. During tool use, no security validation is performed on the user-input programs. You need to ensure the security of the programs.
 
 4. This tool is for development. No restrictions are placed on the owner and permissions for installation, nor on the owner and permissions for the file objects that the tool processes. You need to assign appropriate owners and permissions based on the application scenario and ensure that the file content processed by the tool is secure and trustworthy.
- 	 
+
 5. When you provide input to the tool, ensure that the content is secure and trustworthy and avoid symbolic links. Convert any file to a real absolute path before you input it into the tool.
 
 ## Public Network Addresses

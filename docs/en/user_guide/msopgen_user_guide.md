@@ -60,7 +60,7 @@ msOpGen supports the following functions: operator project creation, operator im
 </tr>
 <tr id="zh-cn_topic_0000001691887174_row13521315132112"><td class="cellrowborder" valign="top" width="27.6%" headers="mcps1.2.3.1.1 "><p id="p648323893210"><a id="p648323893210"></a><a id="p648323893210"></a>Operator implementation (on both host and kernel)</p>
 </td>
-<td class="cellrowborder" valign="top" width="72.39999999999999%" headers="mcps1.2.3.1.2 "><p id="zh-cn_topic_0000001691887174_p25211015152117"><a id="zh-cn_topic_0000001691887174_p25211015152117"></a><a id="zh-cn_topic_0000001691887174_p25211015152117"></a><a href="#developing-an-operator">Developing an Operator</a></p
+<td class="cellrowborder" valign="top" width="72.39999999999999%" headers="mcps1.2.3.1.2 "><p id="zh-cn_topic_0000001691887174_p25211015152117"></p><a id="zh-cn_topic_0000001691887174_p25211015152117"></a><a id="zh-cn_topic_0000001691887174_p25211015152117"></a><a href="#developing-an-operator">Developing an Operator</a></p
 </td>
 </tr>
 <tr id="row333312710327"><td class="cellrowborder" valign="top" width="27.6%" headers="mcps1.2.3.1.1 "><p id="p133497193219"><a id="p133497193219"></a><a id="p133497193219"></a>Operator project build and deployment</p>
@@ -554,7 +554,7 @@ After the operator kernel and host are developed, build the operator project to 
 
 1. Modify the `cacheVariables` configuration item of `CMakePresets.json` in the project directory to complete the project build configuration. The content of the `CMakePresets.json` file is as follows. For details about the parameters, see [Table 1 Common parameters to be configured by developers](#zh-cn_topic_0000001691887130_table2023245818513).
 
-    ```json
+    ```json5
     {
         "version": 1,
         "cmakeMinimumRequired": {
@@ -606,7 +606,7 @@ After the operator kernel and host are developed, build the operator project to 
                         "type": "BOOL",
                         "value": "False"
                     },
-                    "CMAKE_CROSS_PLATFORM_COMPILER": {     // Relace it with the actual path after the cross compilation tool is installed.
+                    "CMAKE_CROSS_PLATFORM_COMPILER": {     // Replace it with the actual path after the cross compilation tool is installed.
                         "type": "PATH",
                         "value": "/usr/bin/aarch64-linux-gnu-g++"
                     },
@@ -667,7 +667,7 @@ After the operator kernel and host are developed, build the operator project to 
 
     Modify the `CMakeLists.txt` file in the `op_kernel` directory of the operator project and use `add_ops_compile_options` to add compile options.
 
-    ```tex
+    ```cmake
     add_ops_compile_options(OpType COMPUTE_UNIT soc_version1 soc_version2 ... OPTIONS option1 option2 ...)
     ```
 
@@ -722,7 +722,7 @@ After the operator kernel and host are developed, build the operator project to 
     ./build.sh
     ```
 
-    After the compilation is successful, the <code>build_out</code> directory is created in the current directory, and the custom operator installation package <code>custom_opp_<target_os>_<target_architecture>.run</code> is generated in the directory.
+    After the compilation is successful, the <code>build_out</code> directory is created in the current directory, and the custom operator installation package **custom\_opp\_**<target\_os\>\_<target\_architecture\>**.run** is generated in the directory.
 
     > [!NOTE]NOTE  
     > After the operator type is registered, the framework obtains the operator registration information based on the operator type and matches the operator implementation file name and kernel function name based on certain rules during compilation and running. To ensure correct matching, the operator type, operator implementation file name, and kernel function name must comply with the following rules. Generally, you only need to ensure that the value of the operator type in the JSON prototype definition file is in upper camel case. The code automatically generated after the project is created meets this rule. When manually writing the operator prototype definition and operator implementation file, comply with the following rules:
@@ -757,13 +757,13 @@ After the operator kernel and host are developed, build the operator project to 
     - <a id="zh-cn_topic_0000001691887130_li1652971821912"></a>For a specified directory installation scenario, configure the `--install-path` option. Upon successful installation, the files associated with the compiled custom operators will be deployed to the `<path>/vendors/<vendor_name>` directory. Additionally, a `set_env.bash` script will be created in the `<path>/vendors/<vendor_name>/bin` directory, which contains the environment variables required for the current custom operator package.
 
         > [!NOTE]NOTE   
-        >If the `--install-path` option is configured to specify the installation directory of the operator package during deployment, run the `source <path>/vendors/<vendor_name>/bin/set_env.bash` command before using the custom operator. The `set_env.bash` script adds the installation path of the custom operator package to the environment variable `ASCEND_CUSTOM_operator package_PATH` so that the custom operator takes effect in the current environment.
+        >If the `--install-path` option is configured to specify the installation directory of the operator package during deployment, run the `source <path>/vendors/<vendor_name>/bin/set_env.bash` command before using the custom operator. The `set_env.bash` script adds the installation path of the custom operator package to the environment variable `ASCEND_CUSTOM_OPP_PATH` so that the custom operator takes effect in the current environment.
 
     After the command is executed successfully, related files in the custom operator package are deployed in the current environment.
 
 2. You can view the directory structure after the deployment. The following example is based on the default installation scenario:
 
-    ```tex
+    ```text
     ├── opp    // Operator library directory
     │   ├── vendors    // Directory of custom operators
     │       ├── config.ini
@@ -811,7 +811,7 @@ After the operator kernel and host are developed, build the operator project to 
 
     - Default installation scenario
 
-        If custom operators of multiple vendors exist in the `opp/vendors` directory, you can configure the priority of the custom operator packages by configuring the `config.ini`·file in the `opp/vendors` directory.
+        If custom operators of multiple vendors exist in the `opp/vendors` directory, you can configure the priority of the custom operator packages by configuring the `config.ini` file in the `opp/vendors` directory.
 
         The following provides a configuration template of `config.ini`.
 
@@ -935,7 +935,7 @@ msOpGen parses dump files generated by users, and generates operator simulation 
     <p id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p8263141813152"><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p8263141813152"></a><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p8263141813152"></a>Specify the dump file to be parsed when the dump file name contains <code>veccore{id}</code> or <code>cubecore{id}</code>. For example, if the file name is <code>core0.veccore0.instr_log.dump</code>, then <code>veccore0</code> corresponds to the subcore ID.</p>
     </td>
     <td class="cellrowborder" rowspan="2" valign="top" width="19.61%" headers="mcps1.2.4.1.3 "><p id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p18733112373515"><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p18733112373515"></a><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p18733112373515"></a>Select either one.</p>
-    <div class="note" id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_note340923217116"><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_note340923217116"></a><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_note340923217116"></a><span class="notetitle"> Note: </span><div class="notebody"><p id="p78031234195419"><a id="p78031234195419"></a><a id="p78031234195419"></a><span id="zh-cn_topic_0000001740005657_ph11939124012202"><a id="zh-cn_topic_0000001740005657_ph11939124012202"></a><a id="zh-cn_topic_0000001740005657_ph11939124012202"></a><term id="zh-cn_topic_0000001312391781_term1253731311225_1"><a id="zh-cn_topic_0000001312391781_term1253731311225_1"></a><a id="zh-cn_topic_0000001312391781_term1253731311225_1"></a>Only for Atlas A3 training/Atlas A3 inference products and Atlas A2 training/Atlas A2 inference products.</p>
+    <div class="note" id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_note340923217116"><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_note340923217116"></a><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_note340923217116"></a><span class="notetitle"> Note: </span><div class="notebody"><p id="p78031234195419"><a id="p78031234195419"></a><a id="p78031234195419"></a><span id="zh-cn_topic_0000001740005657_ph11939124012202"></span><a id="zh-cn_topic_0000001740005657_ph11939124012202"></a><a id="zh-cn_topic_0000001740005657_ph11939124012202"></a><term id="zh-cn_topic_0000001312391781_term1253731311225_1"></term><a id="zh-cn_topic_0000001312391781_term1253731311225_1"></a><a id="zh-cn_topic_0000001312391781_term1253731311225_1"></a>Only for Atlas A3 training/Atlas A3 inference products and Atlas A2 training/Atlas A2 inference products.</p>
     </div></div>
     </td>
     </tr>
@@ -1045,7 +1045,7 @@ msOpGen parses dump files generated by users, and generates operator simulation 
     </tr>
     <tr id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_row1626016547413"><td class="cellrowborder" valign="top" width="23.79%" headers="mcps1.2.3.1.1 "><p id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p226095416411"><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p226095416411"></a><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p226095416411"></a>FIXP</p>
     </td>
-    <td class="cellrowborder" valign="top" width="76.21%" headers="mcps1.2.3.1.2 "><p id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p14442185072614"><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p14442185072614"></a><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p14442185072614"></a>Data transfer pipeline, from FIXPIPE L0C to OUT/L1. (This parameter is displayed only for Atlas A3 training products/Atlas A3 inference products and Atlas A2 training products/Atlas A2 inference products.)
+    <td class="cellrowborder" valign="top" width="76.21%" headers="mcps1.2.3.1.2 "><p id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p14442185072614"></p><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p14442185072614"></a><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p14442185072614"></a>Data transfer pipeline, from FIXPIPE L0C to OUT/L1. (This parameter is displayed only for Atlas A3 training products/Atlas A3 inference products and Atlas A2 training products/Atlas A2 inference products.)
     </td>
     </tr>
     <tr id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_row22514515297"><td class="cellrowborder" valign="top" width="23.79%" headers="mcps1.2.3.1.1 "><p id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p1225118582917"><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p1225118582917"></a><a id="zh-cn_topic_0000001823418621_zh-cn_topic_0000001650160328_p1225118582917"></a>FLOWCTRL</p>
@@ -1218,7 +1218,7 @@ msopst create -i {operator.cpp file} -out {output path} -m {pb file} -q
     <tr id="zh-cn_topic_0000001821790281_row935019433918"><td class="cellrowborder" valign="top" width="24.18020823197431%" headers="mcps1.2.4.1.1 "><p id="zh-cn_topic_0000001821790281_p1834913432919"><a id="zh-cn_topic_0000001821790281_p1834913432919"></a><a id="zh-cn_topic_0000001821790281_p1834913432919"></a>-soc, --soc_version</p>
     </td>
     <td class="cellrowborder" valign="top" width="69.00846550549772%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001821790281_p106751081205"><a id="zh-cn_topic_0000001821790281_p106751081205"></a><a id="zh-cn_topic_0000001821790281_p106751081205"></a>AI processor type.</p>
-    <div class="note" id="zh-cn_topic_0000001821790281_note481620356579"><a id="zh-cn_topic_0000001821790281_note481620356579"></a><a id="zh-cn_topic_0000001821790281_note481620356579"></a><span class="notetitle"> Note: </span><div class="notebody"><a id="ul1553919272419"></a><a id="ul1553919272419"></a><ul id="ul1553919272419"><li>For servers other than the Atlas A3 training products/Atlas A3 inference products: Run the <code>npu-smi info</code> command on the server where the Ascend AI Processor is installed to obtain the chip name. Note that the actual value is represented by <code>AscendChip name</code>. For example, if the chip name is <code>xxxyy</code>, the actual value is <code>Ascendxxxyy</code>. If <code>Ascendxxxyy</code> is the path of the code sample, set this parameter to <code>ascendxxxyy</code>. </li><li><span id="zh-cn_topic_0000002015877373_ph31312041180"><a id="zh-cn_topic_0000002015877373_ph31312041180"></a><a id="zh-cn_topic_0000002015877373_ph31312041180"></a><term id="zh-cn_topic_0000002015877373_zh-cn_topic_0000001312391781_term1253731311225_1"><a id="zh-cn_topic_0000002015877373_zh-cn_topic_0000001312391781_term1253731311225_1"></a><a id="zh-cn_topic_0000002015877373_zh-cn_topic_0000001312391781_term1253731311225_1"></a>For the Atlas A3 training products/Atlas A3 inference products, run the <code>npu-smi info -t board -i id -c chip_id</code> command on the server where the Ascend AI Processor is installed to obtain the chip name and NPU name. The actual value is represented by <code>Chip name_NPU name</code>. For example, if the chip name is <code>Ascendxxx</code> and the NPU name is <code>1234</code>, the actual value is <code>Ascendxxx_1234</code>. If <code>Ascendxxx_1234</code> is the path of the code sample, set this parameter to <code>ascendxxx_1234</code>.  
+    <div class="note" id="zh-cn_topic_0000001821790281_note481620356579"><a id="zh-cn_topic_0000001821790281_note481620356579"></a><a id="zh-cn_topic_0000001821790281_note481620356579"></a><span class="notetitle"> Note: </span><div class="notebody"><a id="ul1553919272419"></a><a id="ul1553919272419"></a><ul id="ul1553919272419"><li>For servers other than the Atlas A3 training products/Atlas A3 inference products: Run the <code>npu-smi info</code> command on the server where the Ascend AI Processor is installed to obtain the chip name. Note that the actual value is represented by <code>AscendChip name</code>. For example, if the chip name is <code>xxxyy</code>, the actual value is <code>Ascendxxxyy</code>. If <code>Ascendxxxyy</code> is the path of the code sample, set this parameter to <code>ascendxxxyy</code>. </li><li><span id="zh-cn_topic_0000002015877373_ph31312041180"></span><a id="zh-cn_topic_0000002015877373_ph31312041180"></a><a id="zh-cn_topic_0000002015877373_ph31312041180"></a><term id="zh-cn_topic_0000002015877373_zh-cn_topic_0000001312391781_term1253731311225_1"></term><a id="zh-cn_topic_0000002015877373_zh-cn_topic_0000001312391781_term1253731311225_1"></a><a id="zh-cn_topic_0000002015877373_zh-cn_topic_0000001312391781_term1253731311225_1"></a>For the Atlas A3 training products/Atlas A3 inference products, run the <code>npu-smi info -t board -i id -c chip_id</code> command on the server where the Ascend AI Processor is installed to obtain the chip name and NPU name. The actual value is represented by <code>Chip name_NPU name</code>. For example, if the chip name is <code>Ascendxxx</code> and the NPU name is <code>1234</code>, the actual value is <code>Ascendxxx_1234</code>. If <code>Ascendxxx_1234</code> is the path of the code sample, set this parameter to <code>ascendxxx_1234</code>.  
     <a id="zh-cn_topic_0000002015877373_ul9238121944"></a><a id="zh-cn_topic_0000002015877373_ul9238121944"></a><ul id="zh-cn_topic_0000002015877373_ul9238121944"><li><code>id</code>: device ID, which is the NPU ID obtained by running the <code>npu-smi info -l</code> command. </li><li><code>chip_id</code>: chip ID, which is the same as the chip ID obtained by running the <code>npu-smi info -m</code> command.</li></ul>
     </li></ul>
     </div></div>
@@ -1263,7 +1263,7 @@ msopst create -i {operator.cpp file} -out {output path} -m {pb file} -q
     <tr id="zh-cn_topic_0000001821790281_row1735319434917"><td class="cellrowborder" valign="top" width="24.18020823197431%" headers="mcps1.2.4.1.1 "><p id="zh-cn_topic_0000001821790281_p13352174319915"><a id="zh-cn_topic_0000001821790281_p13352174319915"></a><a id="zh-cn_topic_0000001821790281_p13352174319915"></a>-conf, --config_file</p>
     </td>
     <td class="cellrowborder" valign="top" width="69.00846550549772%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001821790281_p1035211432915"><a id="zh-cn_topic_0000001821790281_p1035211432915"></a><a id="zh-cn_topic_0000001821790281_p1035211432915"></a>Path to the ST advanced feature configuration file (msopst.ini), which can be specified as an absolute or relative path.</p>
-    <p id="zh-cn_topic_0000001821790281_p1335215433917"><a id="zh-cn_topic_0000001821790281_p1335215433917"></a><a id="zh-cn_topic_0000001821790281_p1335215433917"></a>Users can implement the following advanced features by modifying the <code>msopst.ini</code> configuration file.
+    <p id="zh-cn_topic_0000001821790281_p1335215433917"></p><a id="zh-cn_topic_0000001821790281_p1335215433917"></a><a id="zh-cn_topic_0000001821790281_p1335215433917"></a>Users can implement the following advanced features by modifying the <code>msopst.ini</code> configuration file.
     <a id="zh-cn_topic_0000001821790281_ul83525436917"></a><a id="zh-cn_topic_0000001821790281_ul83525436917"></a><ul id="zh-cn_topic_0000001821790281_ul83525436917"><li>Edit the ST source code. </li><li>Execute the edited ST source code. </li><li>Set the environment variable for the host log level. </li><li>Set whether to display logs on the console. </li><li>Set the log level for ATC model conversion. </li><li>Set the OS type and architecture of the operating environment for ATC model conversion. </li><li>Set the model accuracy. </li><li>Read profile data of the compute operator running on the AI processor.</li></ul>
     <p id="p57016533264"><a id="p57016533264"></a><a id="p57016533264"></a>If <code>--config_file</code> is not specified, the model will forcibly use FP16 precision. For details about the <code>msopst.ini</code> file, see <a href="#zh-cn_topic_0000001821790281_table17358154319919">Table 1 Parameters in the msopst.ini file</a>.</p>
     </td>
@@ -1273,7 +1273,7 @@ msopst create -i {operator.cpp file} -out {output path} -m {pb file} -q
     <tr id="zh-cn_topic_0000001821790281_row113542043199"><td class="cellrowborder" valign="top" width="24.18020823197431%" headers="mcps1.2.4.1.1 "><p id="zh-cn_topic_0000001821790281_p935324314920"><a id="zh-cn_topic_0000001821790281_p935324314920"></a><a id="zh-cn_topic_0000001821790281_p935324314920"></a>-err_report, --error_report</p>
     </td>
     <td class="cellrowborder" valign="top" width="69.00846550549772%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001821790281_p63534437916"><a id="zh-cn_topic_0000001821790281_p63534437916"></a><a id="zh-cn_topic_0000001821790281_p63534437916"></a>For comparison failure cases, retrieve the data where the operator's expected output mismatches the actual test execution result. If this option is not specified, the default value <code>false</code> is used.</p>
-    <a id="zh-cn_topic_0000001821790281_ul103532435917"></a><a id="zh-cn_topic_0000001821790281_ul103532435917"></a><ul id="zh-cn_topic_0000001821790281_ul103532435917"><li><code>true</code>: For comparison-failed cases, save the mismatched data between operator expected results and actual execution outputs to the <code>{case.name}_error_report.csv</code> file. </li><li><code>false</code>: No the comparison failure result is saved. <div class="note" id="zh-cn_topic_0000001821790281_note13535438920"><a id="zh-cn_topic_0000001821790281_note13535438920"></a><a id="zh-cn_topic_0000001821790281_note13535438920"></a><span class="notetitle"> Note: </span><div class="notebody"><a id="zh-cn_topic_0000001821790281_ul8353184316913"></a><a id="zh-cn_topic_0000001821790281_ul8353184316913"></a><ul id="zh-cn_topic_0000001821790281_ul8353184316913"><li>When set to <code>true</code>, the comparison data generates a separate CSV file per case name, with the <code>{case.name}_error_report.csv</code> file located in the <code>{output_path}/{time_stamp}/{op_type}/run/out/test_data/data/st_error_reports</code> directory. </li><li>The maximum number of lines per CSV file is 50,000; when exceeded, additional rows are saved to new sequentially named files (e.g., <code>{case.name}_error_report0.csv</code>).</li></ul>
+    <a id="zh-cn_topic_0000001821790281_ul103532435917"></a><a id="zh-cn_topic_0000001821790281_ul103532435917"></a><ul id="zh-cn_topic_0000001821790281_ul103532435917"><li><code>true</code>: For comparison-failed cases, save the mismatched data between operator expected results and actual execution outputs to the <code>{case.name}_error_report.csv</code> file. </li><li><code>false</code>: The comparison failure result is not saved. <div class="note" id="zh-cn_topic_0000001821790281_note13535438920"><a id="zh-cn_topic_0000001821790281_note13535438920"></a><a id="zh-cn_topic_0000001821790281_note13535438920"></a><span class="notetitle"> Note: </span><div class="notebody"><a id="zh-cn_topic_0000001821790281_ul8353184316913"></a><a id="zh-cn_topic_0000001821790281_ul8353184316913"></a><ul id="zh-cn_topic_0000001821790281_ul8353184316913"><li>When set to <code>true</code>, the comparison data generates a separate CSV file per case name, with the <code>{case.name}_error_report.csv</code> file located in the <code>{output_path}/{time_stamp}/{op_type}/run/out/test_data/data/st_error_reports</code> directory. </li><li>The maximum number of lines per CSV file is 50,000; when exceeded, additional rows are saved to new sequentially named files (e.g., <code>{case.name}_error_report0.csv</code>).</li></ul>
     </div></div>
     </li></ul>
     </td>
@@ -1358,7 +1358,7 @@ This section describes how to use the msOpST tool to generate the operator test 
     > [!NOTE]NOTE  
     > This sample project does not support Atlas A3 training products and Atlas A3 inference products.
 
-    ```tex
+    ```text
     ├── framework/tf_plugin        // Directory for storing the implementation file of the operator plugin. The generation of single-operator model files does not depend on the operator plugin and can be ignored.
     ├── op_host                      // Implementation file on the host.
     │   ├── add_custom_tiling.h    // Operator tiling definition file.
@@ -1450,7 +1450,7 @@ This section describes how to use the msOpST tool to generate the operator test 
     <td class="cellrowborder" valign="top" width="15.8%" headers="mcps1.2.4.1.1 "><p id="zh-cn_topic_0000001775029424_p17317202536"><a id="zh-cn_topic_0000001775029424_p17317202536"></a><a id="zh-cn_topic_0000001775029424_p17317202536"></a>-</p>
     </td>
     <td class="cellrowborder" valign="top" width="67.78999999999999%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001775029424_p9904567558"><a id="zh-cn_topic_0000001775029424_p9904567558"></a><a id="zh-cn_topic_0000001775029424_p9904567558"></a>Optional.</p>
-    <p id="zh-cn_topic_0000001775029424_p12169152811718"><a id="zh-cn_topic_0000001775029424_p12169152811718"></a><a id="zh-cn_topic_0000001775029424_p12169152811718"></a>Custom precision criteria as a two-element list: <code>"[threshold1, threshold2]"</code>.
+    <p id="zh-cn_topic_0000001775029424_p12169152811718"></p><a id="zh-cn_topic_0000001775029424_p12169152811718"></a><a id="zh-cn_topic_0000001775029424_p12169152811718"></a>Custom precision criteria as a two-element list: <code>"[threshold1, threshold2]"</code>.
     <a id="zh-cn_topic_0000001775029424_ul1224154073412"></a><a id="zh-cn_topic_0000001775029424_ul1224154073412"></a><ul id="zh-cn_topic_0000001775029424_ul1224154073412"><li><code>threshold1</code>: threshold of the error between the operator output result and the benchmark data. If the error is greater than this value, the data is recorded as error data. </li><li><code>threshold2</code>: threshold of the ratio of error data to all data. If the actual ratio is less than this threshold, the accuracy is deemed acceptable. Otherwise, the precision does not meet the requirement.</li></ul>
     <p id="p484194515317"><a id="p484194515317"></a><a id="p484194515317"></a>If this option is not set, the default value is <code>"[0.01,0.05]"</code>.</p>
     <p id="zh-cn_topic_0000001775029424_p1164919913414"><a id="zh-cn_topic_0000001775029424_p1164919913414"></a><a id="zh-cn_topic_0000001775029424_p1164919913414"></a>Value range: <code>"[0.0,1.0]"</code>.</p>
@@ -1805,7 +1805,7 @@ This section describes how to use the msOpST tool to generate the operator test 
         For example, if the `x3` input is optional, define the expected operator data generation function of the operator as follows:
 
         ```py
-        def calc_expect_func(x1, x2, x3=None, y=None)
+        def calc_expect_func(x1, x2, x3=None, y=None):
         ```
 
     2. Add a comparison function to the ST case definition file, that is, `OpType_xx.json`. Edit the test case definition file as required.
@@ -2036,7 +2036,7 @@ This section walks through the workflow of generating the ST data and test case 
 3. View the execution result. <a id="output-in-the-co-deployed-development-and-operating-environments"></a>
     - In the run mode that msOpST generates the ST code only, a timestamp directory is generated in the directory specified by `-out`, and under the timestamp directory, a folder named after `OpType` is generated for storing ST cases. The directory structure is as follows:
 
-        ```tex
+        ```text
          {time_stamp}
         │   ├── OpType
         │   │   ├── CMakeLists.txt            // Build script
@@ -2068,7 +2068,7 @@ This section walks through the workflow of generating the ST data and test case 
 
     - In the run mode that msOpST generates and runs ST code, the execution result is printed after the command is executed. Then, a timestamp directory is generated in the directory specified by `-out`, and under the timestamp directory, a folder named after `OpType` is generated for storing both the ST cases and the execution results. The directory structure is as follows:
 
-        ```tex
+        ```text
          {time_stamp}
         │   ├── OpType
         │   │   ├── build
@@ -2376,7 +2376,7 @@ This section describes how to specify the ST case definition file (.json) and im
     </tr>
     <tr id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_zh-cn_topic_0290818047_row82001941201918"><td class="cellrowborder" valign="top" headers="mcps1.2.5.1.1 "><p id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_zh-cn_topic_0290818047_p320094117199"><a id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_zh-cn_topic_0290818047_p320094117199"></a><a id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_zh-cn_topic_0290818047_p320094117199"></a>stage_result</p>
     </td>
-    <td class="cellrowborder" valign="top" headers="mcps1.2.5.1.1 "><p id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_zh-cn_topic_0290818047_p10200741121914"><a id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_zh-cn_topic_0290818047_p10200741121914"></a><a id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_zh-cn_topic_0290818047_p10200741121914"></a>Result information in each running stage, including:</p>;
+    <td class="cellrowborder" valign="top" headers="mcps1.2.5.1.1 "><p id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_zh-cn_topic_0290818047_p10200741121914"><a id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_zh-cn_topic_0290818047_p10200741121914"></a><a id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_zh-cn_topic_0290818047_p10200741121914"></a>Result information in each running stage, including:</p>
     <a id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_ul20489160152817"></a><a id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_ul20489160152817"></a><ul id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_ul20489160152817"><li><code>status</code>: stage running status, indicating whether the stage is successfully executed or fails to be executed. </li><li><code>result</code>: output result. </li><li><code>stage_name</code>: stage name. </li><li><code>cmd</code>: running command.</li></ul>
     </td>
     </tr>
@@ -2465,7 +2465,7 @@ This section describes how to specify the ST case definition file (.json) and im
     </thead>
     <tbody><tr id="zh-cn_topic_0000001776778716_zh-cn_topic_0000001615270497_row1131012314182"><td class="cellrowborder" valign="top" width="18.45%" headers="mcps1.2.4.1.1 "><p id="zh-cn_topic_0000001776778716_p33101334189"><a id="zh-cn_topic_0000001776778716_p33101334189"></a><a id="zh-cn_topic_0000001776778716_p33101334189"></a>&lt;kernel_name&gt;</p>
     </td>
-    <td class="cellrowborder" valign="top" width="34.29%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001776778716_p3310937183"><a id="zh-cn_topic_0000001776778716_p3310937183"></a><a id="zh-cn_topic_0000001776778716_p3310937183"></a><span id="zh-cn_topic_0000001776778716_ph46922372194"><a id="zh-cn_topic_0000001776778716_ph46922372194"></a><a id="zh-cn_topic_0000001776778716_ph46922372194"></a>Name of the Ascend C operator implementation file.</p>
+    <td class="cellrowborder" valign="top" width="34.29%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001776778716_p3310937183"><a id="zh-cn_topic_0000001776778716_p3310937183"></a><a id="zh-cn_topic_0000001776778716_p3310937183"></a><span id="zh-cn_topic_0000001776778716_ph46922372194"></span><a id="zh-cn_topic_0000001776778716_ph46922372194"></a><a id="zh-cn_topic_0000001776778716_ph46922372194"></a>Name of the Ascend C operator implementation file.</p>
     </td>
     <td class="cellrowborder" valign="top" width="47.260000000000005%" headers="mcps1.2.4.1.3 "><p id="zh-cn_topic_0000001776778716_p93108391810"><a id="zh-cn_topic_0000001776778716_p93108391810"></a><a id="zh-cn_topic_0000001776778716_p93108391810"></a>For example, if the implementation file of the Add operator is <code>add_custom.cpp</code>, <code>add_custom</code> should be passed.</p>
     </td>
@@ -2474,8 +2474,8 @@ This section describes how to specify the ST case definition file (.json) and im
     </td>
     <td class="cellrowborder" valign="top" width="34.29%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001776778716_p1931033151815"><a id="zh-cn_topic_0000001776778716_p1931033151815"></a><a id="zh-cn_topic_0000001776778716_p1931033151815"></a>Model of the AI processor where the operator runs.</p>
     </td>
-    <td class="cellrowborder" valign="top" width="47.260000000000005%" headers="mcps1.2.4.1.3 "><p id="zh-cn_topic_0000001776778716_p4764221499"><a id="zh-cn_topic_0000001776778716_p4764221499"></a><a id="zh-cn_topic_0000001776778716_p4764221499"></a><span id="zh-cn_topic_0000001776778716_ph17641221894"><a id="zh-cn_topic_0000001776778716_ph17641221894"></a><a id="zh-cn_topic_0000001776778716_ph17641221894"></a><term id="zh-cn_topic_0000001312391781_term71949488213_1"><a id="zh-cn_topic_0000001312391781_term71949488213_1"></a><a id="zh-cn_topic_0000001312391781_term71949488213_1"></a>For the Atlas training series and Atlas inference series products, the actual model in use must be configured as <code>ascendxxxyy</code>.</p>
-    <div class="note" id="note1794698677"><a id="note1794698677"></a><a id="note1794698677"></a><span class="notetitle"> Note: </span><div class="notebody"><a id="ul1553919272419"></a><a id="ul1553919272419"></a><ul id="ul1553919272419"><li>For servers other than the Atlas A3 training products/Atlas A3 inference products: Run the <code>npu-smi info</code> command on the server where the Ascend AI Processor is installed to obtain the chip name. Note that the actual value is represented by <code>AscendChip name</code>. For example, if the chip name is <code>xxxyy</code>, the actual value is <code>Ascendxxxyy</code>. If <code>Ascendxxxyy</code> is the path of the code sample, set this parameter to <code>ascendxxxyy</code>. </li><li><span id="zh-cn_topic_0000002015877373_ph31312041180"><a id="zh-cn_topic_0000002015877373_ph31312041180"></a><a id="zh-cn_topic_0000002015877373_ph31312041180"></a><term id="zh-cn_topic_0000002015877373_zh-cn_topic_0000001312391781_term1253731311225_1"><a id="zh-cn_topic_0000002015877373_zh-cn_topic_0000001312391781_term1253731311225_1"></a><a id="zh-cn_topic_0000002015877373_zh-cn_topic_0000001312391781_term1253731311225_1"></a>For the Atlas A3 training products/Atlas A3 inference products, run the <code>npu-smi info -t board -i id -c chip_id</code> command on the server where the Ascend AI Processor is installed to obtain the chip name and NPU name. The actual value is represented by <code>Chip name_NPU name</code>. For example, if the chip name is <code>Ascendxxx</code> and the NPU name is <code>1234</code>, the actual value is <code>Ascendxxx_1234</code>. If <code>Ascendxxx_1234</code> is the path of the code sample, set this parameter to <code>ascendxxx_1234</code>.  
+    <td class="cellrowborder" valign="top" width="47.260000000000005%" headers="mcps1.2.4.1.3 "><p id="zh-cn_topic_0000001776778716_p4764221499"><a id="zh-cn_topic_0000001776778716_p4764221499"></a><a id="zh-cn_topic_0000001776778716_p4764221499"></a><span id="zh-cn_topic_0000001776778716_ph17641221894"></span><a id="zh-cn_topic_0000001776778716_ph17641221894"></a><a id="zh-cn_topic_0000001776778716_ph17641221894"></a><term id="zh-cn_topic_0000001312391781_term71949488213_1"></term><a id="zh-cn_topic_0000001312391781_term71949488213_1"></a><a id="zh-cn_topic_0000001312391781_term71949488213_1"></a>For the Atlas training series and Atlas inference series products, the actual model in use must be configured as <code>ascendxxxyy</code>.</p>
+    <div class="note" id="note1794698677"><a id="note1794698677"></a><a id="note1794698677"></a><span class="notetitle"> Note: </span><div class="notebody"><a id="ul1553919272419"></a><a id="ul1553919272419"></a><ul id="ul1553919272419"><li>For servers other than the Atlas A3 training products/Atlas A3 inference products: Run the <code>npu-smi info</code> command on the server where the Ascend AI Processor is installed to obtain the chip name. Note that the actual value is represented by <code>AscendChip name</code>. For example, if the chip name is <code>xxxyy</code>, the actual value is <code>Ascendxxxyy</code>. If <code>Ascendxxxyy</code> is the path of the code sample, set this parameter to <code>ascendxxxyy</code>. </li><li><span id="zh-cn_topic_0000002015877373_ph31312041180"></span><a id="zh-cn_topic_0000002015877373_ph31312041180"></a><a id="zh-cn_topic_0000002015877373_ph3131204118<term id="zh-cn_topic_0000002015877373_zh-cn_topic_0000001312391781_term1253731311225_1"></term>225_1"><a id="zh-cn_topic_0000002015877373_zh-cn_topic_0000001312391781_term1253731311225_1"></a><a id="zh-cn_topic_0000002015877373_zh-cn_topic_0000001312391781_term1253731311225_1"></a>For the Atlas A3 training products/Atlas A3 inference products, run the <code>npu-smi info -t board -i id -c chip_id</code> command on the server where the Ascend AI Processor is installed to obtain the chip name and NPU name. The actual value is represented by <code>Chip name_NPU name</code>. For example, if the chip name is <code>Ascendxxx</code> and the NPU name is <code>1234</code>, the actual value is <code>Ascendxxx_1234</code>. If <code>Ascendxxx_1234</code> is the path of the code sample, set this parameter to <code>ascendxxx_1234</code>.  
     <a id="zh-cn_topic_0000002015877373_ul9238121944"></a><a id="zh-cn_topic_0000002015877373_ul9238121944"></a><ul id="zh-cn_topic_0000002015877373_ul9238121944"><li><code>id</code>: device ID, which is the NPU ID obtained by running the <code>npu-smi info -l</code> command. </li><li><code>chip_id</code>: chip ID, which is the same as the chip ID obtained by running the <code>npu-smi info -m</code> command.</li></ul>
     </li></ul>
     </div></div>

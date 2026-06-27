@@ -51,8 +51,8 @@ pip install mindstudio_opst-xxxxx.whl
 Run the following commands to uninstall the packages:
 
 ```sh
-pip uninstall mindstudio_opgen-xxxxx.whl 
-pip uninstall mindstudio_opst-xxxxx.whl
+pip uninstall mindstudio-opgen
+pip uninstall mindstudio-opst
 ```
 
 ### Upgrade
@@ -60,8 +60,8 @@ pip uninstall mindstudio_opst-xxxxx.whl
 To replace the installed .whl package with another .whl package, run the following command:
 
 ```sh
-pip install mindstudio_opgen-xxxxx.whl --force-reinstall
-pip install mindstudio_opst-xxxxx.whl --force-reinstall
+pip install mindstudio-opgen --force-reinstall
+pip install mindstudio-opst --force-reinstall
 ```
 
 During the installation, if the system asks you whether to replace the original installation package,

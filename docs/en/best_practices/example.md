@@ -76,7 +76,7 @@ You have prepared for using the msOpGen tool by referring to "Preparations" in [
 
 3. After the command is executed, the following operator project directory is generated in the specified directory.
 
-    ```tex
+    ```text
     MatmulCustom/
     ├── build.sh         // Compilation entry script
     ├── CMakeLists.txt   // CMakeLists.txt script of the operator project

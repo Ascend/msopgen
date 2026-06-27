@@ -9,11 +9,11 @@ This document demonstrates the core functions of msOpGen based on the simple add
 
 ### 1.1 Recommendations
 
-This document assumes that you have completed all operations in <a href="https://gitcode.com/Ascend/msot/blob/master/docs/en/quick_start/op_tool_quick_start.md" target="_blank">Ascend Operator Development Toolchain Quick Start</a>. If you have not done so, complete that guide first for a better learning experience.
+This document assumes that you have completed all operations in <a href="https://gitcode.com/Ascend/msot/blob/26.0.0/docs/en/quick_start/op_tool_quick_start.md" target="_blank">Ascend Operator Development Toolchain Quick Start</a>. If you have not done so, complete that guide first for a better learning experience.
 
 ### 1.2 Environment Setup
 
-Strictly follow the <a href="https://gitcode.com/Ascend/msot/blob/master/docs/en/quick_start/installation_guide.md" target="_blank">Ascend AI Operator Development Toolchain Learning Environment Installation Guide</a> to complete the environment installation and workspace configuration.
+Strictly follow the <a href="https://gitcode.com/Ascend/msot/blob/26.0.0/docs/en/quick_start/installation_guide.md" target="_blank">Ascend AI Operator Development Toolchain Learning Environment Installation Guide</a> to complete the environment installation and workspace configuration.
 Even if you have a similar environment, perform the steps in the guide again to ensure that all dependent components and environment variables are complete and consistent.
 
 ## 2. Procedure
@@ -98,7 +98,7 @@ Save the following content as the `msopgen_demo.json` file:
 #### 2.2.3 Generating a Code Framework Based on Configuration
 
 **1. Obtain the chip model and concatenate the parameters.**  
-Refer to <a href="https://gitcode.com/Ascend/msot/blob/master/docs/en/quick_start/get_chip_soc_type.md" target="_blank"> Chip SoC Type Obtaining Method</a> to obtain the chip type, for example, Ascend910B4.
+Refer to <a href="https://gitcode.com/Ascend/msot/blob/26.0.0/docs/en/quick_start/get_chip_soc_type.md" target="_blank"> Chip SoC Type Obtaining Method</a> to obtain the chip type, for example, Ascend910B4.
 
 Option `-c`: chip type. The format is `aicpu`/`ai_core-{SoC_model_in_lowercase}`. Examples: `ai_core-ascend910B4` and `ai_core-ascend910_9392`.  
 
@@ -218,7 +218,7 @@ namespace optiling {
      * and set these outputs in the context structure for subsequent computation.
      * 
      */
-    static ge::graphStatus TilingFunc(gert::TilingContext *context)
+    static ge::graphStatus TilingFunc(ge::TilingContext *context)
     {
         // Step 1: Set the tiling information (total data length and number of tiles) in the context.
         uint32_t totalLength = context->GetInputShape(0)->GetOriginShape().GetShapeSize(); // Obtain the total length of the input data.
@@ -267,7 +267,7 @@ namespace ops {
                 .DataType({ge::DT_FLOAT16})
                 .Format({ge::FORMAT_ND});
 
-            // Configure the AI Core compute unit, including the tilling policy and compatible SoC models.
+            // Configure the AI Core compute unit, including the tiling policy and compatible SoC models.
             this->AICore().SetTiling(optiling::TilingFunc);
             this->AICore().AddConfig("ascend910b");
         }
@@ -512,7 +512,7 @@ echo "export LD_LIBRARY_PATH=${ASCEND_OPP_PATH}/vendors/customize/op_api/lib:$LD
 
 ### 2.5 Verifying the Operator Function
 
->[!CAUTION]NOTE  
+>[!NOTE]NOTE  
 >**Description of NPU device selection**  
 >Run the following `run.sh` script to execute the operator. For ease of learning, assume that all NPU models in the environment are the same. The system randomly selects an idle NPU to execute the task.
 >If you need to specify an NPU due to reasons such as faults on the randomly selected NPU, use the sequence number (value range: [0, Number of NPUs – 1]) based on the NPU information returned by the `npu-smi info` command as follows:
