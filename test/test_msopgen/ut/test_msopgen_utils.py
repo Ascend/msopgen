@@ -131,6 +131,117 @@ class TestUtilsMethods(unittest.TestCase):
                         utils.check_path_is_valid('/home/softlink')
                         mock_warn.assert_called_once()
 
+    # ========== cross-module-003 fix: check_cpp_identifier_valid ==========
+
+    def test_check_cpp_identifier_valid_empty(self):
+        """空字符串应返回错误"""
+        self.assertEqual(utils.check_cpp_identifier_valid(""), ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
+
+    def test_check_cpp_identifier_valid_none(self):
+        """None 应返回错误"""
+        self.assertEqual(utils.check_cpp_identifier_valid(None), ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
+
+    def test_check_cpp_identifier_valid_too_long(self):
+        """超过1000字符应返回错误"""
+        long_name = "a" * 1001
+        self.assertEqual(utils.check_cpp_identifier_valid(long_name), ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
+
+    def test_check_cpp_identifier_valid_starts_with_number(self):
+        """数字开头应返回错误"""
+        self.assertEqual(utils.check_cpp_identifier_valid("1invalid"), ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
+
+    def test_check_cpp_identifier_valid_special_chars(self):
+        """含特殊字符（注入用）应返回错误"""
+        malicious_names = [
+            "x; system(\"id\")",
+            "name)",
+            "x, TensorType({DT_FLOAT}))",
+            "test\nmalicious",
+            "x\r\n",
+            "good_bad;",
+            "name\"",
+            "test'",
+            "attr{",
+            "attr}",
+            "test(",
+            "test)",
+            "x`ls`",
+        ]
+        for name in malicious_names:
+            self.assertEqual(
+                utils.check_cpp_identifier_valid(name),
+                ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR,
+                f"Should reject: {name}",
+            )
+
+    def test_check_cpp_identifier_valid_normal(self):
+        """正常 C++ 标识符应通过"""
+        valid_names = [
+            "x",
+            "input_tensor",
+            "output0",
+            "weight_matrix",
+            "_private",
+            "TensorName",
+            "a" * 1000,  # 边界：刚好1000
+            "y1",
+            "input_desc",
+        ]
+        for name in valid_names:
+            self.assertEqual(
+                utils.check_cpp_identifier_valid(name), ConstManager.MS_OP_GEN_NONE_ERROR, f"Should accept: {name}"
+            )
+
+    # ========== cross-module-003 fix: check_cpp_value_valid ==========
+
+    def test_check_cpp_value_valid_none(self):
+        """None 应通过（无默认值）"""
+        self.assertEqual(utils.check_cpp_value_valid(None), ConstManager.MS_OP_GEN_NONE_ERROR)
+
+    def test_check_cpp_value_valid_too_long(self):
+        """超过1024字符应返回错误"""
+        long_val = "a" * 1025
+        self.assertEqual(utils.check_cpp_value_valid(long_val), ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
+
+    def test_check_cpp_value_valid_dangerous_chars(self):
+        """含代码注入字符应返回错误"""
+        dangerous_values = [
+            "1; system(\"id\")",
+            "true;",
+            "1)",
+            "1(",
+            "true\n",
+            "1\r",
+            "1\t",
+            "true`",
+            "1\"",
+            "1'",
+        ]
+        for val in dangerous_values:
+            self.assertEqual(
+                utils.check_cpp_value_valid(val),
+                ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR,
+                f"Should reject: {repr(val)}",
+            )
+
+    def test_check_cpp_value_valid_normal(self):
+        """正常默认值应通过"""
+        valid_values = [
+            "true",
+            "false",
+            "1",
+            "1.5",
+            "0.001",
+            "-1",
+            "{1, 2, 3}",
+            "ListInt",
+            "",
+        ]
+        for val in valid_values:
+            self.assertEqual(
+                utils.check_cpp_value_valid(val), ConstManager.MS_OP_GEN_NONE_ERROR, f"Should accept: {repr(val)}"
+            )
+
 
 if __name__ == '__main__':
     unittest.main()

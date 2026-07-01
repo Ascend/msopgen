@@ -78,10 +78,10 @@ repos:
     rev: v18.1.8
     hooks:
       - id: clang-format
+        require_serial: true
         files: \.(c|h|cpp|hpp|cc|hh|cxx|hxx)$
         args:
           - "--style={BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 120, BreakBeforeBraces: Allman}"
           - "--verbose"
           - "-i"
         exclude: ^build/|tests/third_party/
-
