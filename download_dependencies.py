@@ -21,11 +21,12 @@ import hashlib
 import json
 import logging
 import shutil
-import subprocess
+import subprocess  # nosec B404
 import sys
 import tempfile
 import traceback
 from pathlib import Path
+
 
 class DependencyManager:
     """
@@ -49,27 +50,34 @@ class DependencyManager:
         self.is_local = "local" in args.command
 
     def _exec_shell_cmd(self, cmd, cwd=None, msg=None):
-        if msg: logging.info(msg)
+        if msg:
+            logging.info(msg)
         try:
-            logging.info(f"Run CMD: {' '.join(cmd)}")
-            subprocess.run(cmd, cwd=cwd, check=True)
+            logging.info(f"Run CMD: {' '.join(cmd)}")  # pylint: disable=logging-fstring-interpolation
+            subprocess.run(cmd, cwd=cwd, check=True)  # nosec B603
         except Exception as e:
-            logging.error(f"Error executing command: {' '.join(cmd)}")
+            logging.error(f"Error executing command: {' '.join(cmd)}")  # pylint: disable=logging-fstring-interpolation
             raise e
 
     def _download_submodule_recursively(self, path):
         mod_dir = self.root / path
         script = mod_dir / "download_dependencies.py"
-        if not script.exists(): return
+        if not script.exists():
+            return
 
-        logging.info(f"Download submodule: {path}")
+        logging.info(f"Download submodule: {path}")  # pylint: disable=logging-fstring-interpolation
         if self.args.revision:
-            self._exec_shell_cmd(["git", "config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"], cwd=mod_dir)
+            self._exec_shell_cmd(
+                ["git", "config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"], cwd=mod_dir
+            )
             self._exec_shell_cmd(["git", "fetch", "--tags", "--all"], cwd=mod_dir)
             self._exec_shell_cmd(["git", "checkout", self.args.revision], cwd=mod_dir)
 
-        cmd = [sys.executable, script.name] + (
-            ["-r", self.args.revision] if self.args.revision else []) + self.args.command
+        cmd = (
+            [sys.executable, script.name]
+            + (["-r", self.args.revision] if self.args.revision else [])
+            + self.args.command
+        )
         self._exec_shell_cmd(cmd, cwd=mod_dir)
 
     def proc_submodule(self, submodules, force_latest_submodules):
@@ -82,7 +90,9 @@ class DependencyManager:
         if traditional_third:
             self._exec_shell_cmd(base + ["--recursive"] + traditional_third, msg="Fetching third-party submodules...")
         if force_latest_submodules:
-            self._exec_shell_cmd(base + ["--recursive", "--remote"] + force_latest_submodules, msg="Fetching third-party submodules...")
+            self._exec_shell_cmd(
+                base + ["--recursive", "--remote"] + force_latest_submodules, msg="Fetching third-party submodules..."
+            )
 
         if builtin:
             self._exec_shell_cmd(base + ["--remote"] + builtin, msg="Fetching built-in submodules...")
@@ -95,34 +105,39 @@ class DependencyManager:
         for name in artifacts:
             target = self.root / spec[name]["path"]
             if target.exists() and any(target.iterdir()):
-                logging.info(f"Skip existing: {name}")
+                logging.info(f"Skip existing: {name}")  # pylint: disable=logging-fstring-interpolation
                 continue
 
             url, sha = spec[name]["url"], spec[name].get("sha256")
             with tempfile.TemporaryDirectory() as td:
                 archive_path = Path(td) / Path(url).name
-                self._exec_shell_cmd(["curl", "-Lfk", "--retry", "5", "--retry-delay", "2",
-                                      "-o", str(archive_path), url], msg=f"Download {name} ...")
+                self._exec_shell_cmd(
+                    ["curl", "-Lf", "--retry", "5", "--retry-delay", "2", "-o", str(archive_path), url],
+                    msg=f"Download {name} ...",
+                )
                 if sha and hashlib.sha256(archive_path.read_bytes()).hexdigest() != sha:
                     sys.exit(f"SHA256 mismatch for {name}")
 
                 extract_path = Path(td) / "extract"
                 try:
                     extract_path.mkdir(parents=True, exist_ok=True)
-                    self._exec_shell_cmd(["tar", "-xf", str(archive_path), "-C", str(extract_path)],
-                                         msg=f"Unzip {name}, please wait...")
+                    self._exec_shell_cmd(
+                        ["tar", "-xf", str(archive_path), "-C", str(extract_path)], msg=f"Unzip {name}, please wait..."
+                    )
                 except Exception as e:
-                    logging.warning(f"tar exec fail, falling back to shutil.unpack_archive, err:{e}")
+                    logging.warning(f"tar exec fail, falling back to shutil.unpack_archive, err:{e}")  # pylint: disable=logging-fstring-interpolation
                     shutil.unpack_archive(archive_path, extract_path)  # tar解压更快，如果失败，再用此接口保护解压
 
                 items = list(extract_path.iterdir())
-                source = items[0] if len(items) == 1 and items[0].is_dir() else extract_path  # 处理常见“单一顶层目录”情况
+                source = (
+                    items[0] if len(items) == 1 and items[0].is_dir() else extract_path
+                )  # 处理常见“单一顶层目录”情况
 
                 if target.exists():
                     shutil.rmtree(target)
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.move(str(source), str(target))
-                logging.info(f"Download {name} successfully!")
+                logging.info(f"Download {name} successfully!")  # pylint: disable=logging-fstring-interpolation
         logging.info("=== Download artifacts end ===")
 
     def run(self):
@@ -142,11 +157,19 @@ class DependencyManager:
         if submodules:
             self.proc_submodule(submodules, force_latest_submodules)
 
+
 def main():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
-    parser = argparse.ArgumentParser(description='Download project dependencies (git submodules and artifacts) based on dependencies.json')
-    parser.add_argument('command', nargs='*', default=[], choices=[[], 'local', 'test'],
-                        help='Execution mode: omit to download prod dependencies, "local" to skip downloads, "test" to download test dependencies')
+    parser = argparse.ArgumentParser(
+        description='Download project dependencies (git submodules and artifacts) based on dependencies.json'
+    )
+    parser.add_argument(
+        'command',
+        nargs='*',
+        default=[],
+        choices=[[], 'local', 'test'],
+        help='Execution mode: omit to download prod dependencies, "local" to skip downloads, "test" to download test dependencies',
+    )
     parser.add_argument('-r', '--revision', help="Specify Git revision for internal dependent repo.")
     try:
         DependencyManager(parser.parse_args()).run()
@@ -156,8 +179,9 @@ def main():
         logging.info("=" * 50)
         logging.info("")
     except Exception as _:
-        logging.error(f"Unexpected error: {traceback.format_exc()}")
+        logging.error(f"Unexpected error: {traceback.format_exc()}")  # pylint: disable=logging-fstring-interpolation
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

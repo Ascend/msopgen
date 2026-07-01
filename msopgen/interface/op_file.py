@@ -19,9 +19,9 @@ This file mainly involves base class for operator files.
 # See the Mulan PSL v2 for more details.
 # -------------------------------------------------------------------------
 """
+
 import os
 import shutil
-import platform
 from abc import ABCMeta
 from abc import abstractmethod
 from msopgen.interface import utils
@@ -48,8 +48,7 @@ class OPFile(metaclass=ABCMeta):
     def _deal_with_default_value(attr_type: str, default_value: any) -> any:
         if attr_type.startswith("List"):
             if isinstance(default_value, list):
-                default_value = str(default_value).replace('[', '{') \
-                    .replace(']', '}')
+                default_value = str(default_value).replace('[', '{').replace(']', '}')
         return default_value
 
     @staticmethod
@@ -88,9 +87,9 @@ class OPFile(metaclass=ABCMeta):
         if self.mode == ConstManager.GEN_OPERATOR:
             if self._failed_add_op_in_ms_proj():
                 utils.print_error_log(
-                    "MindSpore project cannot support to add new operator of different frameworks or compute unit.")
-                raise utils.MsOpGenException(
-                    ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
+                    "MindSpore project cannot support to add new operator of different frameworks or compute unit."
+                )
+                raise utils.MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
             utils.print_info_log("Start to add a new operator.")
             self._new_operator()
         else:
@@ -120,23 +119,26 @@ class OPFile(metaclass=ABCMeta):
             current_path = os.path.realpath(__file__)
             asc_template_path = os.path.join(
                 os.path.realpath(os.path.dirname(current_path) + os.path.sep + ".."),
-                                 ConstManager.OP_TEMPLATE_ASCENDC_PATH)
+                ConstManager.OP_TEMPLATE_ASCENDC_PATH,
+            )
             utils.copy_template(asc_template_path, self.output_path)
             tf_plugin_dir = os.path.join(self.output_path, "framework", ConstManager.FRAMEWORK_TF_PLUGIN)
             onnx_plugin_dir = os.path.join(self.output_path, "framework", ConstManager.FRAMEWORK_ONNX_PLUGIN)
             framework_dir = os.path.join(self.output_path, "framework")
-            if self.fmk_type == "tensorflow" or self.fmk_type == "tf":
+            if self.fmk_type == "tensorflow" or self.fmk_type == "tf":  # pylint: disable=consider-using-in
                 if os.path.exists(onnx_plugin_dir):
                     shutil.rmtree(onnx_plugin_dir)
             elif self.fmk_type == "onnx":
                 if os.path.exists(tf_plugin_dir):
                     shutil.rmtree(tf_plugin_dir)
-            elif self.fmk_type == "pytorch" or self.fmk_type == "caffe" or self.fmk_type == "aclnn":
+            elif self.fmk_type == "pytorch" or self.fmk_type == "caffe" or self.fmk_type == "aclnn":  # pylint: disable=consider-using-in
                 if os.path.exists(framework_dir):
                     shutil.rmtree(framework_dir)
                 if self.fmk_type == "aclnn":
-                    utils.print_warn_log("User used the \"aclnn\" parameter to generate an AscendC template "
-                                         "project via the tool; this feature will be deprecated in future releases.")
+                    utils.print_warn_log(
+                        "User used the \"aclnn\" parameter to generate an AscendC template "
+                        "project via the tool; this feature will be deprecated in future releases."
+                    )
 
         else:
             temp_sub_path = ConstManager.OP_TEMPLATE_PATH
@@ -145,16 +147,13 @@ class OPFile(metaclass=ABCMeta):
                 utils.print_error_log(
                     "Get cann install path failed. Please check if your cann-toolkit is installed and envs."
                 )
-                raise utils.MsOpGenException(
-                    ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
-            template_path = os.path.join(
-                cann_install_path, temp_sub_path)
+                raise utils.MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
+            template_path = os.path.join(cann_install_path, temp_sub_path)
             if not os.path.exists(template_path):
                 utils.print_error_log(
                     "Get template file path failed. Please check if your cann-toolkit is installed and envs."
                 )
-                raise utils.MsOpGenException(
-                    ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
+                raise utils.MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
             utils.copy_template(template_path, self.output_path)
         self._new_operator()
 
@@ -166,26 +165,22 @@ class OPFile(metaclass=ABCMeta):
 
     def _generate_plugin(self: any) -> None:
         if not self.op_info.fix_op_type:
-            utils.print_warn_log("The op type is empty. Failed to generate "
-                                 "plugin files. Please check.")
+            utils.print_warn_log("The op type is empty. Failed to generate plugin files. Please check.")
             return
         if self.fmk_type == "caffe":
             if self.op_lan == ConstManager.OP_LAN_CPP:
                 return
-            plugin_dir = os.path.join(self.output_path, 'framework',
-                                      'caffe_plugin')
+            plugin_dir = os.path.join(self.output_path, 'framework', 'caffe_plugin')
             self._generate_caffe_plugin_cpp(plugin_dir, "caffe")
             self._generate_caffe_plugin_cmake_list(plugin_dir)
             custom_proto_path = os.path.join(self.output_path, 'custom.proto')
             utils.write_files(custom_proto_path, OPTmpl.CAFFE_CUSTOM_PROTO)
-        elif self.fmk_type == "tensorflow" or self.fmk_type == "tf":
-            plugin_dir = os.path.join(self.output_path, 'framework',
-                                      'tf_plugin')
+        elif self.fmk_type == "tensorflow" or self.fmk_type == "tf":  # pylint: disable=consider-using-in
+            plugin_dir = os.path.join(self.output_path, 'framework', 'tf_plugin')
             self._generate_tf_plugin_cpp(plugin_dir, "tensorflow")
             self._generate_tf_plugin_cmake_list(plugin_dir)
         elif self.fmk_type == "onnx":
-            plugin_dir = os.path.join(self.output_path, 'framework',
-                                      'onnx_plugin')
+            plugin_dir = os.path.join(self.output_path, 'framework', 'onnx_plugin')
             self._generate_onnx_plugin_cpp(plugin_dir, "onnx")
             self._generate_onnx_plugin_cmake_list(plugin_dir)
         elif self.fmk_type == "pytorch":
@@ -204,42 +199,44 @@ class OPFile(metaclass=ABCMeta):
             utils.write_files(cmake_list_path, OPTmpl.ONNX_PLUGIN_CMAKLIST)
 
     def _generate_caffe_plugin_cpp(self: any, plugin_dir: str, prefix: str) -> None:
-        p_str = OPTmpl.CAFFE_PLUGIN_CPP.format(left_braces=ConstManager.LEFT_BRACES,
-                                                name=self.op_info.op_type,
-                                                fmk_type=prefix.upper(),
-                                                right_braces=ConstManager.RIGHT_BRACES)
+        p_str = OPTmpl.CAFFE_PLUGIN_CPP.format(
+            left_braces=ConstManager.LEFT_BRACES,
+            name=self.op_info.op_type,
+            fmk_type=prefix.upper(),
+            right_braces=ConstManager.RIGHT_BRACES,
+        )
         # create dir and write
-        plugin_path = os.path.join(plugin_dir, prefix + "_" +
-                                   self.op_info.fix_op_type + "_plugin.cc")
+        plugin_path = os.path.join(plugin_dir, prefix + "_" + self.op_info.fix_op_type + "_plugin.cc")
         utils.make_dirs(plugin_dir)
         utils.write_files(plugin_path, p_str)
 
     def _generate_tf_plugin_cpp(self: any, plugin_dir: str, prefix: str) -> None:
-        p_str = OPTmpl.TF_PLUGIN_CPP.format(left_braces=ConstManager.LEFT_BRACES,
-                                             name=self.op_info.op_type,
-                                             fmk_type=prefix.upper(),
-                                             right_braces=ConstManager.RIGHT_BRACES)
+        p_str = OPTmpl.TF_PLUGIN_CPP.format(
+            left_braces=ConstManager.LEFT_BRACES,
+            name=self.op_info.op_type,
+            fmk_type=prefix.upper(),
+            right_braces=ConstManager.RIGHT_BRACES,
+        )
         # create dir and write
-        plugin_path = os.path.join(plugin_dir, prefix + "_" +
-                                   self.op_info.fix_op_type + "_plugin.cc")
+        plugin_path = os.path.join(plugin_dir, prefix + "_" + self.op_info.fix_op_type + "_plugin.cc")
         utils.make_dirs(plugin_dir)
         utils.write_files(plugin_path, p_str)
 
     def _generate_onnx_plugin_cpp(self: any, plugin_dir: str, prefix: str) -> None:
-        p_str = OPTmpl.ONNX_PLUGIN_CPP.format(left_braces=ConstManager.LEFT_BRACES,
-                                               name=self.op_info.op_type,
-                                               fmk_type=prefix.upper(),
-                                               right_braces=ConstManager.RIGHT_BRACES)
+        p_str = OPTmpl.ONNX_PLUGIN_CPP.format(
+            left_braces=ConstManager.LEFT_BRACES,
+            name=self.op_info.op_type,
+            fmk_type=prefix.upper(),
+            right_braces=ConstManager.RIGHT_BRACES,
+        )
         # create dir and write
-        plugin_path = os.path.join(plugin_dir, self.op_info.fix_op_type
-                                   + "_plugin.cc")
+        plugin_path = os.path.join(plugin_dir, self.op_info.fix_op_type + "_plugin.cc")
         utils.make_dirs(plugin_dir)
         utils.write_files(plugin_path, p_str)
 
     def _generate_op_proto(self: any) -> None:
         if not self.op_info.fix_op_type:
-            utils.print_warn_log("The op type is empty. Failed to generate "
-                                 "op proto files. Please check.")
+            utils.print_warn_log("The op type is empty. Failed to generate op proto files. Please check.")
             return
         self._generate_ir_h()
         self._generate_ir_cpp()
@@ -248,9 +245,13 @@ class OPFile(metaclass=ABCMeta):
         head_str = OPTmpl.IR_H_HEAD.format(
             left_braces=ConstManager.LEFT_BRACES,
             op_type_upper=self.op_info.fix_op_type.upper(),
-            op_type=self.op_info.op_type)
+            op_type=self.op_info.op_type,
+        )
         # generate input
-        for (name, value) in self.op_info.parsed_input_info.items():
+        for name, value in self.op_info.parsed_input_info.items():
+            if utils.check_cpp_identifier_valid(name) != ConstManager.MS_OP_GEN_NONE_ERROR:
+                utils.print_error_log("The input name '%s' is not a valid identifier for code generation." % name)
+                raise utils.MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
             if value[ConstManager.INFO_PARAM_TYPE_KEY] == ConstManager.PARAM_TYPE_DYNAMIC:
                 template_str = OPTmpl.IR_H_DYNAMIC_INPUT
             else:
@@ -258,7 +259,10 @@ class OPFile(metaclass=ABCMeta):
             input_type = ",".join(value[ConstManager.INFO_IR_TYPES_KEY])
             head_str += template_str.format(name=name, type=input_type)
         # generate output
-        for (name, value) in self.op_info.parsed_output_info.items():
+        for name, value in self.op_info.parsed_output_info.items():
+            if utils.check_cpp_identifier_valid(name) != ConstManager.MS_OP_GEN_NONE_ERROR:
+                utils.print_error_log("The output name '%s' is not a valid identifier for code generation." % name)
+                raise utils.MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
             if value[ConstManager.INFO_PARAM_TYPE_KEY] == ConstManager.PARAM_TYPE_DYNAMIC:
                 template_str = OPTmpl.IR_H_DYNAMIC_OUTPUT
             else:
@@ -271,7 +275,8 @@ class OPFile(metaclass=ABCMeta):
         head_str += OPTmpl.IR_H_END.format(
             op_type=self.op_info.op_type,
             right_braces=ConstManager.RIGHT_BRACES,
-            op_type_upper=self.op_info.fix_op_type.upper())
+            op_type_upper=self.op_info.fix_op_type.upper(),
+        )
         ir_h_dir = os.path.join(self.output_path, "op_proto")
         ir_h_path = os.path.join(ir_h_dir, self.op_info.fix_op_type + ".h")
         # create and write
@@ -281,17 +286,20 @@ class OPFile(metaclass=ABCMeta):
     def _generate_attr(self: any, attr: list, head_str: str) -> str:
         attr_name = utils.fix_name_lower_with_under(attr[0])
         attr_type = attr[1]
+        if utils.check_cpp_identifier_valid(attr_name) != ConstManager.MS_OP_GEN_NONE_ERROR:
+            utils.print_error_log("The attribute name '%s' is not a valid identifier for code generation." % attr_name)
+            raise utils.MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
         if (len(attr) == 4 and attr[3] == "optional") or (len(attr) == 3 and attr[2] != ""):
-            default_value = self._deal_with_default_value(attr_type,
-                                                          attr[2])
-            head_str += OPTmpl.IR_H_ATTR_WITH_VALUE.format(
-                name=attr_name,
-                type=attr_type,
-                value=default_value)
+            default_value = self._deal_with_default_value(attr_type, attr[2])
+            if utils.check_cpp_value_valid(default_value) != ConstManager.MS_OP_GEN_NONE_ERROR:
+                utils.print_error_log(
+                    "The default value '%s' of attribute '%s' contains "
+                    "unsafe characters for code generation." % (default_value, attr_name)
+                )
+                raise utils.MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR)
+            head_str += OPTmpl.IR_H_ATTR_WITH_VALUE.format(name=attr_name, type=attr_type, value=default_value)
         else:
-            head_str += OPTmpl.IR_H_ATTR_WITHOUT_VALUE.format(
-                name=attr_name,
-                type=attr_type)
+            head_str += OPTmpl.IR_H_ATTR_WITHOUT_VALUE.format(name=attr_name, type=attr_type)
         return head_str
 
     def _generate_ir_cpp(self: any) -> None:
@@ -299,16 +307,15 @@ class OPFile(metaclass=ABCMeta):
             fix_op_type=self.op_info.fix_op_type,
             op_type=self.op_info.op_type,
             left_braces=ConstManager.LEFT_BRACES,
-            right_braces=ConstManager.RIGHT_BRACES)
+            right_braces=ConstManager.RIGHT_BRACES,
+        )
         ir_cpp_dir = os.path.join(self.output_path, "op_proto")
-        ir_cpp_path = os.path.join(ir_cpp_dir, self.op_info.fix_op_type +
-                                   ".cc")
+        ir_cpp_path = os.path.join(ir_cpp_dir, self.op_info.fix_op_type + ".cc")
         utils.make_dirs(ir_cpp_dir)
         utils.write_files(ir_cpp_path, cpp_str)
 
     def _failed_add_op_in_ms_proj(self: any) -> bool:
-        if os.path.isdir(
-                os.path.join(self.output_path, ConstManager.PROJ_MS_NAME)):
+        if os.path.isdir(os.path.join(self.output_path, ConstManager.PROJ_MS_NAME)):
             # indicate that this is a mindspore aicore project
             return True
         if os.path.isdir(os.path.join(self.output_path, 'framework', ConstManager.PROJ_MS_NAME)):

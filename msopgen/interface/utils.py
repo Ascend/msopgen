@@ -318,6 +318,58 @@ class CheckFromConfig:
         return soc_version
 
 
+def check_cpp_identifier_valid(name: str) -> int:
+    """
+    Function Description:
+    check whether a name is a valid C++/Python identifier suitable for code generation.
+    Only allows alphanumeric characters and underscores, must start with a letter or underscore.
+    Parameter:
+    name: the name to check
+    Return Value:
+    MS_OP_GEN_NONE_ERROR if valid, MS_OP_GEN_INVALID_PARAM_ERROR otherwise
+    """
+    if name == "" or name is None:
+        print_warn_log("The name is empty or None.")
+        return ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR
+    if len(name) > 1000:
+        print_warn_log("The name '%s' is too long (max 1000 chars)." % name)
+        return ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR
+    # C++/Python identifier: must start with letter or underscore, followed by alphanumeric or underscore
+    cpp_identifier_pattern = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
+    if not cpp_identifier_pattern.match(name):
+        print_warn_log(
+            "The name '%s' contains invalid characters for code generation. "
+            "Only alphanumeric characters and underscores are allowed." % name
+        )
+        return ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR
+    return ConstManager.MS_OP_GEN_NONE_ERROR
+
+
+def check_cpp_value_valid(value: str) -> int:
+    """
+    Function Description:
+    check whether a default value string is safe for embedding in C++ source code.
+    Rejects values containing code injection characters.
+    Parameter:
+    value: the value string to check
+    Return Value:
+    MS_OP_GEN_NONE_ERROR if valid, MS_OP_GEN_INVALID_PARAM_ERROR otherwise
+    """
+    if value is None:
+        return ConstManager.MS_OP_GEN_NONE_ERROR
+    value_str = str(value)
+    if len(value_str) > 1024:
+        print_warn_log("The default value is too long (max 1024 chars).")
+        return ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR
+    # Reject characters commonly used in code injection: semicolons, quotes, parentheses, newlines, backticks.
+    # Note: { } are intentionally allowed — they are used in C++ list initializers like {1, 2, 3}.
+    dangerous_chars_pattern = re.compile(r'[;\'\"\(\)\n\r\t`]')
+    if dangerous_chars_pattern.search(value_str):
+        print_warn_log("The default value '%s' contains characters that are not safe for code generation." % value_str)
+        return ConstManager.MS_OP_GEN_INVALID_PARAM_ERROR
+    return ConstManager.MS_OP_GEN_NONE_ERROR
+
+
 def check_name_valid(name: str) -> int:
     """
     Function Description:
