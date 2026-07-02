@@ -11,6 +11,7 @@ When compiling a program that invokes an operator, the `aclnn_xxx.h` header file
 **Cause Analysis**
 
 The header file was not correctly installed to the `op_api/include` directory during operator deployment. Common causes include:
+
 - An incorrect `ASCEND_CUSTOM_OPP_PATH` environment variable
 - Multiple colon-separated paths where the header file was only copied to the first path
 
@@ -41,6 +42,7 @@ When executing an operator invocation program, `aclrtSetDevice failed. ERROR: xx
 **Cause Analysis**
 
 Possible causes include:
+
 - NPU device busy or hardware failure
 - `/dev/hisi_hdc` device issue (not mounted in container, insufficient permissions)
 - Driver/firmware version mismatch
@@ -63,6 +65,7 @@ The operator execution completes but the output differs from the expected result
 **Cause Analysis**
 
 Common causes include:
+
 - Pipeline synchronization errors in EnQue/DeQue in kernel-side code
 - DataCopy length (repeatTimes) mismatch with actual data size
 - Incorrect Tiling block computation parameters (totalLength, tileNum)

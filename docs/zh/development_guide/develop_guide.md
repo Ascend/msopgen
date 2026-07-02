@@ -46,11 +46,11 @@ python build.py test
 ### 5.1 测试覆盖范围
 
 UT 测试覆盖以下核心功能：
+
 - 算子工程模板生成（`msopgen gen`）
 - 仿真流水图解析（`msopgen sim`）
 - ST 测试用例生成（`msopst create`）
 - ST 测试用例执行（`msopst run`）
-
 
 ## 6. 代码规范
 
