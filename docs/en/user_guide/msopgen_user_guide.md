@@ -2,7 +2,7 @@
 
 ## Introduction<a id="ZH-CN_TOPIC_0000002494186946"></a>
 
-**Tool Overview<a id="zh-cn_topic_0000001776910254_section17618134714611"></a>**
+**Tool Overview**
 
 After analyzing an operator and defining the prototype, you can use MindStudio Ops Generator (msOpGen) to generate a custom operator project, build the project, and deploy it.  
 

@@ -1,12 +1,12 @@
 # **MindStudio Ops System Test Quick Start**<a id="ZH-CN_TOPIC_0000002539355243"></a>
 
-## Introduction<a id="section040515232197"></a>
+## 1. Introduction<a id="section040515232197"></a>
 
 The msOpST tool is used to preliminarily test operator functions after operator development. It can be used to analyze and optimize operator performance more efficiently, improving the operator execution efficiency and reducing the development cost.
 
 This sample generates an .om file of a single-operator based on the AscendCL API process and executes the file to verify the operator execution result.
 
-## Environment Setup<a id="section81731814530"></a>
+## 2. Environment Setup<a id="section81731814530"></a>
 
 - Prepare an Atlas A2 training or inference server and install the required driver and firmware. For details, see "Installing the NPU Driver and Firmware" in [CANN Software Installation Guide](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/83RC1/softwareinst/instg/instg_0000.html).
 - Install the CANN Toolkit and ops operator package of the required version and configure CANN environment variables. For details, see [CANN Software Installation Guide](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/83RC1/softwareinst/instg/instg_0000.html).
@@ -15,9 +15,9 @@ This sample generates an .om file of a single-operator based on the AscendCL API
 > [!NOTE]NOTE  
 > Run the `npu-smi info` command on the server where the Ascend AI Processor is installed to obtain the chip name. Note that the actual value is represented by `AscendChip name`. For example, if the chip name is `xxxyy`, the actual value is `Ascendxxxyy`. If `Ascendxxxyy` is the path of the code sample, set this parameter to `Ascendxxxyy`.
 
-## Procedure<a id="section1587411211202"></a>
+## 3. Procedure<a id="section1587411211202"></a>
 
-1. Generate ST cases.
+1. ST cases generation.
     1. After step 2 in [MindStudio Ops Generator Quick Start](msopgen_quick_start.md) is complete, run the following command and replace the command path according to [MindStudio Ops Generator Quick Start](msopgen_quick_start.md).
 
         ```sh
@@ -51,6 +51,6 @@ This sample generates an .om file of a single-operator based on the AscendCL API
        ```
 
         > [!NOTE]NOTE  
-        > Replace `$\{INSTALL\_DIR\}` with the actual file storage path after the CANN software is installed. For example, if the installation is performed as the `root` user, the default file storage path after the installation is `/usr/local/Ascend/cann`.
+        > Replace `${INSTALL_DIR}` with the actual file storage path after the CANN software is installed. For example, if the installation is performed as the `root` user, the default file storage path after the installation is `/usr/local/Ascend/cann`.
 
 3. After the test is successful, the test result is output to the `st.report.json` file in the `./st/out/_\{TIMESTAMP\}_/` directory. For details, see the table "Fields in the st\_report.json report" in "Operator Test (msOpST) \> "Usage Example" \> "Generating/Executing Test Cases" in [MindStudio Ops Generator User Guide](../user_guide/msopgen_user_guide.md).

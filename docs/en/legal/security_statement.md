@@ -24,7 +24,7 @@ echo 2 > /proc/sys/kernel/randomize_va_space
 
 ## File Permission Reference 
 
-| Type                              | Maximum Linux Permission|
+| Type                              | Recommended Linux Permission Reference |
 | ---------------------------------- | ------------------- |
 | Home directory                        | 750 (rwxr-x---)   |
 | Program files (including scripts and library files)    | 550 (r-xr-x---)   |

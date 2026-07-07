@@ -72,6 +72,6 @@ This tool is jointly developed by the following Huawei departments:
 🔹 Ascend Computing MindStudio Development Department  
 🔹 Ascend Computing Ecosystem Enablement Department  
 🔹 Huawei Cloud AI Compute Service  
-🔹 Compiler Technologies Lab, 2012 L abs 
+🔹 Compiler Technologies Lab, 2012 Labs 
 🔹 Markov Lab, 2012 Labs  
 Thank you to everyone in the community for your PRs. We warmly welcome your contributions.
