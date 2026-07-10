@@ -12,7 +12,7 @@
 
 ## 2. 开发环境准备
 
- 请按照以下文档进行环境配置：[《算子工具开发环境安装指导》](https://gitcode.com/Ascend/msot/blob/master/docs/zh/common/dev_env_setup.md)。
+ 请按照以下文档进行环境配置：[《算子工具开发环境安装指导》](https://gitcode.com/Ascend/msot/blob/26.1.0/docs/zh/common/dev_env_setup.md)。
 
 ## 3. 一键式构建
 

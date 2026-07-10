@@ -9,11 +9,11 @@ msOpGen 工具在算子开发过程中可自动生成自定义算子工程，使
 
 ### 1.1 建议
 
-本章节以您已完成<a href="https://gitcode.com/Ascend/msot/blob/master/docs/zh/quick_start/op_tool_quick_start.md" target="_blank">《算子开发工具快速入门》</a>的全流程操作为前提；若尚未体验，建议先完成该指南以获得更佳的学习效果。
+本章节以您已完成<a href="https://gitcode.com/Ascend/msot/blob/26.1.0/docs/zh/quick_start/op_tool_quick_start.md" target="_blank">《算子开发工具快速入门》</a>的全流程操作为前提；若尚未体验，建议先完成该指南以获得更佳的学习效果。
 
 ### 1.2 环境准备
 
-请严格按照<a href="https://gitcode.com/Ascend/msot/blob/master/docs/zh/quick_start/installation_guide.md" target="_blank">《昇腾 AI 算子开发工具链学习环境安装指南》</a>完成环境安装与工作区配置。
+请严格按照<a href="https://gitcode.com/Ascend/msot/blob/26.1.0/docs/zh/quick_start/installation_guide.md" target="_blank">《昇腾 AI 算子开发工具链学习环境安装指南》</a>完成环境安装与工作区配置。
 即使您已具备类似环境，也需按该指南重新执行一遍，以确保所有依赖组件、环境变量等完整且一致。
 
 ## 2. 操作步骤

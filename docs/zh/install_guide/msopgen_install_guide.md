@@ -122,5 +122,6 @@ source ${INSTALL_DIR}/set_env.sh
 测试报告在output目录
 
 ```sh
+cd msopgen
 python build.py test
 ```

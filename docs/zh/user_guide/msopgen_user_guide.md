@@ -137,7 +137,7 @@ msopgen gen -i {*.json} -f {framework type} -c {Compute Resource} -lan cpp -out 
 <td class="cellrowborder" valign="top" width="66.95%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001740005677_p48261745105714"><a id="zh-cn_topic_0000001740005677_p48261745105714"></a><a id="zh-cn_topic_0000001740005677_p48261745105714"></a>框架类型。</p>
 <a id="zh-cn_topic_0000001740005677_ul5826144515578"></a><a id="zh-cn_topic_0000001740005677_ul5826144515578"></a><ul id="zh-cn_topic_0000001740005677_ul5826144515578"><li>默认为TensorFlow框架，默认值：tf或者tensorflow</li><li>Caffe框架，参数值：caffe<div class="note" id="note3645111616382"><a id="note3645111616382"></a><a id="note3645111616382"></a><span class="notetitle"> 说明： </span><div class="notebody"><p id="p1364551663812"><a id="p1364551663812"></a><a id="p1364551663812"></a>自定义Ascend C算子不支持Caffe框架。</p>
 </div></div>
-</li><li>PyTorch框架，参数值：pytorch</li><li>MindSpore框架，参数值：ms或mindspore</li><li>ONNX框架，参数值：onnx</li></ul>
+</li><li>PyTorch框架，参数值：pytorch</li><li>MindSpore框架，参数值：ms或mindspore</li><li>ONNX框架，参数值：onnx</li><li>aclnn框架，参数值：aclnn</li></ul>
 <div class="note" id="zh-cn_topic_0000001740005677_note75526525356"><a id="zh-cn_topic_0000001740005677_note75526525356"></a><a id="zh-cn_topic_0000001740005677_note75526525356"></a><span class="notetitle"> 说明： </span><div class="notebody"><a id="zh-cn_topic_0000001740005677_ul1483915433531"></a><a id="zh-cn_topic_0000001740005677_ul1483915433531"></a><ul id="zh-cn_topic_0000001740005677_ul1483915433531"><li>所有参数值大小写不敏感。</li><li>TBE&amp;TIK不支持单算子API调用，默认生成TensorFlow框架。</li><li>Ascend C算子工程支持TensorFlow框架、PyTorch框架和单算子API调用，默认生成TensorFlow框架。</li><li>当用户使用-f aclnn时，生成Ascend C算子工程。</li></ul>
 </div></div>
 </td>
@@ -1103,7 +1103,7 @@ msOpGen工具通过解析用户生成的dump文件，并生成算子仿真流水
 - 若在实现算子ST功能验证时使用到AI框架，请完成所需AI框架的安装。
     - TensorFlow框架的安装请参见《[TensorFlow 1.15模型迁移指南](https://www.hiascend.com/document/detail/zh/TensorFlowCommercial/83RC1/migration/tfmigr1/tfmigr1_000001.html)》的“环境准备 \> 安装开源框架TensorFlow 1.15”章节。
     - TensorFlow 2.6.5 框架的安装请参见《[TensorFlow 2.6.5模型迁移指南](https://www.hiascend.com/document/detail/zh/TensorFlowCommercial/83RC1/migration/tfmigr2/tfmigr2_000001.html)》的“环境准备 \> 安装开源框架TensorFlow 2.6.5”章节。
-    - PyTorch框架的安装请参见《[Ascend Extension for PyTorch 软件安装指南](https://www.hiascend.com/document/detail/zh/Pytorch/720/configandinstg/instg/insg_0001.html)》。
+    - PyTorch框架的安装请参见《[TorchNPU 软件安装指南](https://gitcode.com/Ascend/pytorch/blob/v2.7.1-26.1.0/docs/zh/installation_guide/installation_description.md)》。
 
 ## 算子测试功能介绍<a id="ZH-CN_TOPIC_0000002539479311"></a>
 
@@ -1459,7 +1459,7 @@ msopst create -i {operator.cpp file} -out {output path} -m {pb file} -q
     <td class="cellrowborder" valign="top" width="15.8%" headers="mcps1.2.4.1.1 "><p id="zh-cn_topic_0000001775029424_p17317202536"><a id="zh-cn_topic_0000001775029424_p17317202536"></a><a id="zh-cn_topic_0000001775029424_p17317202536"></a>-</p>
     </td>
     <td class="cellrowborder" valign="top" width="67.78999999999999%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001775029424_p9904567558"><a id="zh-cn_topic_0000001775029424_p9904567558"></a><a id="zh-cn_topic_0000001775029424_p9904567558"></a>可选。</p>
-    <p id="zh-cn_topic_0000001775029424_p12169152811718"><a id="zh-cn_topic_0000001775029424_p12169152811718"></a><a id="zh-cn_topic_0000001775029424_p12169152811718"></a>配置自定义精度标准，取值为含两个元素的列表："[threshold1，threshold2]"</p>
+    <p id="zh-cn_topic_0000001775029424_p12169152811718"><a id="zh-cn_topic_0000001775029424_p12169152811718"></a><a id="zh-cn_topic_0000001775029424_p12169152811718"></a>配置自定义精度标准，取值为含两个元素的列表："[threshold1,threshold2]"</p>
     <a id="zh-cn_topic_0000001775029424_ul1224154073412"></a><a id="zh-cn_topic_0000001775029424_ul1224154073412"></a><ul id="zh-cn_topic_0000001775029424_ul1224154073412"><li>threshold1：算子输出结果与标杆数据误差阈值，若误差大于该值则记为误差数据。</li><li>threshold2：误差数据在全部数据占比阈值。若误差数据在全部数据占比小于该值，则精度达标，否则精度不达标。</li></ul>
     <p id="p484194515317"><a id="p484194515317"></a><a id="p484194515317"></a>若未设置此参数，默认值为："[0.01,0.05]"。</p>
     <p id="zh-cn_topic_0000001775029424_p1164919913414"><a id="zh-cn_topic_0000001775029424_p1164919913414"></a><a id="zh-cn_topic_0000001775029424_p1164919913414"></a>取值范围为："[0.0,1.0]"。</p>
@@ -1727,7 +1727,7 @@ msopst create -i {operator.cpp file} -out {output path} -m {pb file} -q
     <td class="cellrowborder" valign="top" width="15.8%" headers="mcps1.2.4.1.1 "><p id="zh-cn_topic_0000001775029424_p3375557174714"><a id="zh-cn_topic_0000001775029424_p3375557174714"></a><a id="zh-cn_topic_0000001775029424_p3375557174714"></a>shape</p>
     </td>
     <td class="cellrowborder" valign="top" width="67.78999999999999%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001775029424_p1013071032616"><a id="zh-cn_topic_0000001775029424_p1013071032616"></a><a id="zh-cn_topic_0000001775029424_p1013071032616"></a>必选。</p>
-    <a id="zh-cn_topic_0000001775029424_ul22641405613"></a><a id="zh-cn_topic_0000001775029424_ul22641405613"></a><ul id="zh-cn_topic_0000001775029424_ul22641405613"><li>int类型。一维或者二维数组。<p id="zh-cn_topic_0000001775029424_p141302109260"><a id="zh-cn_topic_0000001775029424_p141302109260"></a><a id="zh-cn_topic_0000001775029424_p141302109260"></a>输入Tensor支持的形状。</p>
+    <a id="zh-cn_topic_0000001775029424_ul22641405613"></a><a id="zh-cn_topic_0000001775029424_ul22641405613"></a><ul id="zh-cn_topic_0000001775029424_ul22641405613"><li>int类型。一维或者二维数组。<p id="zh-cn_topic_0000001775029424_p141302109260"><a id="zh-cn_topic_0000001775029424_p141302109260"></a><a id="zh-cn_topic_0000001775029424_p141302109260"></a>输出Tensor支持的形状。</p>
     </li></ul>
     <a id="zh-cn_topic_0000001775029424_ul131301210192619"></a><a id="zh-cn_topic_0000001775029424_ul131301210192619"></a><ul id="zh-cn_topic_0000001775029424_ul131301210192619"><li>String类型，“fuzz”。<p id="zh-cn_topic_0000001775029424_p101301310122618"><a id="zh-cn_topic_0000001775029424_p101301310122618"></a><a id="zh-cn_topic_0000001775029424_p101301310122618"></a>支持fuzz，使用fuzz测试参数生成脚本自动批量生成值。</p>
     </li></ul>
@@ -1738,7 +1738,7 @@ msopst create -i {operator.cpp file} -out {output path} -m {pb file} -q
     <td class="cellrowborder" valign="top" width="15.8%" headers="mcps1.2.4.1.1 "><p id="zh-cn_topic_0000001775029424_p837616579472"><a id="zh-cn_topic_0000001775029424_p837616579472"></a><a id="zh-cn_topic_0000001775029424_p837616579472"></a>ori_shape</p>
     </td>
     <td class="cellrowborder" valign="top" width="67.78999999999999%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001775029424_p1067863052619"><a id="zh-cn_topic_0000001775029424_p1067863052619"></a><a id="zh-cn_topic_0000001775029424_p1067863052619"></a>可选。</p>
-    <a id="zh-cn_topic_0000001775029424_ul1367810303263"></a><a id="zh-cn_topic_0000001775029424_ul1367810303263"></a><ul id="zh-cn_topic_0000001775029424_ul1367810303263"><li>int类型。一维或者二维数组。<p id="zh-cn_topic_0000001775029424_p1267893042614"><a id="zh-cn_topic_0000001775029424_p1267893042614"></a><a id="zh-cn_topic_0000001775029424_p1267893042614"></a>输入数据的原始shape。当算子实现的shape与原始shape不同时，需要配置此字段。</p>
+    <a id="zh-cn_topic_0000001775029424_ul1367810303263"></a><a id="zh-cn_topic_0000001775029424_ul1367810303263"></a><ul id="zh-cn_topic_0000001775029424_ul1367810303263"><li>int类型。一维或者二维数组。<p id="zh-cn_topic_0000001775029424_p1267893042614"><a id="zh-cn_topic_0000001775029424_p1267893042614"></a><a id="zh-cn_topic_0000001775029424_p1267893042614"></a>输出数据的原始shape。当算子实现的shape与原始shape不同时，需要配置此字段。</p>
     </li></ul>
     <a id="zh-cn_topic_0000001775029424_ul5678113082614"></a><a id="zh-cn_topic_0000001775029424_ul5678113082614"></a><ul id="zh-cn_topic_0000001775029424_ul5678113082614"><li>String类型，“fuzz”。<p id="zh-cn_topic_0000001775029424_p5678230172614"><a id="zh-cn_topic_0000001775029424_p5678230172614"></a><a id="zh-cn_topic_0000001775029424_p5678230172614"></a>支持fuzz，使用fuzz测试参数生成脚本自动批量生成值。</p>
     </li></ul>
@@ -1777,7 +1777,7 @@ msopst create -i {operator.cpp file} -out {output path} -m {pb file} -q
     </td>
     <td class="cellrowborder" valign="top" width="67.78999999999999%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001775029424_p2934143501712"><a id="zh-cn_topic_0000001775029424_p2934143501712"></a><a id="zh-cn_topic_0000001775029424_p2934143501712"></a>若配置attr，则为必选。</p>
     <p id="zh-cn_topic_0000001775029424_p169341835121719"><a id="zh-cn_topic_0000001775029424_p169341835121719"></a><a id="zh-cn_topic_0000001775029424_p169341835121719"></a>属性值，根据type的不同，属性值不同。</p>
-    <a id="zh-cn_topic_0000001775029424_ul579913573180"></a><a id="zh-cn_topic_0000001775029424_ul579913573180"></a><ul id="zh-cn_topic_0000001775029424_ul579913573180"><li>如果“type”配置为“bool”，“value”取值为true或者false。</li><li>如果“type”配置为“int”，“value”取值为整形数据。</li><li>如果“type”配置为“float”，“value”取值为浮点型数据。</li><li>如果“type”配置为“string”，“value”取值为字符串，例如“NCHW”。</li><li>如果“type”配置为“list_bool”，“value”取值示例：[false, true]。</li><li>如果“type”配置为“list_int”，“value”取值示例：[1, 224, 224, 3]。</li><li>如果“type”配置为“list_float”，“value”取值示例：[1.0, 0.0]。</li><li>如果“type”配置为“list_string”，“value”取值示例：["str1", "str2"]。</li><li>如果“type”配置为“list_list_int”，“value”取值示例：[[1, 3, 5, 7], [2, 4, 6, 8]]。</li><li>如果“type”配置为“data_type”，“value”支持如下取值：int8、int32、int16、int64、uint8、uint16、uint32、uint64、float、float16、float32、bool、double、complex64、complex128、bfloat16。</li><li>“value”值配置为“fuzz”时，表示使用fuzz测试参数生成脚本自动批量生成值。</li></ul>
+    <a id="zh-cn_topic_0000001775029424_ul579913573180"></a><a id="zh-cn_topic_0000001775029424_ul579913573180"></a><ul id="zh-cn_topic_0000001775029424_ul579913573180"><li>如果“type”配置为“bool”，“value”取值为true或者false。</li><li>如果“type”配置为“int”，“value”取值为整型数据。</li><li>如果“type”配置为“float”，“value”取值为浮点型数据。</li><li>如果“type”配置为“string”，“value”取值为字符串，例如“NCHW”。</li><li>如果“type”配置为“list_bool”，“value”取值示例：[false, true]。</li><li>如果“type”配置为“list_int”，“value”取值示例：[1, 224, 224, 3]。</li><li>如果“type”配置为“list_float”，“value”取值示例：[1.0, 0.0]。</li><li>如果“type”配置为“list_string”，“value”取值示例：["str1", "str2"]。</li><li>如果“type”配置为“list_list_int”，“value”取值示例：[[1, 3, 5, 7], [2, 4, 6, 8]]。</li><li>如果“type”配置为“data_type”，“value”支持如下取值：int8、int32、int16、int64、uint8、uint16、uint32、uint64、float、float16、float32、bool、double、complex64、complex128、bfloat16。</li><li>“value”值配置为“fuzz”时，表示使用fuzz测试参数生成脚本自动批量生成值。</li></ul>
     </td>
     </tr>
     <tr id="zh-cn_topic_0000001775029424_row19380195715475"><td class="cellrowborder" valign="top" width="16.41%" headers="mcps1.2.4.1.1 "><p id="zh-cn_topic_0000001775029424_p63801757124718"><a id="zh-cn_topic_0000001775029424_p63801757124718"></a><a id="zh-cn_topic_0000001775029424_p63801757124718"></a>calc_expect_func_file</p>
@@ -2449,7 +2449,7 @@ msopst create -i {operator.cpp file} -out {output path} -m {pb file} -q
 
     ```sh
     # 指向昇腾软件包安装地址，导出环境变量
-    if [ ! $ASCEND_HOME_DIR ]; then
+    if [ -z "$ASCEND_HOME_DIR" ]; then
         export ASCEND_HOME_DIR=${INSTALL_DIR}     
     fi
     source $ASCEND_HOME_DIR/bin/set_env.bash
