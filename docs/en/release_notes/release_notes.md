@@ -40,7 +40,7 @@ None
 
 #### 1. New Features
 
-This issue is the first official release. The following features are added:
+This version is the first official release. The following features are added:
 
 1. Output operator projects based on the operator prototype definition.
 2. Output the operator simulation pipeline file based on the dump data file generated in the performance simulation environment.

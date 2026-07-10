@@ -115,5 +115,6 @@ source ${INSTALL_DIR}/set_env.sh
 The test report is stored in the `output` directory.
 
 ```sh
+cd msopgen
 python build.py test
 ```

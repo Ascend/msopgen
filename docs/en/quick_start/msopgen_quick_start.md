@@ -537,7 +537,7 @@ test pass
 ```
 
 If no result is returned within 30 seconds, the NPU may be busy. In this case, press Ctrl+C to stop the process and switch to another idle NPU. If an error similar to the following occurs, the possible causes are as follows: The NPU is abnormal (due to hardware faults, driver issues, etc.), the /dev/hisi_hdc device is abnormal (for example, the container fails to be mounted, the access permission is insufficient, or the device cannot be opened due to too many threads), or system resources such as memory are insufficient.  
-For details about the error code description, see [ACL Error Code Table](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/850/API/appdevgapi/aclcppdevg_03_1345.html).
+For details about the error code description, see [ACL Error Code Table](https://www.hiascend.com/document/detail/en/canncommercial/850/API/appdevgapi/aclcppdevg_03_1345.html).
 Rectify the NPU fault or replace the NPU with a normal one, and then continue the experience. (For details about how to specify the NPU, see the description of NPU device selection above.)
 
 ```text

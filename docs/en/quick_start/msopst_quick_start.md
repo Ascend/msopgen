@@ -8,12 +8,12 @@ This sample generates an .om file of a single-operator based on the AscendCL API
 
 ## 2. Environment Setup<a id="section81731814530"></a>
 
-- Prepare an Atlas A2 training or inference server and install the required driver and firmware. For details, see "Installing the NPU Driver and Firmware" in [CANN Software Installation Guide](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/83RC1/softwareinst/instg/instg_0000.html).
-- Install the CANN Toolkit and ops operator package of the required version and configure CANN environment variables. For details, see [CANN Software Installation Guide](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/83RC1/softwareinst/instg/instg_0000.html).
-- To use MindStudio Insight for viewing, install the MindStudio Insight software package separately. For download links, see "Installation and Uninstallation" in [MindStudio Insight User Guide](https://www.hiascend.com/document/detail/zh/mindstudio/82RC1/GUI_baseddevelopmenttool/msascendinsightug/Insight_userguide_0002.html).
+- Prepare an Atlas A2 training or inference server and install the required driver and firmware. For details, see "Installing the NPU Driver and Firmware" in [CANN Software Installation Guide](https://www.hiascend.com/document/detail/en/canncommercial/850/softwareinst/instg/instg_0000.html?Mode=PmIns&InstallType=netyum&OS=openEuler).
+- Install the CANN Toolkit and ops operator package of the required version and configure CANN environment variables. For details, see [CANN Software Installation Guide](https://www.hiascend.com/document/detail/en/canncommercial/850/softwareinst/instg/instg_0000.html?Mode=PmIns&InstallType=netyum&OS=openEuler).
+- To use MindStudio Insight for viewing, install the MindStudio Insight software package separately. For download links, see "Installation and Uninstallation" in [MindStudio Insight User Guide](https://gitcode.com/Ascend/msinsight/blob/26.0.0/docs/en/user_guide/mindstudio_insight_install_guide.md).
 
 > [!NOTE]NOTE  
-> Run the `npu-smi info` command on the server where the Ascend AI Processor is installed to obtain the chip name. Note that the actual value is represented by `AscendChip name`. For example, if the chip name is `xxxyy`, the actual value is `Ascendxxxyy`. If `Ascendxxxyy` is the path of the code sample, set this parameter to `Ascendxxxyy`.
+> Run the `npu-smi info` command on the server where the Ascend AI Processor is installed to obtain the chip name. Note that the actual value is represented by `AscendChip name`. For example, if the chip name is `xxxyy`, the actual value is `Ascendxxxyy`. If the chip name is `xxxyy`, set this parameter to `Ascendxxxyy`.
 
 ## 3. Procedure<a id="section1587411211202"></a>
 
@@ -53,4 +53,4 @@ This sample generates an .om file of a single-operator based on the AscendCL API
         > [!NOTE]NOTE  
         > Replace `${INSTALL_DIR}` with the actual file storage path after the CANN software is installed. For example, if the installation is performed as the `root` user, the default file storage path after the installation is `/usr/local/Ascend/cann`.
 
-3. After the test is successful, the test result is output to the `st.report.json` file in the `./st/out/_\{TIMESTAMP\}_/` directory. For details, see the table "Fields in the st\_report.json report" in "Operator Test (msOpST) \> "Usage Example" \> "Generating/Executing Test Cases" in [MindStudio Ops Generator User Guide](../user_guide/msopgen_user_guide.md).
+3. After the test is successful, the test result is output to the `st.report.json` file in the `./st/out/_{TIMESTAMP}_/` directory. For details, see the table "Fields in the st\_report.json report" in "Operator Test (msOpST) \> "Usage Example" \> "Generating/Executing Test Cases" in [MindStudio Ops Generator User Guide](../user_guide/msopgen_user_guide.md).
