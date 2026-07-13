@@ -24,6 +24,7 @@ This class mainly involves generate data.
 
 import os
 import importlib
+import importlib.util
 import functools
 
 import numpy as np
