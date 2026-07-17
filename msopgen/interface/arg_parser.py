@@ -23,6 +23,7 @@ import os
 import re
 import sys
 import argparse
+import subprocess
 from msopgen.interface import utils
 from msopgen.interface.const_manager import ConstManager
 from msopgen.simulator import Simulator
@@ -66,7 +67,9 @@ class ArgParser:
             self.op_lan = ""
             self._check_input_path(args.input)
             self._check_framework(args.framework)
-            self._check_compute_unit_valid(args.compute_unit)
+            # compute_unit = self._get_auto_compute_unit() if args.auto_version else args.compute_unit
+            # self._check_compute_unit_valid(compute_unit)
+            self._resolve_compute_unit(args)
             self._check_output_path(args.output)
             self._check_mode_valid(args.mode)
             self._check_op_type_valid(args.operator)
@@ -130,7 +133,13 @@ class ArgParser:
                                 help="<Required> compute unit, of which the "
                                      "format should be like "
                                      "ai_core-ascend310 or aicpu or vector_core-ascend610.",
-                                required=True)
+                                required=False)
+        gen_parser.add_argument("--auto-version",
+                                dest="auto_version",
+                                action="store_true",
+                                default=False,
+                                help="<Optional> automatically detect the current device's soc version "
+                                     "via 'acl.get_soc_name()' instead of specifying --compute_unit manually.")
         gen_parser.add_argument("-out", "--output",
                                 dest="output",
                                 default="./",
@@ -300,6 +309,43 @@ class ArgParser:
                 self._print_compute_unit_invalid_log()
         self.compute_unit = compute_unit_valid
         return ConstManager.MS_OP_GEN_NONE_ERROR
+    
+    @staticmethod
+    def _get_soc_version_by_acl() -> str:
+        cmd = [sys.executable, "-c", "import acl;print(acl.get_soc_name())"]
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, check=False)
+        except Exception as ex:
+            utils.print_error_log(
+                "Failed to auto detect soc version via acl.get_soc_name(): %s" % str(ex))
+            raise utils.MsOpGenException(
+                ConstManager.MS_OP_GEN_CONFIG_INVALID_COMPUTE_UNIT_ERROR) from ex
+
+        soc_name = result.stdout.strip()
+        if result.returncode != 0 or not soc_name:
+            utils.print_error_log(
+                "Failed to auto detect soc version. Please make sure 'acl' module is importable "
+                "and the device driver is properly installed. stderr: %s" % result.stderr.strip())
+            raise utils.MsOpGenException(
+                ConstManager.MS_OP_GEN_CONFIG_INVALID_COMPUTE_UNIT_ERROR)
+        return "ai_core-%s" % soc_name
+
+    def _resolve_compute_unit(self: any, args: any) -> None:
+        if args.auto_version:
+            if args.compute_unit:
+                utils.print_warn_log(
+                    "Both --auto-version and --compute_unit are specified, "
+                    "--auto-version takes precedence and -c/--compute_unit will be ignored.")
+            compute_unit = self._get_soc_version_by_acl()
+        else:
+            if not args.compute_unit:
+                utils.print_error_log(
+                    "compute unit is required when --auto-version is not set. "
+                    "Please specify -c/--compute_unit, or use --auto-version instead.")
+                raise utils.MsOpGenException(
+                    ConstManager.MS_OP_GEN_CONFIG_INVALID_COMPUTE_UNIT_ERROR)
+            compute_unit = args.compute_unit
+        self._check_compute_unit_valid(compute_unit)
 
     def _check_mode_valid(self: any, mode: any) -> int:
         if str(mode) not in ConstManager.GEN_MODE_LIST:
