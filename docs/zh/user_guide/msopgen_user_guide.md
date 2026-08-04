@@ -39,7 +39,7 @@
 
 **环境准备<a id="section16705155515116"></a>**
 
-进行算子开发之前，需要安装配套版本的CANN Toolkit开发套件包和ops算子包并配置CANN环境变量，请参见《[CANN 软件安装指南](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/83RC1/softwareinst/instg/instg_0000.html)》。本节不再给出安装示例。
+进行算子开发之前，需要安装配套版本的CANN Toolkit开发套件包和ops算子包并配置CANN环境变量，请参见《[CANN 软件安装指南](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910/softwareinst/instg/instg_0000.html?OS=openEuler&InstallType=netconda)》。本节不再给出安装示例。
 
 **约束<a id="section160697141319"></a>**
 
@@ -388,7 +388,7 @@ msOpGen工具其他参数说明可参考[表2 参数说明](#table122041115099)�
     </td>
     <td class="cellrowborder" valign="top" headers="mcps1.2.6.1.2 "><p id="p132471493320"><a id="p132471493320"></a><a id="p132471493320"></a>算子参数的类型。</p>
     <a id="ul2066691961715"></a><a id="ul2066691961715"></a><ul id="ul2066691961715"><li><span id="ph1189182417255"><a id="ph1189182417255"></a><a id="ph1189182417255"></a>Ascend C或TBE算子取值范围：float、half、float16 (fp16)、float32 (fp32)、int8、int16、int32、int64、uint8、uint16、uint32、uint64、qint8、qint16、qint32、quint8、quint16、quint32、bool、double、string、resource、complex64、complex128、bf16、numbertype、realnumbertype、quantizedtype、all、BasicType、IndexNumberType、bfloat16。</span></li><li><span id="ph51382781714"><a id="ph51382781714"></a><a id="ph51382781714"></a>MindSpore数据类型取值范围：None_None、BOOL_None、BOOL_Default、BOOL_5HD、BOOL_FracZ、BOOL_FracNZ、BOOL_C1HWNCoC0、BOOL_NCHW、BOOL_NHWC、BOOL_NDHWC、I8_None、I8_Default、I8_5HD、I8_FracZ、I8_FracNZ、I8_C1HWNCoC0、I8_NCHW、I8_NHWC、I8_HWCN、I8_NDHWC、U8_None、U8_Default、U8_5HD、U8_FracZ、U8_FracNZ、U8_C1HWNCoC0、U8_NCHW、U8_NHWC、U8_HWCN、U8_NDHWC、I16_None、I16_Default、I16_5HD、I16_FracZ、I16_FracNZ、I16_C1HWNCoC0、I16_NCHW、I16_NHWC、I16_HWCN、I16_NDHWC、U16_None、U16_Default、U16_5HD、U16_FracZ、U16_FracNZ、U16_C1HWNCoC0、U16_NCHW、U16_NHWC、U16_HWCN、U16_NDHWC、I32_None、I32_Default、I32_5HD、I32_FracZ、I32_FracNZ、I32_C1HWNCoC0、I32_NCHW、I32_NHWC、I32_HWCN、I32_NDHWC、U32_None、U32_Default、U32_5HD、U32_FracZ、U32_FracNZ、U32_C1HWNCoC0、U32_NCHW、U32_NHWC、U32_HWCN、U32_NDHWC、I64_None、I64_Default、I64_5HD、I64_FracZ、I64_FracNZ、I64_C1HWNCoC0、I64_NCHW、I64_NHWC、I64_HWCN、I64_NDHWC、U64_None、U64_Default、U64_5HD、U64_FracZ、U64_FracNZ、U64_C1HWNCoC0、U64_NCHW、U64_NHWC、U64_HWCN、U64_NDHWC、F16_None、F16_Default、F16_5HD、F16_FracZ、F16_FracNZ、F16_C1HWNCoC0、F16_NCHW、F16_NHWC、F16_HWCN、F16_NDHWCi、F16_FracZNLSTM、F32_None、F32_Default、F32_5HD、F32_FracZ、F32_FracNZ、F32_C1HWNCoC0、F32_NCHW、F32_NHWC、F32_HWCN、F32_NDHWC、F32_FracZNLSTM、F64_None、F64_Default、F64_5HD、F64_FracZ、F64_FracNZ、F64_C1HWNCoC0、F64_NCHW、F64_NHWC、F64_HWCN、F64_NDHWC。</span></li></ul>
-    <div class="note" id="zh-cn_topic_0000001740005677_zh-cn_topic_0228422146_zh-cn_topic_0187054064_note125461103482"><a id="zh-cn_topic_0000001740005677_zh-cn_topic_0228422146_zh-cn_topic_0187054064_note125461103482"></a><a id="zh-cn_topic_0000001740005677_zh-cn_topic_0228422146_zh-cn_topic_0187054064_note125461103482"></a><span class="notetitle"> 说明： </span><div class="notebody"><a id="ul54891820181216"></a><a id="ul54891820181216"></a><ul id="ul54891820181216"><li>不同计算操作支持的数据类型不同，详细请参见《<a href="https://www.hiascend.com/document/detail/zh/canncommercial/83RC1/API/ascendcopapi/atlasascendc_api_07_0003.html" target="_blank" rel="noopener noreferrer">Ascend C算子开发接口</a>》。</li><li><span id="ph1183323441317"><a id="ph1183323441317"></a><a id="ph1183323441317"></a>format与type需一一对应。若仅填充其中一项的唯一值，msOpGen工具将会以未填充项的唯一输入值为准自动补充至已填充项的长度。例如用户配置为format:["ND"] /type:["fp16","float","int32"]，msOpGen工具将会以format的唯一输入值（"ND"）为准自动补充至type参数的长度，自动补充后的配置为format:["ND","ND","ND"]/type:["fp16","float","int32"]。</span></li></ul>
+    <div class="note" id="zh-cn_topic_0000001740005677_zh-cn_topic_0228422146_zh-cn_topic_0187054064_note125461103482"><a id="zh-cn_topic_0000001740005677_zh-cn_topic_0228422146_zh-cn_topic_0187054064_note125461103482"></a><a id="zh-cn_topic_0000001740005677_zh-cn_topic_0228422146_zh-cn_topic_0187054064_note125461103482"></a><span class="notetitle"> 说明： </span><div class="notebody"><a id="ul54891820181216"></a><a id="ul54891820181216"></a><ul id="ul54891820181216"><li>不同计算操作支持的数据类型不同，详细请参见《<a href="https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910/API/ascendcopapi/docs/api/api_list.md" target="_blank" rel="noopener noreferrer">Ascend C算子开发接口</a>》。</li><li><span id="ph1183323441317"><a id="ph1183323441317"></a><a id="ph1183323441317"></a>format与type需一一对应。若仅填充其中一项的唯一值，msOpGen工具将会以未填充项的唯一输入值为准自动补充至已填充项的长度。例如用户配置为format:["ND"] /type:["fp16","float","int32"]，msOpGen工具将会以format的唯一输入值（"ND"）为准自动补充至type参数的长度，自动补充后的配置为format:["ND","ND","ND"]/type:["fp16","float","int32"]。</span></li></ul>
     </div></div>
     </td>
     </tr>
@@ -436,7 +436,7 @@ msOpGen工具其他参数说明可参考[表2 参数说明](#table122041115099)�
     </td>
     <td class="cellrowborder" valign="top" headers="mcps1.2.6.1.2 "><p id="zh-cn_topic_0000001740005677_p98712521657"><a id="zh-cn_topic_0000001740005677_p98712521657"></a><a id="zh-cn_topic_0000001740005677_p98712521657"></a>算子参数的类型。</p>
     <a id="ul17864151012187"></a><a id="ul17864151012187"></a><ul id="ul17864151012187"><li><span id="ph15518186114510"><a id="ph15518186114510"></a><a id="ph15518186114510"></a>Ascend C或TBE算子取值范围：float、half、float16 (fp16)、float32 (fp32)、int8、int16、int32、int64、uint8、uint16、uint32、uint64、qint8、qint16、qint32、quint8、quint16、quint32、bool、double、string、resource、complex64、complex128、bf16、numbertype、realnumbertype、quantizedtype、all、BasicType、IndexNumberType、bfloat16。</span></li><li><span id="ph192021333111720"><a id="ph192021333111720"></a><a id="ph192021333111720"></a>MindSpore数据类型取值范围：None_None、BOOL_None、BOOL_Default、BOOL_5HD、BOOL_FracZ、BOOL_FracNZ、BOOL_C1HWNCoC0、BOOL_NCHW、BOOL_NHWC、BOOL_NDHWC、I8_None、I8_Default、I8_5HD、I8_FracZ、I8_FracNZ、I8_C1HWNCoC0、I8_NCHW、I8_NHWC、I8_HWCN、I8_NDHWC、U8_None、U8_Default、U8_5HD、U8_FracZ、U8_FracNZ、U8_C1HWNCoC0、U8_NCHW、U8_NHWC、U8_HWCN、U8_NDHWC、I16_None、I16_Default、I16_5HD、I16_FracZ、I16_FracNZ、I16_C1HWNCoC0、I16_NCHW、I16_NHWC、I16_HWCN、I16_NDHWC、U16_None、U16_Default、U16_5HD、U16_FracZ、U16_FracNZ、U16_C1HWNCoC0、U16_NCHW、U16_NHWC、U16_HWCN、U16_NDHWC、I32_None、I32_Default、I32_5HD、I32_FracZ、I32_FracNZ、I32_C1HWNCoC0、I32_NCHW、I32_NHWC、I32_HWCN、I32_NDHWC、U32_None、U32_Default、U32_5HD、U32_FracZ、U32_FracNZ、U32_C1HWNCoC0、U32_NCHW、U32_NHWC、U32_HWCN、U32_NDHWC、I64_None、I64_Default、I64_5HD、I64_FracZ、I64_FracNZ、I64_C1HWNCoC0、I64_NCHW、I64_NHWC、I64_HWCN、I64_NDHWC、U64_None、U64_Default、U64_5HD、U64_FracZ、U64_FracNZ、U64_C1HWNCoC0、U64_NCHW、U64_NHWC、U64_HWCN、U64_NDHWC、F16_None、F16_Default、F16_5HD、F16_FracZ、F16_FracNZ、F16_C1HWNCoC0、F16_NCHW、F16_NHWC、F16_HWCN、F16_NDHWCi、F16_FracZNLSTM、F32_None、F32_Default、F32_5HD、F32_FracZ、F32_FracNZ、F32_C1HWNCoC0、F32_NCHW、F32_NHWC、F32_HWCN、F32_NDHWC、F32_FracZNLSTM、F64_None、F64_Default、F64_5HD、F64_FracZ、F64_FracNZ、F64_C1HWNCoC0、F64_NCHW、F64_NHWC、F64_HWCN、F64_NDHWC。</span></li></ul>
-    <div class="note" id="zh-cn_topic_0000001740005677_note1311920126217"><a id="zh-cn_topic_0000001740005677_note1311920126217"></a><a id="zh-cn_topic_0000001740005677_note1311920126217"></a><span class="notetitle"> 说明： </span><div class="notebody"><a id="ul135819481168"></a><a id="ul135819481168"></a><ul id="ul135819481168"><li>不同计算操作支持的数据类型不同，详细请参见《<a href="https://www.hiascend.com/document/detail/zh/canncommercial/83RC1/API/ascendcopapi/atlasascendc_api_07_0003.html" target="_blank" rel="noopener noreferrer">Ascend C算子开发接口</a>》。</li><li><span id="ph52588526169"><a id="ph52588526169"></a><a id="ph52588526169"></a>format与type需一一对应。若仅填充其中一项的唯一值，msOpGen工具将会以未填充项的唯一输入值为准自动补充至已填充项的长度。例如用户配置为format:["ND"] /type:["fp16","float","int32"]，msOpGen工具将会以format的唯一输入值（"ND"）为准自动补充至type参数的长度，自动补充后的配置为format:["ND","ND","ND"]/type:["fp16","float","int32"]。</span></li></ul>
+    <div class="note" id="zh-cn_topic_0000001740005677_note1311920126217"><a id="zh-cn_topic_0000001740005677_note1311920126217"></a><a id="zh-cn_topic_0000001740005677_note1311920126217"></a><span class="notetitle"> 说明： </span><div class="notebody"><a id="ul135819481168"></a><a id="ul135819481168"></a><ul id="ul135819481168"><li>不同计算操作支持的数据类型不同，详细请参见《<a href="https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910/API/ascendcopapi/docs/api/api_list.md" target="_blank" rel="noopener noreferrer">Ascend C算子开发接口</a>》。</li><li><span id="ph52588526169"><a id="ph52588526169"></a><a id="ph52588526169"></a>format与type需一一对应。若仅填充其中一项的唯一值，msOpGen工具将会以未填充项的唯一输入值为准自动补充至已填充项的长度。例如用户配置为format:["ND"] /type:["fp16","float","int32"]，msOpGen工具将会以format的唯一输入值（"ND"）为准自动补充至type参数的长度，自动补充后的配置为format:["ND","ND","ND"]/type:["fp16","float","int32"]。</span></li></ul>
     </div></div>
     </td>
     </tr>
@@ -473,7 +473,7 @@ msOpGen工具其他参数说明可参考[表2 参数说明](#table122041115099)�
     </td>
     <td class="cellrowborder" valign="top" headers="mcps1.2.6.1.2 "><p id="zh-cn_topic_0000001740005677_p3994193815913"><a id="zh-cn_topic_0000001740005677_p3994193815913"></a><a id="zh-cn_topic_0000001740005677_p3994193815913"></a>算子参数的类型。</p>
     <p id="zh-cn_topic_0000001740005677_p15994133815914"><a id="zh-cn_topic_0000001740005677_p15994133815914"></a><a id="zh-cn_topic_0000001740005677_p15994133815914"></a>包含如下取值：</p>
-    <p id="p973243181319"><a id="p973243181319"></a><a id="p973243181319"></a>int、bool、float、string、list_int、list_float、list_bool、list_list_int，其他请自行参考《<a href="https://www.hiascend.com/document/detail/zh/canncommercial/83RC1/API/ascendcopapi/atlasascendc_api_07_0003.html" target="_blank" rel="noopener noreferrer">Ascend C算子开发接口</a>》中的“ Host API &gt; 原型注册与管理 &gt; OpAttrDef &gt; OpAttrDef”章节进行修改。</p>
+    <p id="p973243181319"><a id="p973243181319"></a><a id="p973243181319"></a>int、bool、float、string、list_int、list_float、list_bool、list_list_int，其他请自行参考《<a href="https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910/API/ascendcopapi/docs/api/api_list.md" target="_blank" rel="noopener noreferrer">Ascend C算子开发接口</a>》中的“ Host API &gt; 原型注册与管理 &gt; OpAttrDef &gt; OpAttrDef”章节进行修改。</p>
     </td>
     </tr>
     <tr id="zh-cn_topic_0000001740005677_row342716133411"><td class="cellrowborder" valign="top" headers="mcps1.2.6.1.1 "><p id="zh-cn_topic_0000001740005677_p994511381038"><a id="zh-cn_topic_0000001740005677_p994511381038"></a><a id="zh-cn_topic_0000001740005677_p994511381038"></a>default_value</p>
@@ -537,7 +537,7 @@ msOpGen工具其他参数说明可参考[表2 参数说明](#table122041115099)�
 
 **操作步骤<a id="section7309175019420"></a>**
 
-1. 完成算子相关的开发适配，包括算子核函数的开发和tiling实现等，详细内容请参考《[Ascend C算子开发指南](https://www.hiascend.com/document/detail/zh/canncommercial/850/opdevg/Ascendcopdevg/atlas_ascendc_10_0059.html)》中的工程化算子开发章节。
+1. 完成算子相关的开发适配，包括算子核函数的开发和tiling实现等，详细内容请参考《[Ascend C算子开发指南](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/850/opdevg/Ascendcopdevg/atlas_ascendc_10_0059.html)》中的工程化算子开发章节。
 2. 可参考[文档](https://gitee.com/ascend/samples/tree/master/operator/ascendc/0_introduction/1_add_frameworklaunch/AddCustom)进行开发，完成op_host/add_custom_tiling.h、op_host/add_custom.cpp和op_kernel/add_custom.cpp的实现。
 3. 算子实现完成后，进入[算子编译部署](#算子编译部署)。
 
@@ -762,7 +762,7 @@ msOpGen工具其他参数说明可参考[表2 参数说明](#table122041115099)�
     - 默认安装场景，不配置--install-path参数，安装成功后会将编译生成的自定义算子相关文件部署到`${INSTALL_DIR}/opp/vendors/<vendor_name>`目录。`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。例如，若安装的Ascend-cann-toolkit软件包，安装后文件存储路径示例为：`$HOME/Ascend/cann`。
 
         > [!NOTE]  
-        > 自定义算子包默认安装路径`${INSTALL_DIR}/opp/vendors`的目录权限与CANN软件包安装用户和安装配置有关。如果因权限不足导致自定义算子包安装失败，可使用--install-path参数并配置环境变量ASCEND_CUSTOM_OPP_PATH来指定安装目录（参考[指定目录安装场景](#zh-cn_topic_0000001691887130_li1652971821912)）或者联系CANN软件包的安装用户修改vendors目录权限来解决。详细的案例请参考《Ascend C算子开发指南》中“FAQ \>[调用算子时出现无法打开config.ini的报错及算子包部署时出现权限不足报错](https://www.hiascend.com/document/detail/zh/canncommercial/83RC1/opdevg/Ascendcopdevg/atlas_ascendc_10_00003.html)”章节。
+        > 自定义算子包默认安装路径`${INSTALL_DIR}/opp/vendors`的目录权限与CANN软件包安装用户和安装配置有关。如果因权限不足导致自定义算子包安装失败，可使用--install-path参数并配置环境变量ASCEND_CUSTOM_OPP_PATH来指定安装目录（参考[指定目录安装场景](#zh-cn_topic_0000001691887130_li1652971821912)）或者联系CANN软件包的安装用户修改vendors目录权限来解决。详细的案例请参考《Ascend C算子开发指南》中“FAQ \>[调用算子时出现无法打开config.ini的报错及算子包部署时出现权限不足报错](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910/programug/Ascendcopdevg/docs/guide/%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/%E9%99%84%E5%BD%95/FAQ/%E8%B0%83%E7%94%A8%E7%AE%97%E5%AD%90%E6%97%B6%E5%87%BA%E7%8E%B0%E6%97%A0%E6%B3%95%E6%89%93%E5%BC%80config-ini%E7%9A%84%E6%8A%A5%E9%94%99.md)”章节。
 
     - <a id="zh-cn_topic_0000001691887130_li1652971821912"></a>指定目录安装场景，配置--install-path参数，安装成功后会将编译生成的自定义算子相关文件部署到`<path>/vendors/<vendor_name>`目录，并在`<path>/vendors/<vendor_name>/bin`目录下新增set_env.bash，写入当前自定义算子包相关的环境变量。
 
@@ -1095,15 +1095,15 @@ msOpGen工具通过解析用户生成的dump文件，并生成算子仿真流水
 
 **环境要求<a id="section78326397288"></a>**
 
-进行算子开发之前，需要安装配套版本的CANN Toolkit开发套件包和ops算子包并配置CANN环境变量，请参见《[CANN 软件安装指南](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/83RC1/softwareinst/instg/instg_0000.html)》。本节不再给出安装示例。完成相关配置后，可直接使用msOpST工具的相关功能。
+进行算子开发之前，需要安装配套版本的CANN Toolkit开发套件包和ops算子包并配置CANN环境变量，请参见《[CANN 软件安装指南](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910/softwareinst/instg/instg_0000.html)》。本节不再给出安装示例。完成相关配置后，可直接使用msOpST工具的相关功能。
 
 **约束<a id="section34178519565"></a>**
 
 - 使用此工具生成算子测试用例前，需要将要测试的算子部署到算子库中，具体请参见[算子编译部署](#算子编译部署)。
 - 若在实现算子ST功能验证时使用到AI框架，请完成所需AI框架的安装。
-    - TensorFlow框架的安装请参见《[TensorFlow 1.15模型迁移指南](https://www.hiascend.com/document/detail/zh/TensorFlowCommercial/83RC1/migration/tfmigr1/tfmigr1_000001.html)》的“环境准备 \> 安装开源框架TensorFlow 1.15”章节。
-    - TensorFlow 2.6.5 框架的安装请参见《[TensorFlow 2.6.5模型迁移指南](https://www.hiascend.com/document/detail/zh/TensorFlowCommercial/83RC1/migration/tfmigr2/tfmigr2_000001.html)》的“环境准备 \> 安装开源框架TensorFlow 2.6.5”章节。
-    - PyTorch框架的安装请参见《[TorchNPU 软件安装指南](https://gitcode.com/Ascend/pytorch/blob/v2.7.1-26.1.0/docs/zh/installation_guide/installation_description.md)》。
+    - TensorFlow框架的安装请参见《[TensorFlow 1.15模型迁移指南](https://www.hiascend.com/document/detail/zh/TensorFlowCommunity/910/migration/tfmigr1/docs/zh/tfadapter_1/introduction.md)》的“环境准备 \> 安装开源框架TensorFlow 1.15”章节。
+    - TensorFlow 2.6.5 框架的安装请参见《[TensorFlow 2.6.5模型迁移指南](https://www.hiascend.com/document/detail/zh/TensorFlowCommunity/910/migration/tfmigr2/docs/zh/tfadapter_2/introduction.md)》的“环境准备 \> 安装开源框架TensorFlow 2.6.5”章节。
+    - PyTorch框架的安装请参见《[TorchNPU软件安装](https://www.hiascend.com/document/detail/zh/Pytorch/910/installguide/swinstall/docs/zh/installation_guide/installation_description.md)》。
 
 ## 算子测试功能介绍<a id="ZH-CN_TOPIC_0000002539479311"></a>
 
@@ -1258,8 +1258,7 @@ msopst create -i {operator.cpp file} -out {output path} -m {pb file} -q
     </tr>
     <tr id="zh-cn_topic_0000001821790281_row143526431893"><td class="cellrowborder" valign="top" width="24.18020823197431%" headers="mcps1.2.4.1.1 "><p id="zh-cn_topic_0000001821790281_p1135010432095"><a id="zh-cn_topic_0000001821790281_p1135010432095"></a><a id="zh-cn_topic_0000001821790281_p1135010432095"></a>-err_thr，--error_threshold</p>
     </td>
-    <td class="cellrowborder" valign="top" width="69.00846550549772%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001821790281_p1135044317916"><a id="zh-cn_topic_0000001821790281_p1135044317916"></a><a id="zh-cn_topic_0000001821790281_p1135044317916"></a>配置自定义精度标准，取值为含两个元素的列表："[threshold1
-    ,threshold2]"。</p>
+    <td class="cellrowborder" valign="top" width="69.00846550549772%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001821790281_p1135044317916"><a id="zh-cn_topic_0000001821790281_p1135044317916"></a><a id="zh-cn_topic_0000001821790281_p1135044317916"></a>配置自定义精度标准，取值为含两个元素的列表："[threshold1,threshold2]"。</p>
     <a id="zh-cn_topic_0000001821790281_ul203515431497"></a><a id="zh-cn_topic_0000001821790281_ul203515431497"></a><ul id="zh-cn_topic_0000001821790281_ul203515431497"><li>threshold1：算子输出结果与标杆数据误差阈值，若误差大于该值则记为误差数据。</li><li>threshold2：误差数据在全部数据占比阈值。若误差数据在全部数据占比小于该值，则精度达标，否则精度不达标。</li></ul>
     <p id="zh-cn_topic_0000001821790281_p535114313912"><a id="zh-cn_topic_0000001821790281_p535114313912"></a><a id="zh-cn_topic_0000001821790281_p535114313912"></a>若未设置此参数，默认值为："[0.01,0.05]"。</p>
     <p id="zh-cn_topic_0000001821790281_p193515432093"><a id="zh-cn_topic_0000001821790281_p193515432093"></a><a id="zh-cn_topic_0000001821790281_p193515432093"></a>取值范围为："[0.0,1.0]"。</p>
@@ -2038,9 +2037,9 @@ msopst create -i {operator.cpp file} -out {output path} -m {pb file} -q
 
             > [!NOTE]  
             > 若执行失败，请参见以下文档进行排查：
-            >- 请参见“[aclError](https://www.hiascend.com/document/detail/zh/canncommercial/83RC1/API/appdevgapi/aclcppdevg_03_1345.html)”查看aclError的含义。
-            >- 请参见“[错误码参考](https://www.hiascend.com/document/detail/zh/canncommercial/83RC1/maintenref/troubleshooting/troubleshooting_0225.html)”。
-            >- 请参见《[日志参考](https://www.hiascend.com/document/detail/zh/canncommercial/83RC1/maintenref/logreference/logreference_0001.html)》查看日志进行分析。
+            >- 请参见“[aclError](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910/API/runtimeapi/aclcppdevg_03_1345.html)”查看aclError的含义。
+            >- 请参见“[错误码参考](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910/maintenref/troubleshooting/troubleshooting_0225.html)”。
+            >- 请参见《[日志参考](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910/maintenref/logreference/logreference_0001.html)》查看日志进行分析。
 
 3. 查看执行结果。<a id="开发环境与运行环境合设场景输出结果"></a>
     - 若运行模式为仅生成ST测试用例代码，不执行ST测试用例，会在-out指定的目录下生成时间戳目录，时间戳目录下将生成以算子的OpType命名的存储测试用例代码的文件夹，目录结构如下所示：
@@ -2301,7 +2300,7 @@ msopst create -i {operator.cpp file} -out {output path} -m {pb file} -q
 
 1. 请用户完成以下输入文件的准备工作。
     - 算子ST测试用例定义文件（\*.json文件）。
-    - Kernel侧算子实现文件（\*.cpp文件），具体可参考《[Ascend C算子开发指南](https://www.hiascend.com/document/detail/zh/canncommercial/83RC1/opdevg/Ascendcopdevg/atlas_ascendc_10_0063.html)》中的“算子实现 \> 工程化算子开发 \> Kernel侧算子实现”章节。
+    - Kernel侧算子实现文件（\*.cpp文件），具体可参考《[Ascend C算子开发指南](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/850/opdevg/Ascendcopdevg/atlas_ascendc_10_0063.html)》中的“算子实现 \> 工程化算子开发 \> Kernel侧算子实现”章节。
 
 2. 生成调用Kernel函数的测试代码，执行如下命令，具体参数介绍请参见[生成单算子上板测试框架参数说明](#zh-cn_topic_0000001776778716_zh-cn_topic_0000001571310758_table20825174505717)。
 

@@ -1,10 +1,11 @@
-# msOpGen算子调试工具快速入门
+# MindStudio Ops Generator快速入门
 
 <br>
 
 ## 1. 概述
 
-msOpGen 工具在算子开发过程中可自动生成自定义算子工程，使用户能够聚焦于算子的核心逻辑与算法实现，避免在项目搭建、编译配置等重复性工作上耗费大量时间，从而显著提升开发效率。    
+msOpGen 工具在算子开发过程中可自动生成自定义算子工程，使用户能够聚焦于算子的核心逻辑与算法实现，避免在项目搭建、编译配置等重复性工作上耗费大量时间，从而显著提升开发效率。
+
 本文档基于入门教程中开发的简易加法算子，演示 msOpGen 工具的核心功能，帮助初学者直观体会其在算子开发过程中带来的高效性与便捷性。
 
 本章节以您已完成<a href="https://gitcode.com/Ascend/msot/blob/26.1.0/docs/zh/quick_start/op_tool_quick_start.md" target="_blank">《算子开发工具链快速入门》</a>的全流程操作为前提；若尚未体验，建议先完成该指南以获得更佳的学习效果。
@@ -542,9 +543,9 @@ result is:
 test pass
 ```
 
-若超过 30 秒未返回结果，可能是 NPU 卡繁忙，可按 Ctrl+C 终止后切换至其他空闲卡重试；若出现类似如下错误，可能原因包括：NPU卡异常（硬件故障、驱动问题等），/dev/hisi_hdc 设备异常（如容器内未成功挂载、缺乏访问权限、因线程数过多导致设备无法打开等），以及内存等系统资源不足等。    
-错误码说明请参见：[《ACL错误码表》](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/850/API/appdevgapi/aclcppdevg_03_1345.html)，
-请先解决 NPU 卡故障或更换为其他正常卡后再继续体验（指定 NPU 卡运行的方法详见上文“关于 NPU 设备选择的说明”）：
+若超过 30 秒未返回结果，可能是 NPU 卡繁忙，可按 Ctrl+C 终止后切换至其他空闲卡重试；若出现类似如下错误，可能原因包括：NPU卡异常（硬件故障、驱动问题等），/dev/hisi_hdc 设备异常（如容器内未成功挂载、缺乏访问权限、因线程数过多导致设备无法打开等），以及内存等系统资源不足等。
+
+错误码说明请参见：[《ACL错误码表》](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910/API/runtimeapi/aclcppdevg_03_1345.html)，请先解决 NPU 卡故障或更换为其他正常卡后再继续体验（指定 NPU 卡运行的方法详见上文“关于 NPU 设备选择的说明”）：
 
 ```text
 aclrtSetDevice failed. ERROR: xxxxxx
