@@ -12,6 +12,8 @@
 
 </div>
 
+English | [简体中文](README.md)
+
 ## ✨Latest News
 
 <span style="font-size:14px;">
@@ -62,16 +64,15 @@ To improve documentation browsing efficiency, we provide multiple search methods
 🔹 [AI Q&A (ZRead)](https://zread.ai/mindstudio-docs/master): Better Chinese Q&A experience with precise feature and detail location.   
 🔹 [Exact Search (ReadTheDocs)](https://mindstudio-docs-master.readthedocs.io): Full-text keyword search for APIs, parameters, and error messages.  
 
-
 ## 🛠️ Contribution Guide
 
 You are welcome to contribute to the project. For details, see [Contribution Guide](./docs/en/contributing/contributing_guide.md).
 
 ## ⚖️ Related Notes
 
-🔹 [Release Notes](./docs/en/release_notes/release_notes.md) 
-🔹 [License Notice](./docs/en/legal/license_notice.md) 
-🔹 [Security Statement](./docs/en/legal/security_statement.md) 
+🔹 [Release Notes](./docs/en/release_notes/release_notes.md)   
+🔹 [License Notice](./docs/en/legal/license_notice.md)   
+🔹 [Security Statement](./docs/en/legal/security_statement.md)   
 🔹 [Disclaimer](./docs/en/legal/disclaimer.md) 
 
 ## 🤝 Suggestions and Communication
