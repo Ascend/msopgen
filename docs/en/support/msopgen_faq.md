@@ -53,8 +53,8 @@ Possible causes include:
 1. Run `npu-smi info` to check NPU status
 2. Try switching NPU devices via `-d <device_id>`
 3. In container environments, verify that `--device=/dev/davinciX` is correctly mounted
-4. Check the driver installation. See [CANN Software Installation Guide](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/83RC1/softwareinst/instg/instg_0000.html)
-5. See [ACL Error Code Reference](https://www.hiascend.com/document/detail/zh/canncommercial/83RC1/API/appdevgapi/aclcppdevg_03_1345.html) for error code details
+4. Check the driver installation. See [CANN Software Installation Guide](https://www.hiascend.com/document/detail/en/CANNCommunityEdition/83RC1/softwareinst/instg/instg_0000.html)
+5. See [ACL Error Code Reference](https://www.hiascend.com/document/detail/en/canncommercial/83RC1/API/appdevgapi/aclcppdevg_03_1345.html) for error code details
 
 ## Output Is All Zeros or Random Values
 
