@@ -28,7 +28,6 @@ from msopgen.simulator.parse_first_pc import FirstPCParser
 
 
 class Args:
-
     def __init__(self, args) -> None:
         self.args = args
         self.core_id = args.core_id
@@ -40,19 +39,52 @@ class Args:
 
     @classmethod
     def add_arguments(cls, parser) -> None:
-        parser.add_argument("-c", "--core-id", dest="core_id", required=True,
-                            help="[Required]Core ID which you want to visualize.")
-        parser.add_argument("-d", "--dump-dir", dest="dump_dir", required=True,
-                            metavar="DIR", help="[Required]Path of dump data.")
-        parser.add_argument("-subc", "--subcore_id", dest="subcore_id", default="",
-                            help="[Required only when using Ascend910B and mixcore is False]"
-                            "Subcore ID which you want to visualize.")
-        parser.add_argument("-mix", "--mixcore-mode", dest="mixcore_mode", action='store_true',
-                            help="[Required only when using Ascend910B]If the core mode is mixcore.")
-        parser.add_argument("-out", "--output", dest="output", required=True, metavar="DIR",
-                            help="[Required]Output path of JSON file in trace format.")
-        parser.add_argument("-reloc", "--relocatable-file", dest="relocatable_file", required=False, default="",
-                            help="[Optional]Relocatable file end with '.o' or executable file.")
+        required_group = parser.add_argument_group("Required arguments")
+        optional_group = parser.add_argument_group("Optional arguments")
+        optional_group.add_argument("-h", "--help", action="help", help="Show this help message.")
+        required_group.add_argument(
+            "-c",
+            "--core-id",
+            dest="core_id",
+            required=True,
+            metavar="CORE_ID",
+            help="Core ID which you want to visualize.",
+        )
+        required_group.add_argument(
+            "-d", "--dump-dir", dest="dump_dir", required=True, metavar="DIR", help="Path of dump data."
+        )
+        optional_group.add_argument(
+            "-subc",
+            "--subcore_id",
+            dest="subcore_id",
+            default="",
+            metavar="SUBCORE_ID",
+            help="[Required only when using Ascend910B and mixcore is False]Subcore ID which you want to visualize.",
+        )
+        optional_group.add_argument(
+            "-mix",
+            "--mixcore-mode",
+            dest="mixcore_mode",
+            action='store_true',
+            help="[Required only when using Ascend910B]If the core mode is mixcore.",
+        )
+        required_group.add_argument(
+            "-out",
+            "--output",
+            dest="output",
+            required=True,
+            metavar="DIR",
+            help="Output path of JSON file in trace format.",
+        )
+        optional_group.add_argument(
+            "-reloc",
+            "--relocatable-file",
+            dest="relocatable_file",
+            required=False,
+            default="",
+            metavar="FILE",
+            help="Relocatable file end with '.o' or executable file.",
+        )
 
     def check_args(self):
         utils.CheckPath.check_path(self.dump_dir, os.R_OK)
@@ -60,16 +92,13 @@ class Args:
         if self.relocatable_file:
             utils.CheckPath.check_file(self.relocatable_file)
         if re.match(r"^core{0-9}+$", self.core_id):
-            raise utils.Dump2TraceException(
-                "--core-id: %s, doesn't match" % self.core_id)
+            raise utils.Dump2TraceException("--core-id: %s, doesn't match" % self.core_id)
         if self.subcore_id and not re.match(r"^mixcore|((vec|cube)core[0-9]+)$", self.subcore_id):
-            raise utils.Dump2TraceException(
-                "--subcore: %s, doesn't match" % self.subcore_id)
+            raise utils.Dump2TraceException("--subcore: %s, doesn't match" % self.subcore_id)
         if self.mixcore_mode:
             subcore_list = self.load_mixcore()
             if len(subcore_list) < 2:
-                raise utils.Dump2TraceException(
-                    "Mixcore mode need dumps of 2 subcores.")
+                raise utils.Dump2TraceException("Mixcore mode need dumps of 2 subcores.")
             for subcore_id in subcore_list:
                 self._check_dump_file_valid(subcore_id)
         else:
@@ -80,8 +109,7 @@ class Args:
         dump_files = self.get_dump_files(self.core_id, subcore_id)
         for file in dump_files.values():
             if file not in file_list:
-                raise utils.Dump2TraceException(
-                    f"The file {file} is not exist.")
+                raise utils.Dump2TraceException(f"The file {file} is not exist.")
             utils.CheckPath.check_file(os.path.join(self.dump_dir, file))
 
     @classmethod
@@ -217,8 +245,7 @@ class Task:
 
     def parse_first_pc(self):
         if self.task_info.relocatable_file:
-            first_pc_parser = FirstPCParser(
-                self.task_info.core_prefix, self.task_info.dump_dir, self.task_info.core_id)
+            first_pc_parser = FirstPCParser(self.task_info.core_prefix, self.task_info.dump_dir, self.task_info.core_id)
             self.first_pc = first_pc_parser.get_first_pc()
 
     def parse_reloc(self):
@@ -229,8 +256,7 @@ class Task:
 
     def output_statistics(self):
         if self.task_info.relocatable_file:
-            stat = CodeStatistics(
-                self.code2pc, self.instr_list, self.task_info.output, self.task_info.core_name)
+            stat = CodeStatistics(self.code2pc, self.instr_list, self.task_info.output, self.task_info.core_name)
             stat.show_hot_spot()
 
     def gen_trace_events(self):

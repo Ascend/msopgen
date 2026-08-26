@@ -19,13 +19,68 @@ This file mainly involves class for parsing input arguments.
 # See the Mulan PSL v2 for more details.
 # -------------------------------------------------------------------------
 """
+
 import os
 import re
 import sys
 import argparse
 from msopgen.interface import utils
 from msopgen.interface.const_manager import ConstManager
+from msopgen.interface.version_info import format_version_info
 from msopgen.simulator import Simulator
+
+
+_TOP_LEVEL_HELP = (
+    "Description:\n"
+    "  Generate, extend, and compile Ascend custom operator projects, and parse\n"
+    "  simulator pipeline dump data.\n"
+    "\n"
+    "Usage:\n"
+    "  msopgen <command> [options]\n"
+    "\n"
+    "Required arguments:\n"
+    "  <command>                 Command to run.\n"
+    "    gen                     Generate or extend an operator project.\n"
+    "    compile                 Compile an operator project.\n"
+    "    sim                     Parse simulator pipeline dump data.\n"
+    "\n"
+    "Optional arguments:\n"
+    "  -h, --help                Show this help message.\n"
+    "  -V, --version             Show version information.\n"
+    "\n"
+    "Examples:\n"
+    "  msopgen gen -i ./op.json -c ai_core-ascend910B4 -lan cpp -out ./MyOp\n"
+    "  msopgen compile -i ./MyOp\n"
+    "  msopgen sim -c core0 -d ./dump -out ./trace\n"
+    "\n"
+    "Output:\n"
+    "  Results are written according to the selected command and its output path.\n"
+    "\n"
+    "Troubleshooting:\n"
+    "  Run 'msopgen <command> -h' for command-specific options, and check required\n"
+    "  arguments and input paths when a command fails.\n"
+)
+
+
+class _TopLevelArgumentParser(argparse.ArgumentParser):
+    """Argument parser with the fixed top-level help text."""
+
+    def format_help(self):
+        return _TOP_LEVEL_HELP
+
+
+class _VersionAction(argparse.Action):
+    """Print the MindStudio logo and complete version information."""
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        utils.CliLogo().print_logo()
+        sys.stdout.write(format_version_info())
+        sys.stdout.flush()
+        parser.exit()
+
+
+def _add_help_option(group: any) -> None:
+    group.add_argument("-h", "--help", action="help", help="Show this help message.")
 
 
 class ArgParser:
@@ -34,17 +89,23 @@ class ArgParser:
     """
 
     def __init__(self: any) -> None:
-        parse = argparse.ArgumentParser()
-        subparsers = parse.add_subparsers(help='commands')
+        parse = _TopLevelArgumentParser()
+        parse.add_argument("-V", "--version", action=_VersionAction, nargs=0, help="Show version information.")
+        subparsers = parse.add_subparsers(help='commands', parser_class=argparse.ArgumentParser)
         gen_parser = subparsers.add_parser(
-            ConstManager.INPUT_ARGUMENT_CMD_GEN, help='Generator operator project.',
-            allow_abbrev=False)
+            ConstManager.INPUT_ARGUMENT_CMD_GEN, help='Generator operator project.', allow_abbrev=False, add_help=False
+        )
         compile_parser = subparsers.add_parser(
-            ConstManager.INPUT_ARGUMENT_CMD_COMPILE, help='Compile operator project.',
-            allow_abbrev=False)
+            ConstManager.INPUT_ARGUMENT_CMD_COMPILE,
+            help='Compile operator project.',
+            allow_abbrev=False,
+            add_help=False,
+        )
         sim_parser = subparsers.add_parser(
-            ConstManager.INPUT_ARGUMENT_CMD_SIM, help='Simulator-related operations.',
-            allow_abbrev=False
+            ConstManager.INPUT_ARGUMENT_CMD_SIM,
+            help='Simulator-related operations.',
+            allow_abbrev=False,
+            add_help=False,
         )
         self._gen_parse_add_arguments(gen_parser)
         self._compile_parse_add_arguments(compile_parser)
@@ -98,95 +159,144 @@ class ArgParser:
 
     @staticmethod
     def _compile_parse_add_arguments(compile_parser: any) -> None:
-        compile_parser.add_argument(
-            "-i", "--input", dest="input_project", default="",
-            help="<Required> the input project path", required=True)
-        compile_parser.add_argument(
-            "-c", "--cann", dest="cann_path", default="/usr/local/Ascend/latest",
-            help="<Optional> the CANN install path", required=False)
-        compile_parser.add_argument(
-            '-q', "--quiet", dest="quiet", action="store_true", default=False,
-            help="<Optional> quiet mode, skip human-computer interactions",
-            required=False)
+        required_group = compile_parser.add_argument_group("Required arguments")
+        optional_group = compile_parser.add_argument_group("Optional arguments")
+        _add_help_option(optional_group)
+        required_group.add_argument(
+            "-i",
+            "--input",
+            dest="input_project",
+            default="",
+            metavar="DIR",
+            help="The input project path",
+            required=True,
+        )
+        optional_group.add_argument(
+            "-c",
+            "--cann",
+            dest="cann_path",
+            default="/usr/local/Ascend/latest",
+            metavar="DIR",
+            help="The CANN install path",
+            required=False,
+        )
+        optional_group.add_argument(
+            '-q',
+            "--quiet",
+            dest="quiet",
+            action="store_true",
+            default=False,
+            help="Quiet mode, skip human-computer interactions",
+            required=False,
+        )
 
     @staticmethod
     def _gen_parse_add_arguments(gen_parser: any) -> None:
-        gen_parser.add_argument("-i", "--input",
-                                dest="input",
-                                default="",
-                                help="<Required> the input file, %s file, "
-                                     "which needs to be existed and readable." % (ConstManager.GEN_VALID_TYPE,),
-                                required=True)
-        gen_parser.add_argument("-f", "--framework",
-                                dest="framework",
-                                default="TF",
-                                help="<Optional> op framework type(case "
-                                     "insensitive) tf, tensorflow, caffe, "
-                                     "ms, mindspore, onnx, aclnn, pytorch.",
-                                required=False)
-        gen_parser.add_argument("-c", "--compute_unit",
-                                dest="compute_unit",
-                                default="",
-                                help="<Required> compute unit, of which the "
-                                     "format should be like "
-                                     "ai_core-ascend310 or aicpu or vector_core-ascend610.",
-                                required=True)
-        gen_parser.add_argument("-out", "--output",
-                                dest="output",
-                                default="./",
-                                help="<Optional> output path.",
-                                required=False)
-        gen_parser.add_argument("-m", "--mode",
-                                dest="mode",
-                                default='0',
-                                help="<Optional> 0:default, generator "
-                                     "project;1: add a new operator.",
-                                required=False)
-        gen_parser.add_argument("-op", "--operator",
-                                dest="operator",
-                                default="",
-                                help="<Optional> op type in IR excel.",
-                                required=False)
-        gen_parser.add_argument("-lan", "--language",
-                                dest="language",
-                                default="PY",
-                                help="<Optional> py: default, dsl and tik coding "
-                                     "language; cpp: for op coding with tikcpp.",
-                                required=False)
+        required_group = gen_parser.add_argument_group("Required arguments")
+        optional_group = gen_parser.add_argument_group("Optional arguments")
+        _add_help_option(optional_group)
+        required_group.add_argument(
+            "-i",
+            "--input",
+            dest="input",
+            default="",
+            metavar="FILE",
+            help="The input file, %s file, which needs to be existed and readable." % (ConstManager.GEN_VALID_TYPE,),
+            required=True,
+        )
+        required_group.add_argument(
+            "-c",
+            "--compute_unit",
+            dest="compute_unit",
+            default="",
+            metavar="COMPUTE_UNIT",
+            help="Compute unit, of which the format should be like "
+            "ai_core-ascend310 or aicpu or vector_core-ascend610.",
+            required=True,
+        )
+        optional_group.add_argument(
+            "-f",
+            "--framework",
+            dest="framework",
+            default="TF",
+            metavar="{tf,tensorflow,caffe,pytorch,ms,mindspore,onnx,aclnn}",
+            help="Op framework type(case insensitive) tf, tensorflow, caffe, ms, mindspore, onnx, aclnn, pytorch.",
+            required=False,
+        )
+        optional_group.add_argument(
+            "-out",
+            "--output",
+            dest="output",
+            default="./",
+            metavar="DIR",
+            help="Output path.",
+            required=False,
+        )
+        optional_group.add_argument(
+            "-m",
+            "--mode",
+            dest="mode",
+            default='0',
+            metavar="{0,1}",
+            help="0:default, generator project;1: add a new operator.",
+            required=False,
+        )
+        optional_group.add_argument(
+            "-op",
+            "--operator",
+            dest="operator",
+            default="",
+            metavar="OP_TYPE",
+            help="Op type in IR excel.",
+            required=False,
+        )
+        optional_group.add_argument(
+            "-lan",
+            "--language",
+            dest="language",
+            default="PY",
+            metavar="{py,cpp}",
+            help="py: default, dsl and tik coding language; cpp: for op coding with tikcpp.",
+            required=False,
+        )
 
     @staticmethod
     def _print_compute_unit_invalid_log() -> None:
-        utils.print_error_log("Invalid compute unit format. "
-                              "Please check whether the format of the input "
-                              "compute unit is ${core_type}-${"
-                              "unit_type}, like ai_core-ascend310 or aicpu.")
-        raise utils.MsOpGenException(
-            ConstManager.MS_OP_GEN_CONFIG_INVALID_COMPUTE_UNIT_ERROR)
+        utils.print_error_log(
+            "Invalid compute unit format. "
+            "Please check whether the format of the input "
+            "compute unit is ${core_type}-${"
+            "unit_type}, like ai_core-ascend310 or aicpu."
+        )
+        raise utils.MsOpGenException(ConstManager.MS_OP_GEN_CONFIG_INVALID_COMPUTE_UNIT_ERROR)
 
     @staticmethod
     def _is_mdc(unit_parse_list: list) -> bool:
-        return (len(unit_parse_list[1]) >= len("bs9sx1a")
-                and unit_parse_list[1][:7].lower() in ConstManager.MDC_SOC_VERSION) \
-               or (len(unit_parse_list[1]) >= len("ascendxxx")
-                   and unit_parse_list[1][:9].lower() in ConstManager.MDC_SOC_VERSION)
+        return (
+            len(unit_parse_list[1]) >= len("bs9sx1a") and unit_parse_list[1][:7].lower() in ConstManager.MDC_SOC_VERSION
+        ) or (
+            len(unit_parse_list[1]) >= len("ascendxxx")
+            and unit_parse_list[1][:9].lower() in ConstManager.MDC_SOC_VERSION
+        )
 
     @staticmethod
     def _check_soc_version_valid(soc_version: str) -> None:
-        res = re.search("^[aA]scend[A-Za-z0-9-_]{3,20}$|^[bB][sS]9[sS][xX]1[aA]+$|^[hH][iI][A-Za-z0-9]{3,20}",
-                        soc_version.lower())
+        res = re.search(
+            "^[aA]scend[A-Za-z0-9-_]{3,20}$|^[bB][sS]9[sS][xX]1[aA]+$|^[hH][iI][A-Za-z0-9]{3,20}", soc_version.lower()
+        )
         if not res:
-            utils.print_error_log("Invalid unit type format. "
-                                  "Please check whether the format of the input "
-                                  "compute unit is ${core_type}-${"
-                                  "unit_type}, and unit type like ascend310 or ascend910A.")
-            raise utils.MsOpGenException(
-                ConstManager.MS_OP_GEN_CONFIG_INVALID_COMPUTE_UNIT_ERROR)
+            utils.print_error_log(
+                "Invalid unit type format. "
+                "Please check whether the format of the input "
+                "compute unit is ${core_type}-${"
+                "unit_type}, and unit type like ascend310 or ascend910A."
+            )
+            raise utils.MsOpGenException(ConstManager.MS_OP_GEN_CONFIG_INVALID_COMPUTE_UNIT_ERROR)
 
     @staticmethod
     def _check_compile_path(path, isdir=False):
         if isdir and not os.path.exists(path):
-            utils.print_error_log('The path {} does not exist. Please check whether '
-                                  'the path exists.'.format(path))
+            utils.print_error_log('The path {} does not exist. Please check whether the path exists.'.format(path))
             raise utils.MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
         utils.check_path_valid(path, True, access_type=os.W_OK)
 
@@ -212,8 +322,7 @@ class ArgParser:
         if lower_args_framework in ConstManager.FMK_LIST:
             self.framework = lower_args_framework
         else:
-            utils.print_error_log(
-                "Unsupported framework type: " + args_framework)
+            utils.print_error_log("Unsupported framework type: " + args_framework)
             raise utils.MsOpGenException(ConstManager.MS_OP_GEN_CONFIG_UNSUPPORTED_FMK_TYPE_ERROR)
 
     def _check_output_path(self: any, args_output_path: str) -> None:
@@ -221,13 +330,10 @@ class ArgParser:
         args_output_path = os.path.realpath(args_output_path)
         if not os.path.exists(args_output_path):
             utils.make_dirs(args_output_path)
-        if os.path.exists(args_output_path) and os.access(args_output_path,
-                                                          os.W_OK):
+        if os.path.exists(args_output_path) and os.access(args_output_path, os.W_OK):
             self.output_path = args_output_path
         else:
-            utils.print_error_log(args_output_path +
-                                  " does not exist or does not allow data "
-                                  "write.")
+            utils.print_error_log(args_output_path + " does not exist or does not allow data write.")
             raise utils.MsOpGenException(ConstManager.MS_OP_GEN_CONFIG_INVALID_OUTPUT_PATH_ERROR)
         if not utils.check_path_owner_consistent(args_output_path):
             utils.print_warn_log('You are not the owner of path {}.'.format(args_output_path))
@@ -236,20 +342,25 @@ class ArgParser:
         if not args_input.endswith(ConstManager.GEN_VALID_TYPE):
             utils.print_error_log(
                 'The file "%s" is invalid. Only the %s file is supported. Please '
-                'modify it.' % (args_input, ConstManager.GEN_VALID_TYPE))
+                'modify it.' % (args_input, ConstManager.GEN_VALID_TYPE)
+            )
             raise utils.MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
         utils.check_path_is_valid(args_input)
         utils.check_input_permission_valid(args_input)
         dir_path = os.path.dirname(os.path.realpath(args_input))
         utils.check_input_permission_valid(dir_path)
         args_op_info = os.path.realpath(args_input)
-        if os.path.isfile(args_op_info) and os.access(args_op_info, os.R_OK) and \
-                os.path.getsize(args_op_info) < ConstManager.TEN_MB:
+        if (
+            os.path.isfile(args_op_info)
+            and os.access(args_op_info, os.R_OK)
+            and os.path.getsize(args_op_info) < ConstManager.TEN_MB
+        ):
             self.input_path = args_op_info
         else:
-            utils.print_error_log("Input path: " + args_input +
-                                  " error. Please check whether it is an existing "
-                                  "and readable file. Or check it is larger than 10 MB.")
+            utils.print_error_log(
+                "Input path: " + args_input + " error. Please check whether it is an existing "
+                "and readable file. Or check it is larger than 10 MB."
+            )
             raise utils.MsOpGenException(ConstManager.MS_OP_GEN_CONFIG_INVALID_OPINFO_FILE_ERROR)
         if not utils.check_path_owner_consistent(self.input_path):
             utils.print_warn_log('You are not the owner of path {}.'.format(self.input_path))
@@ -260,11 +371,8 @@ class ArgParser:
                 self.core_type = core_type
             else:
                 if self.core_type != core_type:
-                    utils.print_error_log("Invalid compute unit "
-                                          "format. Only one core type is "
-                                          "supported.")
-                    raise utils.MsOpGenException(
-                        ConstManager.MS_OP_GEN_CONFIG_INVALID_COMPUTE_UNIT_ERROR)
+                    utils.print_error_log("Invalid compute unit format. Only one core type is supported.")
+                    raise utils.MsOpGenException(ConstManager.MS_OP_GEN_CONFIG_INVALID_COMPUTE_UNIT_ERROR)
         else:
             self._print_compute_unit_invalid_log()
 
@@ -278,24 +386,22 @@ class ArgParser:
             compute_unit_valid.append(unit.lower())
             unit_parse_list = unit.split("-", 1)
             if len(unit_parse_list) == 1:
-                self._init_core_type(unit_parse_list,
-                                     ConstManager.AICPU_CORE_TYPE_LIST,
-                                     ConstManager.AICPU)
+                self._init_core_type(unit_parse_list, ConstManager.AICPU_CORE_TYPE_LIST, ConstManager.AICPU)
             elif len(unit_parse_list) == 2:
                 self._check_soc_version_valid(unit_parse_list[1])
                 if self._is_mdc(unit_parse_list):
                     if unit_parse_list[0].lower() in ConstManager.VECTOR_CORE_TYPE_LIST:
-                        self._init_core_type(unit_parse_list,
-                                             ConstManager.VECTOR_CORE_TYPE_LIST,
-                                             ConstManager.VECTORCORE)
+                        self._init_core_type(
+                            unit_parse_list, ConstManager.VECTOR_CORE_TYPE_LIST, ConstManager.VECTORCORE
+                        )
                     else:
-                        self._init_core_type(unit_parse_list,
-                                             ConstManager.AICORE_CORE_TYPE_LIST,
-                                             ConstManager.AICORE)
+                        self._init_core_type(unit_parse_list, ConstManager.AICORE_CORE_TYPE_LIST, ConstManager.AICORE)
                 else:
-                    self._init_core_type(unit_parse_list,
-                                         ConstManager.AICORE_CORE_TYPE_LIST + ConstManager.VECTOR_CORE_TYPE_LIST,
-                                         ConstManager.AICORE)
+                    self._init_core_type(
+                        unit_parse_list,
+                        ConstManager.AICORE_CORE_TYPE_LIST + ConstManager.VECTOR_CORE_TYPE_LIST,
+                        ConstManager.AICORE,
+                    )
             else:
                 self._print_compute_unit_invalid_log()
         self.compute_unit = compute_unit_valid
@@ -303,11 +409,11 @@ class ArgParser:
 
     def _check_mode_valid(self: any, mode: any) -> int:
         if str(mode) not in ConstManager.GEN_MODE_LIST:
-            utils.print_error_log('Unsupported mode: %s. Only %s is supported. '
-                                  'Please check the input mode.' %
-                                  (str(mode), ','.join(ConstManager.GEN_MODE_LIST)))
-            raise utils.MsOpGenException(
-                ConstManager.MS_OP_GEN_CONFIG_UNSUPPORTED_MODE_ERROR)
+            utils.print_error_log(
+                'Unsupported mode: %s. Only %s is supported. '
+                'Please check the input mode.' % (str(mode), ','.join(ConstManager.GEN_MODE_LIST))
+            )
+            raise utils.MsOpGenException(ConstManager.MS_OP_GEN_CONFIG_UNSUPPORTED_MODE_ERROR)
         self.mode = mode
         return ConstManager.MS_OP_GEN_NONE_ERROR
 
@@ -316,7 +422,9 @@ class ArgParser:
         if lan_set in ConstManager.OP_LAN_LIST:
             self.op_lan = lan_set
         else:
-            utils.print_error_log(f'Unsupported language: {lan}. Only {ConstManager.OP_LAN_LIST} is supported. '
-                                  'Please check the input op language.')
+            utils.print_error_log(
+                f'Unsupported language: {lan}. Only {ConstManager.OP_LAN_LIST} is supported. '
+                'Please check the input op language.'
+            )
             raise utils.MsOpGenException(1005)
         return ConstManager.MS_OP_GEN_NONE_ERROR
