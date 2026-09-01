@@ -2,3 +2,4 @@
 	path = thirdparty/asc-tools
 	url = https://gitcode.com/cann/asc-tools.git
 	branch = master
+	ignore=all

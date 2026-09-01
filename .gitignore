@@ -5,8 +5,11 @@ ut_report/
 .coverage
 
 # IDE
-.vscode
+# devcontainer使用包含vscode相关配置
+# .vscode
 .codemate
+.host-gitconfig
+
 # Binary
 *.so
 
@@ -18,9 +21,17 @@ msopgen/_build_info.py
 *.egg
 build/
 dist/
+msopgen/new_op_project_template
+test/build.sh
+test/op_kernel
+artifacts
+
 # Environments
 .env
 .venv
 env/
 venv/
 ENV/
+
+#others
+thirdparty
