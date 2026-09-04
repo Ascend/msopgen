@@ -130,4 +130,4 @@ Strict conversion rules apply between the operator type (OpType), file names, an
 
 ## 6 msOpGen Class Diagram
 
-![alt text](../figures/msOpGenClass.png)
+![alt text](../figures/msopgenclass.png)

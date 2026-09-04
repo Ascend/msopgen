@@ -486,7 +486,8 @@ For details about other parameters of the msOpGen tool, see [Table 2 Parameter d
     </tbody>
     </table>
 
-    > [!NOTE] 
+    > [!NOTE]
+    > 
     >- Multiple operators can be configured in a JSON file, which contains a list, with each element representing an operator.
     >- If the `input_desc` or `output_desc` parameter has the same `name`, the latter parameter overwrites the previous one.
     >- The `type` and `format` fields in `input_desc` and `output_desc` must be matched in sequence.
@@ -736,7 +737,8 @@ After the operator kernel and host are developed, build the operator project to 
 
     After the compilation is successful, the <code>build_out</code> directory is created in the current directory, and the custom operator installation package `custom_opp_<target_os>_<target_architecture>.run` is generated in the directory.
 
-    > [!NOTE]  
+    > [!NOTE]
+    > 
     > After the operator type is registered, the framework obtains the operator registration information based on the operator type and matches the operator implementation file name and kernel function name based on certain rules during compilation and running. To ensure correct matching, the operator type, operator implementation file name, and kernel function name must comply with the following rules. Generally, you only need to ensure that the value of the operator type in the JSON prototype definition file is in upper camel case. The code automatically generated after the project is created meets this rule. When manually writing the operator prototype definition and operator implementation file, comply with the following rules:
     >Name operator type in upper camel case and separate words with a single capitalized letter.
     >The operator implementation file name and kernel function name must be the same. They are the values after the operator type is converted using underscores (_). The following describes the process of converting the operator implementation file name and kernel function name through the operator type.
@@ -761,13 +763,15 @@ After the operator kernel and host are developed, build the operator project to 
 
     - In the default installation scenario, the `--install-path` option is not set. After the installation is successful, the custom operator files generated after building are deployed to the `${INSTALL_DIR}/opp/vendors/<vendor_name>` directory. Replace `${INSTALL_DIR}` with the file storage path after the CANN software is installed. For example, if the Ascend-CANN-Toolkit software package is installed, the default installation directory is `$HOME/Ascend/cann`.
 
-        > [!NOTE]  
+        > [!NOTE]
+        > 
         > The permission on the default installation path `${INSTALL_DIR}/opp/vendors` of the custom operator package is related to the installation user and configuration of the CANN package. If the custom operator package fails to be installed due to insufficient permissions, use the `--install-path` option and configure the environment variable `ASCEND_CUSTOM_OPP_PATH` to specify the installation directory (see [Installation in a specified directory](#zh-cn_topic_0000001691887130_li1652971821912), or contact the CANN package installation user to modify the permission on the `vendors` directory. For details about cases, see "FAQs" > "[Failed to Open the config.ini File During Operator Calling and Insufficient Permission During Operator Package Deployment](https://www.hiascend.com/document/detail/en/CANNCommunityEdition/910/programug/Ascendcopdevg/docs/guide/%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97/%E9%99%84%E5%BD%95/FAQ/%E8%B0%83%E7%94%A8%E7%AE%97%E5%AD%90%E6%97%B6%E5%87%BA%E7%8E%B0%E6%97%A0%E6%B3%95%E6%89%93%E5%BC%80config-ini%E7%9A%84%E6%8A%A5%E9%94%99.md)" in *Ascend C Operator Development Guide*.
 
     - <a id="zh-cn_topic_0000001691887130_li1652971821912"></a>For a specified directory installation scenario, configure the `--install-path` option. Upon successful installation, the files associated with the compiled custom operators will be deployed to the `<path>/vendors/<vendor_name>` directory. Additionally, a `set_env.bash` script will be created in the `<path>/vendors/<vendor_name>/bin` directory, which contains the environment variables required for the current custom operator package.
 
-        > [!NOTE]   
-        >If the `--install-path` option is configured to specify the installation directory of the operator package during deployment, run the `source <path>/vendors/<vendor_name>/bin/set_env.bash` command before using the custom operator. The `set_env.bash` script adds the installation path of the custom operator package to the environment variable `ASCEND_CUSTOM_OPP_PATH` so that the custom operator takes effect in the current environment.
+        > [!NOTE]
+        > 
+        > If the `--install-path` option is configured to specify the installation directory of the operator package during deployment, run the `source <path>/vendors/<vendor_name>/bin/set_env.bash` command before using the custom operator. The `set_env.bash` script adds the installation path of the custom operator package to the environment variable `ASCEND_CUSTOM_OPP_PATH` so that the custom operator takes effect in the current environment.
 
     After the command is executed successfully, related files in the custom operator package are deployed in the current environment.
 
@@ -807,7 +811,8 @@ After the operator kernel and host are developed, build the operator project to 
     │       ├── vendor_name2   // Custom operator deployed by storage vendor vendor_name2
     ```
 
-    > [!NOTE]  
+    > [!NOTE]
+    > 
     >**Parameter value:** `<soc_version>`. The query method is as follows:
     >- For servers other than the Atlas A3 training products/Atlas A3 inference products: Run the `npu-smi info` command on the server where the Ascend AI Processor is installed to obtain the chip name. Note that the actual value is represented by `AscendChip name`. For example, if the chip name is `xxxyy`, the actual value is `Ascendxxxyy`. If `Ascendxxxyy` is the path of the code sample, set this parameter to `ascendxxxyy`.
     >- For the Atlas A3 training products/Atlas A3 inference products, run the `npu-smi info -t board -i id -c chip_id` command on the server where the Ascend AI Processor is installed to obtain the chip name and NPU name. The actual value is represented by `Chip name_NPU name`. For example, if the chip name is `Ascendxxx` and the NPU name is `1234`, the actual value is `Ascendxxx_1234`. If `Ascendxxx_1234` is the path of the code sample, set this parameter to `ascendxxx_1234`. 
@@ -858,7 +863,8 @@ msOpGen parses dump files generated by users, and generates operator simulation 
 
 1. Run the `install.sh` file in the `${git_clone_path}/samples/operator/ascendc/0_introduction/1_add_frameworklaunch` directory and generate the `CustomOp` folder. For details, see [the document](https://gitee.com/ascend/samples/tree/master/operator/ascendc/0_introduction/1_add_frameworklaunch).
 
-    > [!NOTE]  
+    > [!NOTE]
+    > 
     > This sample project does not support Atlas A3 training products, Atlas A3 inference products, or Atlas training products.
 
     ```sh
@@ -869,7 +875,8 @@ msOpGen parses dump files generated by users, and generates operator simulation 
     1. Complete build configurations by referring to [Preparations](#section4684858183614).
     2. Run the following command in the `CustomOp` operator project directory to build the operator project:
 
-        > [!NOTE]  
+        > [!NOTE]
+        > 
         > To generate an operator simulation pipeline, change the value of `CMAKE_BUILD_TYPE` in the `CMakePresets.json` file in the current directory to `Debug`.
 
         After the build is complete, the .run operator package is generated in the `build_out` directory.
@@ -1363,7 +1370,8 @@ This section describes how to use the msOpST tool to generate the operator test 
 
     You can obtain the host-side operator implementation file [add_custom.cpp](https://gitee.com/ascend/samples/tree/master/operator/ascendc/0_introduction/1_add_frameworklaunch/AddCustom) for reference.
 
-    > [!NOTE]  
+    > [!NOTE]
+    > 
     > This sample project does not support Atlas A3 training products and Atlas A3 inference products.
 
     ```text
@@ -1382,7 +1390,8 @@ This section describes how to use the msOpST tool to generate the operator test 
     msopst create -i {operator.cpp file} -out {output path} -m {pb file} -q
     ```
 
-    > [!NOTE]  
+    > [!NOTE]
+    > 
     > Example:
     > The following command uses the AddCustom operator as an example.
     > 
@@ -1807,7 +1816,8 @@ This section describes how to use the msOpST tool to generate the operator test 
             return [res, ]
         ```
 
-        > [!NOTE]  
+        > [!NOTE]
+        > 
         > You need to create the expected data generation function of the operator based on the developed custom operator. The names of all input, output, and attribute elements in the test case definition file are used as the input parameters of the expected data generation function of the operator. If an input is optional, the default value will be specified for the input.
 
         For example, if the `x3` input is optional, define the expected operator data generation function of the operator as follows:
@@ -1846,7 +1856,8 @@ This section walks through the workflow of generating the ST data and test case 
     export NPU_HOST_LIB=${INSTALL_DIR}/${arch-os}/devlib
     ```
 
-    > [!NOTE] 
+    > [!NOTE]
+    > 
     >- Replace `${INSTALL_DIR}` with the actual file storage path after the CANN software is installed. For example, if the installation is performed as the `root` user, the default file storage path after the installation is `/usr/local/Ascend/cann`.
     >- In `{arch-os}`, `arch` indicates the OS architecture, and `os` indicates the operating system.
 
@@ -1859,7 +1870,8 @@ This section walks through the workflow of generating the ST data and test case 
     - The path of the `msopst.ini` file is `${INSTALL_DIR}/python/site-packages/bin/`.
     - The following table describes the parameters in the·`msopst.ini` file.
 
-        > [!NOTE]  
+        > [!NOTE]
+        > 
         >By default, the `msopst.ini` file uses the `FP16` precision mode. To use another precision mode, manually modify the `--precision_mode` option of `atc_singleop_advance_option` in [Table 1 msopst.ini file parameter description](#zh-cn_topic_0000001821790281_table17358154319919).
 
         **Table 1** msopst.ini file parameter description
@@ -2035,7 +2047,8 @@ This section walks through the workflow of generating the ST data and test case 
                 msopst run -i xx/AddCustom_case_timestamp.json -soc {soc version} -out ./output -conf xx/msopst.ini
                 ```
 
-            > [!NOTE] 
+            > [!NOTE]
+            > 
             > If the execution fails, analyze the cause as follows:
             >- For details about aclError, see [aclError](https://www.hiascend.com/document/detail/en/CANNCommunityEdition/910/API/runtimeapi/aclcppdevg_03_1345.html).
             >- See [Error Code Reference](https://www.hiascend.com/document/detail/en/CANNCommunityEdition/910/maintenref/troubleshooting/troubleshooting_0225.html).
@@ -2245,7 +2258,8 @@ This section walks through the workflow of generating the ST data and test case 
             export NPU_HOST_LIB=${INSTALL_DIR}/{arch-os}/devlib
             ```
 
-        > [!NOTE] 
+        > [!NOTE]
+        > 
         >- Replace `${INSTALL_DIR}` with the actual file storage path after the CANN software is installed. For example, if the installation is performed as the `root` user, the default file storage path after the installation is `/usr/local/Ascend/cann`.
         >- In `arch-os`, `arch` indicates the OS architecture (select a value based on the architecture of the operating environment), and `os` indicates the operating system (select a value based on the OS of the operating environment).
 
@@ -2292,7 +2306,7 @@ This section walks through the workflow of generating the ST data and test case 
 
 This section describes how to specify the ST case definition file (.json) and implementation file `kernel_name.cpp` of the Ascend C operator to automatically generate the on-board test framework for calling the kernel function, test and verify the operator, and view the output result to check whether the operator function is correct.
 
-> [!NOTE] 
+> [!NOTE]
 > 
 >- This function applies only to Atlas inference products and Atlas training products, excluding the Atlas A2 training products/Atlas A2 inference products and Atlas A3 training products/Atlas A3 inference products.
 >- The `addr` and `tiling` attributes cannot be specified for any parameter.

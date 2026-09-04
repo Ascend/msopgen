@@ -50,7 +50,8 @@ rm -rf ~/ot_demo/workspace/src && mkdir -p ~/ot_demo/workspace/src && cd ~/ot_de
 
 #### 2.2.2 Developing the Operator Definition Configuration File
 
-> [!NOTE]  
+> [!NOTE]
+> 
 > **(Optional) Knowledge point: msOpGen input configuration file**  
 > This is a JSON configuration file in a custom format, which can be simply understood as a declaration of a C-language function, including the function name, input parameters, and return value type.
 > For example, the `msopgen_demo.json` file defines the operator name and names, types, and data layout format of input and output variables.
@@ -117,7 +118,8 @@ msopgen gen -i msopgen_demo.json -c xxx -lan cpp -out AddCustom
 
 #### 2.2.4 Viewing the Generated Result  
 
-> [!NOTE]  
+> [!NOTE]
+> 
 > **(Optional) Knowledge point: key concepts**  
 > On the host: code running on the CPU, responsible for data preprocessing, task scheduling, and operator calling.  
 > On the kernel: code running on the NPU, responsible for executing the massively parallel computing logic.  
@@ -144,7 +146,8 @@ AddCustom
 
 ### 2.3 Implementing the Core Logic
 
-> [!NOTE]  
+> [!NOTE]
+> 
 > **(Optional) Knowledge point: implementation principles of core operator code files**  
 > `op_host/add_custom.cpp`: Implements the tiling compute logic and operator prototype registration on the host.  
 > `op_kernel/add_custom_tiling.h`: Defines the data structure of the tiling policy.  
@@ -495,7 +498,8 @@ bash ./build.sh
 
 **2. Deploy the operator.**  
 
-> [!NOTE]  
+> [!NOTE]
+> 
 > **(Optional) Knowledge point: What does "deploying an operator" mean?**  
 > To deploy an operator means to register the operator with the CANN framework. In essence, this involves copying the binary files of the operator to a system-wide public directory, enabling other programs to
 > automatically discover and invoke the operator through standard APIs (such as CANN or PyTorch APIs). A deployment package in `.run` format can be simply understood as a self-extracting compressed package.
