@@ -24,7 +24,6 @@ import os
 import stat
 import shutil
 import subprocess  # nosec B404
-from datetime import datetime, timezone
 from pathlib import Path
 
 from setuptools import setup
@@ -93,11 +92,6 @@ def get_git_revision(repository):
     return result.stdout.strip() or "unknown"
 
 
-def get_build_date():
-    """Return the build timestamp in UTC ISO-8601 format."""
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-
 def write_build_info():
     """Generate metadata used by wheel, regular, and editable installations."""
     project_root = Path(currentDir)
@@ -106,10 +100,9 @@ def write_build_info():
         dependency_revision = ""
     build_info_path = project_root / "msopgen" / "_build_info.py"
     build_info_path.write_text(
-        "# Generated at build time. Do not edit.\n"
-        "COMMIT_REVISION = {!r}\n"
-        "BUILD_DATE = {!r}\n"
-        "ASC_TOOLS_REVISION = {!r}\n".format(get_git_revision(project_root), get_build_date(), dependency_revision),
+        "# Generated at build time. Do not edit.\nCOMMIT_REVISION = {!r}\nASC_TOOLS_REVISION = {!r}\n".format(
+            get_git_revision(project_root), dependency_revision
+        ),
         encoding="utf-8",
     )
 
