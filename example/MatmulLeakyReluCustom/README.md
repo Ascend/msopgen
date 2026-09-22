@@ -8,9 +8,9 @@
 
 ## 支持的产品范围
 
-- Ascend 950PR&950DT 系列产品
-- Atlas A3 系列产品
-- Atlas A2 系列产品
+- Ascend 950PR&950DT系列产品
+- Atlas A3系列产品
+- Atlas A2系列产品
 
 ## 目录结构
 
