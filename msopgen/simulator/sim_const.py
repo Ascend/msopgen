@@ -20,6 +20,7 @@
 Function:
 simulator const parameters
 """
+
 from enum import Enum
 
 
@@ -27,6 +28,7 @@ class DumpType(Enum):
     """
     simulator dump file type
     """
+
     InstrDump = "instr"
     InstrPopDump = "instr_pop"
     IcacheDump = "icache"
@@ -36,6 +38,7 @@ class Const:
     """
     simulator constant
     """
+
     SET_FLAG = "set_flag"
     WAIT_FLAG = "wait_flag"
     BARRIER = "barrier"

@@ -1,3 +1,19 @@
+# -------------------------------------------------------------------------
+# This file is part of the MindStudio project.
+# Copyright (c) 2026 Huawei Technologies Co.,Ltd.
+#
+# MindStudio is licensed under Mulan PSL v2.
+# You can use this software according to the terms and conditions of the Mulan PSL v2.
+# You may obtain a copy of Mulan PSL v2 at:
+#
+#          http://license.coscl.org.cn/MulanPSL2
+#
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+# EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+# MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+# See the Mulan PSL v2 for more details.
+# -------------------------------------------------------------------------
+
 import os
 import stat
 import shutil
@@ -17,9 +33,7 @@ os.chmod(dst, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 setup(
     name="mindstudio-opst",
     version=os.environ.get('WHL_VERSION', '26.0.0'),
-    options={
-        'bdist_wheel': {
-            'python_tag': 'py3'}},
+    options={'bdist_wheel': {'python_tag': 'py3'}},
     scripts=['build/msopst', 'msopst/scripts/msopst.ini'],
     packages=['msopst'],
     package_data={
@@ -32,5 +46,5 @@ setup(
     },
     include_package_data=True,
     zip_safe=False,
-    python_requires = '>=3.7'
+    python_requires='>=3.7',
 )

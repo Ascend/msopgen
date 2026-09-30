@@ -19,6 +19,7 @@
 """
 shape utils module
 """
+
 import functools
 
 

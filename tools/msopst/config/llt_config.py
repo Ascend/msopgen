@@ -25,6 +25,7 @@ class LLTConf:  # 'pylint: disable=too-few-public-methods
     """
     llt conf
     """
+
     default_dynamic_case_cnt = 10
 
     op_cfg_file_path = {}
