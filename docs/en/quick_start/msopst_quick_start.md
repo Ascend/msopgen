@@ -13,12 +13,12 @@ This sample generates an `.om` file of a single-operator based on the AscendCL A
 
 ## Environment Setup<a id="section81731814530"></a>
 
-- Prepare an Atlas A2 training or inference server and install the required driver and firmware. For details, see "Installing the NPU Driver and Firmware" in [CANN Software Installation Guide](https://www.hiascend.com/document/detail/en/CANNCommunityEdition/910/softwareinst/instg/instg_0000.html?OS=openEuler&InstallType=netconda).
-- Install the CANN Toolkit and ops operator package of the required version and configure CANN environment variables. For details, see [CANN Software Installation Guide](https://www.hiascend.com/document/detail/en/CANNCommunityEdition/910/softwareinst/instg/instg_0000.html?OS=openEuler&InstallType=netconda).
-- To use MindStudio Insight for viewing, install the MindStudio Insight software package separately. For download links, see "Installation Guide" in [MindStudio Insight User Guide](https://www.hiascend.com/document/detail/en/mindstudio/2610/GUI_baseddevelopmenttool/MindStudioInsight/docs/en/install_guide/mindstudio_insight_install_guide.md?framework=mindspore).
+- Prepare a server with Atlas A2 products and install the required driver and firmware. For details, see "Installing the NPU Driver and Firmware" in [CANN Software Installation Guide](https://www.hiascend.com/document/detail/en/CANNCommunityEdition/latest/softwareinst/instg/instg_0107.html?OS=openEuler&InstallType=netyum).
+- Install the CANN Toolkit and ops operator package of the required version and configure CANN environment variables. For details, see [CANN Software Installation Guide](https://www.hiascend.com/document/detail/en/CANNCommunityEdition/latest/softwareinst/instg/instg_0089.html?OS=openEuler&InstallType=netyum).
+- To use MindStudio Insight for viewing, install the MindStudio Insight software package separately. For download links, see "Installation Guide" in [MindStudio Insight User Guide](https://atomgit.com/Ascend/msinsight/blob/26.2.0/docs/en/install_guide/mindstudio_insight_install_guide.md).
 
 > [!NOTE]
-> 
+>
 > Run the `npu-smi info` command on the server where the Ascend AI Processor is installed to obtain the chip name. Note that the actual value is represented by `AscendChip name`. For example, if the chip name is `xxxyy`, the actual value is `Ascendxxxyy`. If the chip name is `xxxyy`, set this parameter to `Ascendxxxyy`.
 
 ## Common Commands Quick Reference
@@ -78,5 +78,5 @@ This sample generates an `.om` file of a single-operator based on the AscendCL A
         - `-err_thr, --error_threshold`: custom accuracy criteria. Optional (`"[0.01,0.05]"` by default).
 
         > [!NOTE]
-        > 
+        >
         > Replace `${INSTALL_DIR}` with the actual file storage path after the CANN software is installed. For example, if the installation is performed as the `root` user, the default file storage path after the installation is `/usr/local/Ascend/cann`.
