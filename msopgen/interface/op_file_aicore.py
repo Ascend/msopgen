@@ -19,6 +19,7 @@ This file mainly involves class for generating aicore operator files.
 # See the Mulan PSL v2 for more details.
 # -------------------------------------------------------------------------
 """
+
 import os
 import re
 from functools import partial
@@ -53,20 +54,12 @@ class OpFileAiCore(OPFile):
         "DT_COMPLEX32": "complex32",
         "DT_COMPLEX64": "complex64",
         "DT_COMPLEX128": "complex128",
-        "DT_DOUBLE": "double"
+        "DT_DOUBLE": "double",
     }
 
-    PARAM_CHECK_TYPE_MAP = {
-        "required": "REQUIRED",
-        "optional": "OPTION",
-        "dynamic": "DYNAMIC"
-    }
+    PARAM_CHECK_TYPE_MAP = {"required": "REQUIRED", "optional": "OPTION", "dynamic": "DYNAMIC"}
 
-    ASCEND_C_PARAM_TYPE_MAP = {
-        "required": "REQUIRED",
-        "optional": "OPTIONAL",
-        "dynamic": "DYNAMIC"
-    }
+    ASCEND_C_PARAM_TYPE_MAP = {"required": "REQUIRED", "optional": "OPTIONAL", "dynamic": "DYNAMIC"}
 
     @staticmethod
     def _mapping_attr_type_for_ini(attr_type: str) -> str:
@@ -78,11 +71,13 @@ class OpFileAiCore(OPFile):
         op_type = op_type.strip()
         if op_type in OpFileAiCore.CFG_INFO_TYPE_MAP:
             return OpFileAiCore.CFG_INFO_TYPE_MAP.get(op_type)
-        utils.print_warn_log("The input/output type '%s' "
-                             "is not supported by the .ini file. "
-                             "Please check. If "
-                             "you do not have this problem, ignore "
-                             "the warning." % op_type)
+        utils.print_warn_log(
+            "The input/output type '%s' "
+            "is not supported by the .ini file. "
+            "Please check. If "
+            "you do not have this problem, ignore "
+            "the warning." % op_type
+        )
         return ""
 
     def generate_impl(self: any) -> None:
@@ -107,17 +102,14 @@ class OpFileAiCore(OPFile):
         Return Value:
         """
         if not self.op_info.fix_op_type:
-            utils.print_warn_log("The op type is empty. Failed to generate "
-                                 "the info config file. Please check.")
+            utils.print_warn_log("The op type is empty. Failed to generate the info config file. Please check.")
             return
         # 1.make [OpType], eg:[Add]
         new_str = OPTmpl.INI_OP.format(op_type=self.op_info.op_type)
         # 2.make input string
-        new_str += self._generate_input_output_info_cfg(
-            self.op_info.parsed_input_info, OPTmpl.INI_INPUT)
+        new_str += self._generate_input_output_info_cfg(self.op_info.parsed_input_info, OPTmpl.INI_INPUT)
         # 3.make output string
-        new_str += self._generate_input_output_info_cfg(
-            self.op_info.parsed_output_info, OPTmpl.INI_OUTPUT)
+        new_str += self._generate_input_output_info_cfg(self.op_info.parsed_output_info, OPTmpl.INI_OUTPUT)
         # 4.make attr string
         if len(self.op_info.parsed_attr_info) > 0:
             attr_info = ", ".join(x[0] for x in self.op_info.parsed_attr_info)
@@ -137,7 +129,7 @@ class OpFileAiCore(OPFile):
         Return Value:
         """
         cpp_list = ['#include "kernel_operator.h"']
-        cpp_list.append('#include "' + self.op_info.fix_op_type +  '_tiling.h"')
+        cpp_list.append('#include "' + self.op_info.fix_op_type + '_tiling.h"')
         cpp_list.append('')
         kern_args = []
         for op_input in list(self.op_info.parsed_input_info):
@@ -150,8 +142,7 @@ class OpFileAiCore(OPFile):
         kern_args.append('GM_ADDR workspace')
         kern_args.append('GM_ADDR tiling')
         arg_list = ', '.join(kern_args)
-        cpp_list.append('extern "C" __global__ __aicore__ void {}({}) {{'.format(
-            self.op_info.fix_op_type, arg_list))
+        cpp_list.append('extern "C" __global__ __aicore__ void {}({}) {{'.format(self.op_info.fix_op_type, arg_list))
         cpp_list.append('    REGISTER_TILING_DEFAULT({}TilingData);'.format(self.op_info.op_type))
         cpp_list.append('    GET_TILING_DATA(tilingData, tiling);')
         cpp_list.append('    // TODO: user kernel impl')
@@ -171,8 +162,7 @@ class OpFileAiCore(OPFile):
         """
         op_params_for_check = self._generate_op_params_for_check()
         if not self.op_info.fix_op_type:
-            utils.print_warn_log("The op type is empty. Failed to generate "
-                                 "impl files. Please check.")
+            utils.print_warn_log("The op type is empty. Failed to generate impl files. Please check.")
             return
         # 1.make head string
         head_str = OPTmpl.PY_HEAD
@@ -182,29 +172,24 @@ class OpFileAiCore(OPFile):
         head_str = self._generate_impl_compute(head_str, op_input, op_output)
         # 3.make [op_type]()
         head_str = self._generate_impl_define_head(head_str, op_input, op_output, op_params_for_check)
-        input_data = ", ".join("data_" + x
-                               for x in self.op_info.parsed_input_info)
+        input_data = ", ".join("data_" + x for x in self.op_info.parsed_input_info)
         output_data = ", ".join(y for y in self.op_info.parsed_output_info)
         if len(self.op_info.parsed_attr_info) == 0:
             head_str += OPTmpl.PY_RES_WITHOUT_ATTR.format(
-                name=self.op_info.fix_op_type,
-                input_data=input_data,
-                output_data=output_data)
+                name=self.op_info.fix_op_type, input_data=input_data, output_data=output_data
+            )
         else:
             attr = ", ".join(a[0] for a in self.op_info.parsed_attr_info)
             head_str += OPTmpl.PY_RES_WIT_ATTR.format(
-                name=self.op_info.fix_op_type,
-                input_data=input_data,
-                output_data=output_data,
-                attr=attr)
+                name=self.op_info.fix_op_type, input_data=input_data, output_data=output_data, attr=attr
+            )
         head_str += OPTmpl.PY_TARGET_CCE
-        head_str += OPTmpl.PY_BUILD.format(input_data=input_data,
-                                           left_braces=ConstManager.LEFT_BRACES,
-                                           right_braces=ConstManager.RIGHT_BRACES)
+        head_str += OPTmpl.PY_BUILD.format(
+            input_data=input_data, left_braces=ConstManager.LEFT_BRACES, right_braces=ConstManager.RIGHT_BRACES
+        )
         # create py_dir
         py_dir = os.path.join(self.output_path, ConstManager.IMPL_DIR)
-        py_path = os.path.join(py_dir, self.op_info.fix_op_type +
-                               ConstManager.IMPL_SUFFIX)
+        py_path = os.path.join(py_dir, self.op_info.fix_op_type + ConstManager.IMPL_SUFFIX)
         utils.make_dirs(py_dir)
         utils.write_files(py_path, head_str)
 
@@ -214,15 +199,12 @@ class OpFileAiCore(OPFile):
             return
         utils.make_dirs(tbe_dir)
         cann_install_path = ConstManager.CANN_HOME_PATH
-        template_path = os.path.join(
-            cann_install_path,
-            ConstManager.OP_TEMPLATE_TBE_PATH)
+        template_path = os.path.join(cann_install_path, ConstManager.OP_TEMPLATE_TBE_PATH)
         if not os.path.exists(template_path):
             utils.print_error_log(
                 "Get template TBE file path failed. Please check if your cann-toolkit is installed and envs."
             )
-            raise utils.MsOpGenException(
-                ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
+            raise utils.MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
         utils.copy_template(template_path, tbe_dir, True)
         utils.modify_permission(tbe_dir)
 
@@ -252,27 +234,23 @@ class OpFileAiCore(OPFile):
     def _generate_impl_compute(self: any, head_str: str, op_input: str, op_output: str) -> str:
         if len(self.op_info.parsed_attr_info) == 0:
             head_str += OPTmpl.PY_COMPUTE_WITHOUT_ATTR.format(
-                name=self.op_info.fix_op_type,
-                input_name=op_input,
-                output=op_output)
+                name=self.op_info.fix_op_type, input_name=op_input, output=op_output
+            )
         else:
             attr = ", ".join(a[0] for a in self.op_info.parsed_attr_info)
             head_str += OPTmpl.PY_COMPUTE_WITH_ATTR.format(
-                name=self.op_info.fix_op_type,
-                input_name=op_input,
-                output=op_output,
-                attr=attr)
+                name=self.op_info.fix_op_type, input_name=op_input, output=op_output, attr=attr
+            )
         head_str += OPTmpl.PY_COMPUTE_END.format(input_name=op_input)
         return head_str
 
-    def _generate_impl_define_head(self: any, head_str: str, op_input: str, op_output: str,
-                                   op_params_for_check: str) -> str:
+    def _generate_impl_define_head(
+        self: any, head_str: str, op_input: str, op_output: str, op_params_for_check: str
+    ) -> str:
         if len(self.op_info.parsed_attr_info) == 0:
             head_str += OPTmpl.PY_DEF_WITHOUT_ATTR.format(
-                op_params=op_params_for_check,
-                name=self.op_info.fix_op_type,
-                input_name=op_input,
-                output=op_output)
+                op_params=op_params_for_check, name=self.op_info.fix_op_type, input_name=op_input, output=op_output
+            )
         else:
             attr = ", ".join(a[0] for a in self.op_info.parsed_attr_info)
             head_str += OPTmpl.PY_DEF_WITH_ATTR.format(
@@ -280,44 +258,29 @@ class OpFileAiCore(OPFile):
                 name=self.op_info.fix_op_type,
                 input_name=op_input,
                 output=op_output,
-                attr=attr)
+                attr=attr,
+            )
         for name in self.op_info.parsed_input_info:
             head_str += OPTmpl.PY_PLACEHOLDER.format(name=name)
         return head_str
 
     def _generate_attr_aicore(self: any, attr: list, new_str: str) -> str:
         attr_type = self._mapping_attr_type_for_ini(attr[1])
-        new_str += OPTmpl.INI_ATTR_TYPE_VALUE.format(name=attr[0],
-                                                      type=attr_type)
+        new_str += OPTmpl.INI_ATTR_TYPE_VALUE.format(name=attr[0], type=attr_type)
         if len(attr) == 4:
-            new_str += OPTmpl.INI_ATTR_PARAM_TYPE.format(
-                name=attr[0],
-                paramType=attr[3]
-            )
+            new_str += OPTmpl.INI_ATTR_PARAM_TYPE.format(name=attr[0], paramType=attr[3])
             if attr[2]:
-                new_str += OPTmpl.INI_ATTR_DEFAULT_VALUE.format(
-                    name=attr[0],
-                    defaultValue=attr[2]
-                )
+                new_str += OPTmpl.INI_ATTR_DEFAULT_VALUE.format(name=attr[0], defaultValue=attr[2])
         elif len(attr) == 3 and attr[2] != "":
-            new_str += OPTmpl.INI_ATTR_PARAM_TYPE.format(
-                name=attr[0],
-                paramType=ConstManager.PARAM_TYPE_OPTIONAL
-            )
-            new_str += OPTmpl.INI_ATTR_DEFAULT_VALUE.format(
-                name=attr[0],
-                defaultValue=attr[2]
-            )
+            new_str += OPTmpl.INI_ATTR_PARAM_TYPE.format(name=attr[0], paramType=ConstManager.PARAM_TYPE_OPTIONAL)
+            new_str += OPTmpl.INI_ATTR_DEFAULT_VALUE.format(name=attr[0], defaultValue=attr[2])
         else:
-            new_str += OPTmpl.INI_ATTR_PARAM_TYPE.format(
-                name=attr[0],
-                paramType=ConstManager.PARAM_TYPE_REQUIRED
-            )
+            new_str += OPTmpl.INI_ATTR_PARAM_TYPE.format(name=attr[0], paramType=ConstManager.PARAM_TYPE_REQUIRED)
         return new_str
 
     def _generate_input_output_info_cfg(self: any, parsed_info: any, template_string: str) -> str:
         new_str = ""
-        for (index, name) in enumerate(parsed_info):
+        for index, name in enumerate(parsed_info):
             ir_types = (x for x in parsed_info[name][ConstManager.INFO_IR_TYPES_KEY] if x != "")
             ini_types = (self._mapping_info_cfg_type(x) for x in ir_types)
             ini_types = (x for x in ini_types if x != "")
@@ -334,11 +297,9 @@ class OpFileAiCore(OPFile):
                     op_format = ",".join(parsed_info[name][ConstManager.INFO_PARAM_FORMAT_KEY])
             else:
                 op_format = ",".join("ND" for _ in ini_types.split(','))
-            new_str += template_string.format(index=index,
-                                              name=name,
-                                              dtype=ini_types,
-                                              format=op_format,
-                                              paramType=param_type)
+            new_str += template_string.format(
+                index=index, name=name, dtype=ini_types, format=op_format, paramType=param_type
+            )
         return new_str
 
     def _make_info_cfg_file(self: any, new_str: str) -> None:
@@ -350,20 +311,20 @@ class OpFileAiCore(OPFile):
             utils.make_dirs(info_dir)
             core_type_dir = os.path.join(info_dir, compute_unit_parse_list[0])
             utils.make_dirs(core_type_dir)
-            soc_dir = os.path.join(core_type_dir,
-                                   utils.CheckFromConfig().trans_soc_version(compute_unit_parse_list[1]))
+            soc_dir = os.path.join(core_type_dir, utils.CheckFromConfig().trans_soc_version(compute_unit_parse_list[1]))
             utils.make_dirs(soc_dir)
             # create dir and write ini file
-            info_path = os.path.join(soc_dir, self.op_info.fix_op_type +
-                                     ".ini")
+            info_path = os.path.join(soc_dir, self.op_info.fix_op_type + ".ini")
             utils.write_files(info_path, new_str)
 
     def _generate_cpp_tiling(self: any) -> None:
         th_path = os.path.join(self.output_path, ConstManager.CPP_KERNEL_DIR)
         th_file = os.path.join(th_path, self.op_info.fix_op_type + "_tiling.h")
         utils.make_dirs(th_path)
-        utils.write_files(th_file, OPTmpl.OP_HOST_TILING_DEF_H.format(
-                          op_type=self.op_info.fix_op_type.upper(), op_name=self.op_info.op_type ))
+        utils.write_files(
+            th_file,
+            OPTmpl.OP_HOST_TILING_DEF_H.format(op_type=self.op_info.fix_op_type.upper(), op_name=self.op_info.op_type),
+        )
 
     def _generate_cpp_params(self: any, is_output: bool) -> str:
         param_str = ""
@@ -373,10 +334,11 @@ class OpFileAiCore(OPFile):
         else:
             param_api = "Input"
             param_info = self.op_info.parsed_input_info
-        for (name, value) in param_info.items():
+        for name, value in param_info.items():
             param_type = OpFileAiCore.ASCEND_C_PARAM_TYPE_MAP.get(value[ConstManager.INFO_PARAM_TYPE_KEY])
-            ge_types = ", ".join(["ge::" + t for t in value[ConstManager.INFO_IR_TYPES_KEY]]).\
-                                            replace("DT_FLOAT32", "DT_FLOAT")
+            ge_types = ", ".join(["ge::" + t for t in value[ConstManager.INFO_IR_TYPES_KEY]]).replace(
+                "DT_FLOAT32", "DT_FLOAT"
+            )
             ge_fmts = ", ".join(["ge::FORMAT_" + f for f in value[ConstManager.INFO_PARAM_FORMAT_KEY]])
             param_str += "        this->{api}(\"{name}\")\n".format(api=param_api, name=name)
             param_str += "            .ParamType({type})\n".format(type=param_type)
@@ -384,6 +346,18 @@ class OpFileAiCore(OPFile):
             param_str += "            .Format({{{fmt}}})\n".format(fmt=ge_fmts)
             param_str += "            .UnknownShapeFormat({{{fmt}}});\n".format(fmt=ge_fmts)
         return param_str
+
+    @staticmethod
+    def _format_cpp_list_value(value: any) -> str:
+        """Render list defaults as C++ initializers, including nested lists and booleans."""
+        if isinstance(value, list):
+            return "{" + ", ".join(OpFileAiCore._format_cpp_list_value(item) for item in value) + "}"
+        if isinstance(value, bool):
+            return "true" if value else "false"
+        if isinstance(value, int) and value == -(1 << 63):
+            # The positive magnitude of INT64_MIN does not fit a signed C++ literal.
+            return "(-9223372036854775807 - 1)"
+        return str(value)
 
     def _generate_cpp_attrs(self: any) -> str:
         attr_str = ""
@@ -395,12 +369,14 @@ class OpFileAiCore(OPFile):
             attr_val = attr[2]
             if attr_api == "String":
                 attr_val = "\"{val}\"".format(val=attr[2])
+            elif attr_api in ("ListInt", "ListFloat", "ListBool", "ListListInt") and isinstance(attr_val, list):
+                attr_val = self._format_cpp_list_value(attr_val)
             if attr[3] == "optional":
                 attr_str += "        this->Attr(\"{name}\").AttrType(OPTIONAL).{api}({val});\n".format(
-                    name=attr[0], api=attr_api, val=attr_val)
+                    name=attr[0], api=attr_api, val=attr_val
+                )
             else:
-                attr_str += "        this->Attr(\"{name}\").{api}();\n".format(
-                    name=attr[0], api=attr_api)
+                attr_str += "        this->Attr(\"{name}\").{api}();\n".format(name=attr[0], api=attr_api)
         return attr_str
 
     def _generate_cpp_aicore(self: any) -> str:
@@ -412,7 +388,8 @@ class OpFileAiCore(OPFile):
             if units[0] != "ai_core":
                 continue
             aic_str += "        this->AICore().AddConfig(\"{soc_ver}\");\n".format(
-                soc_ver = utils.CheckFromConfig().trans_soc_version(units[1]))
+                soc_ver=utils.CheckFromConfig().trans_soc_version(units[1])
+            )
         return aic_str
 
     def _generate_cpp_opdef(self: any) -> None:
@@ -431,7 +408,7 @@ class OpFileAiCore(OPFile):
         file_str += self._generate_cpp_aicore()
         file_str += OPTmpl.OP_HOST_DEF_END.format(op_type=self.op_info.op_type)
         utils.write_files(def_file, file_str)
-        
+
     def _generate_op_host(self: any) -> None:
         self._generate_cpp_tiling()
         self._generate_cpp_opdef()
@@ -444,33 +421,31 @@ class OpFileAiCore(OPFile):
 
     def _update_config_cmake(self: any, config_content: str, env: dict) -> str:
         repl_func = partial(self._update_cmake_variable_value, env)
-        return re.sub(r'set\s*\(\s*(?P<variable>[\w{}]+)\s+(?P<value>.*?)((\s+CACHE\s+.+)|(PARENT_SCOPE)?)\)',
-                    repl_func,
-                    config_content,
-                    flags=re.IGNORECASE)
+        return re.sub(
+            r'set\s*\(\s*(?P<variable>[\w{}]+)\s+(?P<value>.*?)((\s+CACHE\s+.+)|(PARENT_SCOPE)?)\)',
+            repl_func,
+            config_content,
+            flags=re.IGNORECASE,
+        )
 
     def _update_ascendc_op_kernel_cmake(self: any) -> None:
         cmake_file_path = os.path.join(self.output_path, ConstManager.KERNEL_CMAKELISTS_FILE)
         if not os.path.exists(cmake_file_path):
-            utils.print_error_log(
-                "Get template file path %s failed." % cmake_file_path
-            )
-            raise utils.MsOpGenException(
-                ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
+            utils.print_error_log("Get template file path %s failed." % cmake_file_path)
+            raise utils.MsOpGenException(ConstManager.MS_OP_GEN_INVALID_PATH_ERROR)
         cmake_str = utils.read_file(cmake_file_path)
-        cmake_update_value = cmake_str.format(op_name=self.op_info.op_type,
-                                              compute_unit=self.input_soc_version,
-                                              kernel_name=self.op_info.fix_op_type)
+        socs = [
+            utils.CheckFromConfig().trans_soc_version(unit.split("-", 1)[1])
+            for unit in self.compute_unit
+            if unit.startswith("ai_core-")
+        ]
+        cmake_update_value = cmake_str.format(
+            op_name=self.op_info.op_type, compute_unit=";".join(socs), kernel_name=self.op_info.fix_op_type
+        )
         utils.write_files(cmake_file_path, cmake_update_value)
-        return
-
 
     def _check_config_cmake_env(self: any, content: str, config_env: dict, config_type: str) -> None:
-        check_list = ["ASCEND_COMPUTE_UNIT"]
-        check_list.append("ASCEND_FRAMEWORK_TYPE")
-        for env in check_list:
-            if env in content:
-                check_list.remove(env)
+        check_list = [env for env in ("ASCEND_COMPUTE_UNIT", "ASCEND_FRAMEWORK_TYPE") if env not in content]
         if check_list:
             res = ", ".join(check_list)
             utils.print_warn_log("File config.cmake lack of {}. Please check your config env.".format(res))
@@ -496,14 +471,12 @@ class OpFileAiCore(OPFile):
                 if preset.get(cache_variables).get('ASCEND_COMPUTE_UNIT').get(preset_value) is not None:
                     preset[cache_variables]['ASCEND_COMPUTE_UNIT'][preset_value] = soc
                 if preset.get(cache_variables).get('ASCEND_CANN_PACKAGE_PATH').get(preset_value) is not None:
-                    preset[cache_variables]['ASCEND_CANN_PACKAGE_PATH'][preset_value] = \
-                        cann_install_path
+                    preset[cache_variables]['ASCEND_CANN_PACKAGE_PATH'][preset_value] = cann_install_path
         # write presets json
         os.chmod(json_file, ConstManager.CONFIG_MODE)
         fd = os.open(json_file, ConstManager.WRITE_FLAGS | os.O_TRUNC, ConstManager.CONFIG_MODE)
         with os.fdopen(fd, 'w+') as file:
             json.dump(preset_json_data, file, indent=4)
-        return
 
     def _new_operator(self: any) -> None:
         if self.op_lan == ConstManager.OP_LAN_CPP:

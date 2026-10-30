@@ -93,7 +93,7 @@ repos:
           - "--style={BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 120, BreakBeforeBraces: Allman}"
           - "--verbose"
           - "-i"
-        exclude: ^build/|tests/third_party/
+        exclude: ^build/|tests/third_party/|^test/test_msopgen/st/msopgen/golden/golden_from_(json|ms_json)/golden_output_cpp/op_host/conv2_d\.cpp$
 
   # -------------------------- Gitleaks 本地离线二进制扫描 --------------------------
   - repo: local

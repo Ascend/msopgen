@@ -58,8 +58,8 @@ public:
             .DataType({ge::DT_FLOAT16, ge::DT_FLOAT})
             .Format({ge::FORMAT_ND, ge::FORMAT_NCHW})
             .UnknownShapeFormat({ge::FORMAT_ND, ge::FORMAT_NCHW});
-        this->Attr("strides").AttrType(OPTIONAL).ListInt([1, 1, 1, 1]);
-        this->Attr("pads").AttrType(OPTIONAL).ListInt([1, 1, 1, 1]);
+        this->Attr("strides").AttrType(OPTIONAL).ListInt({1, 1, 1, 1});
+        this->Attr("pads").AttrType(OPTIONAL).ListInt({1, 1, 1, 1});
         this->Attr("dilations").ListInt();
 
         this->SetInferShape(ge::InferShape).SetInferDataType(ge::InferDataType);
