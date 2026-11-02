@@ -3,12 +3,12 @@
 <div align="center">
 <p><b><span style="font-size:24px;">Ascend AI Operator Project Generator</span></b></p>
 
- [![Quick Start](https://badgen.net/badge/快速入门/QuickStart/blue)](docs/en/quick_start/msopgen_quick_start.md)
- [![AI Q&A (DeepWiki)](https://badgen.net/badge/AI问答/DeepWiki/blue)](https://deepwiki.com/mindstudio-docs/master) 
- [![AI Q&A (ZRead)](https://badgen.net/badge/AI问答/ZRead/blue)](https://zread.ai/mindstudio-docs/master) 
- [![Exact Search](https://badgen.net/badge/精确搜索/ReadTheDocs/blue)](https://mindstudio-docs-master.readthedocs.io/zh-cn/latest/) 
- [![Ascend Community](https://badgen.net/badge/昇腾社区/Community/blue)](https://www.hiascend.com/cn/developer/software/mindstudio) 
- [![Report an Issue](https://badgen.net/badge/报告问题/Issues/blue)](https://gitcode.com/Ascend/msopgen/issues) 
+ [![Quick Start](https://badgen.net/badge/Quick%20Start/QuickStart/blue)](docs/en/quick_start/msopgen_quick_start.md)
+ [![AI Q&A (DeepWiki)](https://badgen.net/badge/AI%20Q%26A/DeepWiki/blue)](https://deepwiki.com/mindstudio-docs/master) 
+ [![AI Q&A (ZRead)](https://badgen.net/badge/AI%20Q%26A/ZRead/blue)](https://zread.ai/mindstudio-docs/master) 
+ [![Exact Search](https://badgen.net/badge/Exact%20Search/ReadTheDocs/blue)](https://mindstudio-docs-master.readthedocs.io/zh-cn/latest/) 
+ [![Ascend Community](https://badgen.net/badge/Ascend%20Community/Community/blue)](https://www.hiascend.com/eng/developer/software/mindstudio) 
+ [![Report Issues](https://badgen.net/badge/Report%20Issues/Issues/blue)](https://gitcode.com/Ascend/msopgen/issues) 
 
 </div>
 
@@ -70,7 +70,7 @@ You are welcome to contribute to the project. For details, see [Contribution Gui
 
 ## ⚖️ Related Notes
 
-🔹 [Release Notes](./docs/en/release_notes/release_notes.md)   
+🔹 [Release Notes](https://gitcode.com/Ascend/msopgen/releases)   
 🔹 [License Notice](./docs/en/legal/license_notice.md)   
 🔹 [Security Statement](./docs/en/legal/security_statement.md)   
 🔹 [Disclaimer](./docs/en/legal/disclaimer.md) 
@@ -85,10 +85,6 @@ You are welcome to contribute to the community. If you have any questions or sug
 
 ## 🙏 Acknowledgements
 
-This tool is jointly developed by the following Huawei departments:   
-🔹 Ascend Computing MindStudio Development Department  
-🔹 Ascend Computing Ecosystem Enablement Department  
-🔹 Huawei Cloud AI Compute Service  
-🔹 Compiler Technologies Lab, 2012 Labs   
-🔹 Markov Lab, 2012 Labs   
-Thank you to everyone in the community for your PRs. We warmly welcome your contributions.
+This tool is jointly contributed by Huawei Technologies Co., Ltd. and developers.
+
+Thanks for every PR from the community, and contributions are welcome.
