@@ -15,7 +15,7 @@ This sample generates an `.om` file of a single-operator based on the AscendCL A
 
 - Prepare a server with Atlas A2 products and install the required driver and firmware. For details, see "Installing the NPU Driver and Firmware" in [CANN Software Installation Guide](https://www.hiascend.com/document/detail/en/CANNCommunityEdition/latest/softwareinst/instg/instg_0107.html?OS=openEuler&InstallType=netyum).
 - Install the CANN Toolkit and ops operator package of the required version and configure CANN environment variables. For details, see [CANN Software Installation Guide](https://www.hiascend.com/document/detail/en/CANNCommunityEdition/latest/softwareinst/instg/instg_0089.html?OS=openEuler&InstallType=netyum).
-- To use MindStudio Insight for viewing, install the MindStudio Insight software package separately. For download links, see "Installation Guide" in [MindStudio Insight User Guide](https://atomgit.com/Ascend/msinsight/blob/26.2.0/docs/en/install_guide/mindstudio_insight_install_guide.md).
+- To use MindStudio Insight for viewing, install the MindStudio Insight software package separately. For download links, see "Installation Guide" in [MindStudio Insight User Guide](https://gitcode.com/Ascend/msinsight/blob/26.2.0/docs/en/install_guide/mindstudio_insight_install_guide.md).
 
 > [!NOTE]
 >

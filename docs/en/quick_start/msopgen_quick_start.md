@@ -6,7 +6,7 @@
 
 MindStudio Ops Generator (msOpGen) automatically generates a custom operator project during operator development, allowing users to focus on the core logic and algorithmic implementation of the operator. This eliminates time-consuming, repetitive tasks such as build and configuration, thereby significantly improving development efficiency. This document demonstrates the core functions of msOpGen based on the simple addition operator developed in the introductory tutorial. It helps beginners intuitively experience the efficiency and convenience the tool brings to the operator development process.
 
-This document assumes that you have completed all operations in <a href="https://atomgit.com/Ascend/msot/blob/26.2.0/docs/en/quick_start/op_tool_quick_start.md" target="_blank">Quick Start of Operator Development Toolchain</a>. If you have not done so, complete that guide first for a better learning experience.
+This document assumes that you have completed all operations in <a href="https://gitcode.com/Ascend/msot/blob/26.2.0/docs/en/quick_start/op_tool_quick_start.md" target="_blank">Quick Start of Operator Development Toolchain</a>. If you have not done so, complete that guide first for a better learning experience.
 
 ## 2. Procedure
 
@@ -18,7 +18,7 @@ This tutorial **only supports** a standardized CANN container environment and is
 #### 2.1.1 Installing the CANN Container Environment
 
 ✅ **Strictly follow the guide below to complete the environment installation:**  
-👉 **<a href="https://atomgit.com/Ascend/msot/blob/26.2.0/docs/en/quick_start/installation_guide.md" target="_blank">Ascend AI Operator Development Toolchain Learning Environment Installation Guide</a>**
+👉 **<a href="https://gitcode.com/Ascend/msot/blob/26.2.0/docs/en/quick_start/installation_guide.md" target="_blank">Ascend AI Operator Development Toolchain Learning Environment Installation Guide</a>**
 
 > ⏱️ **Estimated time in an environment with external network access: about 3 minutes**  
 > After installation, you will obtain a standardized container environment preinstalled with all operator tools, sample code, and dependent libraries.
@@ -523,7 +523,7 @@ Execute the operator calling project to verify the operator function. (In this e
 ```shell
 mkdir ~/ot_demo/workspace/src/caller
 cd ~/ot_demo/workspace/src/caller
-curl -fLO --retry 10 --retry-all-errors --retry-delay 3 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" "https://raw.atomgit.com/Ascend/msot/raw/master/example/quick_start/msopgen/caller/{CMakeLists.txt,main.cpp,exec.py,run.sh}"
+curl -fLO --retry 10 --retry-all-errors --retry-delay 3 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" "https://raw.gitcode.com/Ascend/msot/raw/master/example/quick_start/msopgen/caller/{CMakeLists.txt,main.cpp,exec.py,run.sh}"
 bash ./run.sh
 ```
 
