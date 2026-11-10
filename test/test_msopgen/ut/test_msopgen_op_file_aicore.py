@@ -66,6 +66,9 @@ class TestOpFileAiCoreMethods(unittest.TestCase):
     ("float", 0.5, "Float(0.5)"),
     ("bool", False, "Bool(false)"),
     ("string", "ND", 'String("ND")'),
+    ("string", r"C:\new\test", r'String("C:\\new\\test")'),
+    ("string", "C:\\tmp\\", r'String("C:\\tmp\\")'),
+    ("string", r"\\server\share", r'String("\\\\server\\share")'),
 ])
 def test_cpp_attribute_default_from_json(tmp_path, attr_type, default_value, expected):
     """Valid JSON defaults must produce the corresponding C++ registration call."""

@@ -368,7 +368,7 @@ class OpFileAiCore(OPFile):
             attr_api = attr[1]
             attr_val = attr[2]
             if attr_api == "String":
-                attr_val = "\"{val}\"".format(val=attr[2])
+                attr_val = '"' + str(attr_val).replace("\\", "\\\\") + '"'
             elif attr_api in ("ListInt", "ListFloat", "ListBool", "ListListInt") and isinstance(attr_val, list):
                 attr_val = self._format_cpp_list_value(attr_val)
             if attr[3] == "optional":
