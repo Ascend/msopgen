@@ -87,6 +87,34 @@ def test_cpp_attribute_default_from_json(tmp_path, attr_type, default_value, exp
     assert op_file._generate_cpp_attrs() == '        this->Attr("value").AttrType(OPTIONAL).{};\n'.format(expected)
 
 
+@pytest.mark.parametrize("framework", ["pytorch", "tf", "onnx"])
+@pytest.mark.parametrize("types, formats, expected_types, expected_formats", [
+    ("float", ["ND"], ["DT_FLOAT"], ["ND"]),
+    ("float", "ND", ["DT_FLOAT"], ["ND"]),
+    (["float"], ["ND"], ["DT_FLOAT"], ["ND"]),
+    (["float"], "ND", ["DT_FLOAT"], ["ND"]),
+    ("float", ["ND", "NCHW"], ["DT_FLOAT", "DT_FLOAT"], ["ND", "NCHW"]),
+    (["float", "int32"], "ND", ["DT_FLOAT", "DT_INT32"], ["ND", "ND"]),
+    ("IndexNumberType", ["ND"], ["DT_INT32", "DT_INT64"], ["ND", "ND"]),
+    (["IndexNumberType"], ["ND"], ["DT_INT32", "DT_INT64"], ["ND", "ND"]),
+])
+def test_json_tensor_types_and_formats(tmp_path, framework, types, formats, expected_types, expected_formats):
+    input_file = tmp_path / "op.json"
+    input_file.write_text(json.dumps([{
+        "op": "AddCustom",
+        "input_desc": [{"name": "x", "type": types, "format": formats}],
+        "output_desc": [{"name": "y", "type": types, "format": formats}],
+    }]), encoding="utf-8")
+    args = SimpleNamespace(input_path=str(input_file), gen_flag=True, output_path=str(tmp_path),
+                           op_type="", framework=framework)
+    info = JsonIROpInfo(args)
+    info.parse()
+
+    for parsed in (info.parsed_input_info["x"], info.parsed_output_info["y"]):
+        assert [value.strip() for value in parsed["ir_type_list"]] == expected_types
+        assert parsed["format_list"] == expected_formats
+
+
 def test_cpp_required_list_attribute_omits_default():
     op_file = OpFileAiCore.__new__(OpFileAiCore)
     op_file.op_info = SimpleNamespace(parsed_attr_info=[["value", "ListInt", None, "required"]])

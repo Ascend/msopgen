@@ -257,6 +257,7 @@ class JsonIROpInfo(OpInfo):
             format_list = [format_list]
         if isinstance(type_list, str):
             type_list = [type_list]
+            check_map['type'] = type_list
         type_length = len(type_list)
         format_length = len(format_list)
         if type_length == format_length:
