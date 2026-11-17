@@ -281,6 +281,12 @@ class ArgParser:
 
     @staticmethod
     def _check_soc_version_valid(soc_version: str) -> None:
+        if soc_version.lower() == "ascendxxx":
+            utils.print_error_log(
+                "The SoC version 'ascendxxx' is a placeholder. Replace it with the actual SoC version, "
+                "such as ascend910B4. Use acl.get_soc_name() on the target device to query its SoC version."
+            )
+            raise utils.MsOpGenException(ConstManager.MS_OP_GEN_CONFIG_INVALID_COMPUTE_UNIT_ERROR)
         res = re.search(
             "^[aA]scend[A-Za-z0-9-_]{3,20}$|^[bB][sS]9[sS][xX]1[aA]+$|^[hH][iI][A-Za-z0-9]{3,20}", soc_version.lower()
         )
